@@ -27,11 +27,30 @@ public class AlphaService {
 
 	@Transactional
 	public Alpha save(Alpha alpha) {
+		validateRequiredFields(alpha);
 		return alphaRepository.save(alpha);
 	}
 
 	@Transactional
 	public void deleteById(Integer id) {
 		alphaRepository.deleteById(id);
+	}
+
+	private void validateRequiredFields(Alpha alpha) {
+		if (alpha == null) {
+			throw new IllegalArgumentException("L'instance Alpha ne peut pas être nulle.");
+		}
+		if (alpha.getCentre() == null) {
+			throw new IllegalArgumentException("Le centre est obligatoire pour une Alpha.");
+		}
+		if (alpha.getIdCompagne() == null) {
+			throw new IllegalArgumentException("La campagne est obligatoire pour une Alpha.");
+		}
+		if (alpha.getIdTypeAlpha() == null) {
+			throw new IllegalArgumentException("Le type d'alpha est obligatoire.");
+		}
+		if (alpha.getIdRegimeAlpha() == null) {
+			throw new IllegalArgumentException("Le régime d'alphabétisation est obligatoire.");
+		}
 	}
 }

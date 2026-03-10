@@ -27,11 +27,21 @@ public class CampagneService {
 
 	@Transactional
 	public Campagne save(Campagne campagne) {
+		validateRequiredFields(campagne);
 		return campagneRepository.save(campagne);
 	}
 
 	@Transactional
 	public void deleteById(Integer id) {
 		campagneRepository.deleteById(id);
+	}
+
+	private void validateRequiredFields(Campagne campagne) {
+		if (campagne == null) {
+			throw new IllegalArgumentException("L'instance Campagne ne peut pas être nulle.");
+		}
+		if (campagne.getCodeCampagne() == null || campagne.getCodeCampagne().isBlank()) {
+			throw new IllegalArgumentException("Le code campagne est obligatoire.");
+		}
 	}
 }
