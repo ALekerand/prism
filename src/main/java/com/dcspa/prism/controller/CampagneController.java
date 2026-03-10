@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/campagnes")
+@RequestMapping("/api/campagnes")
 @RequiredArgsConstructor
 public class CampagneController {
 
@@ -38,7 +38,7 @@ public class CampagneController {
 	@PostMapping
 	public ResponseEntity<Campagne> create(@RequestBody Campagne campagne) {
 		Campagne saved = campagneService.save(campagne);
-		return ResponseEntity.status(201).body(saved);
+		return ResponseEntity.status(200).body(saved);
 	}
 
 	@PutMapping("/{id}")

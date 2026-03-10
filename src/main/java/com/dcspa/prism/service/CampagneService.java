@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +16,8 @@ import java.util.Optional;
 public class CampagneService {
 
 	private final CampagneRepository campagneRepository;
+
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Transactional(readOnly = true)
 	public List<Campagne> findAll() {
@@ -28,6 +32,7 @@ public class CampagneService {
 	@Transactional
 	public Campagne save(Campagne campagne) {
 		validateRequiredFields(campagne);
+		// dateFormat.parse(campagne.getDateDebutCampagne());
 		return campagneRepository.save(campagne);
 	}
 
@@ -37,11 +42,17 @@ public class CampagneService {
 	}
 
 	private void validateRequiredFields(Campagne campagne) {
-		if (campagne == null) {
-			throw new IllegalArgumentException("L'instance Campagne ne peut pas être nulle.");
+		if (campagne.getDateDebutCampagne() == null) {
+			throw new IllegalArgumentException("La date de début ne peut pas être nulle.");
 		}
-		if (campagne.getCodeCampagne() == null || campagne.getCodeCampagne().isBlank()) {
-			throw new IllegalArgumentException("Le code campagne est obligatoire.");
-		}
+		if (campagne.getDateFinCampagne() == null) {
+			throw new IllegalArgumentException("La date de fin ne peut pas être nulle.");
+		}	
+		// if (campagne == null) {
+		// 	throw new IllegalArgumentException("L'instance Campagne ne peut pas être nulle.");
+		// }
+		// if (campagne.getCodeCampagne() == null || campagne.getCodeCampagne().isBlank()) {
+		// 	throw new IllegalArgumentException("Le code campagne est obligatoire.");
+		// }
 	}
 }
