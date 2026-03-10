@@ -1,9 +1,7 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.dto.CentreDto;
 import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.service.CentreService;
-import com.dcspa.prism.service.mapper.CentreMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,19 +17,16 @@ import java.util.List;
 public class CentreController {
 
 	private final CentreService centreService;
-	private final CentreMapper centreMapper;
 
 	@GetMapping
-	public ResponseEntity<List<CentreDto>> findAll() {
+	public ResponseEntity<List<Centre>> findAll() {
 		List<Centre> list = centreService.findAll();
-		List<CentreDto> dtos = list.stream().map(centreMapper::toDto).toList();
-		return ResponseEntity.ok(dtos);
+		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<CentreDto> findById(@PathVariable Integer id) {
+	public ResponseEntity<Centre> findById(@PathVariable Integer id) {
 		return centreService.findById(id)
-				.map(centreMapper::toDto)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}

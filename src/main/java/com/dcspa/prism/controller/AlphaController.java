@@ -1,9 +1,7 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.dto.AlphaDto;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.service.AlphaService;
-import com.dcspa.prism.service.mapper.AlphaMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,19 +17,16 @@ import java.util.List;
 public class AlphaController {
 
 	private final AlphaService alphaService;
-	private final AlphaMapper alphaMapper;
 
 	@GetMapping
-	public ResponseEntity<List<AlphaDto>> findAll() {
+	public ResponseEntity<List<Alpha>> findAll() {
 		List<Alpha> list = alphaService.findAll();
-		List<AlphaDto> dtos = list.stream().map(alphaMapper::toDto).toList();
-		return ResponseEntity.ok(dtos);
+		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<AlphaDto> findById(@PathVariable Integer id) {
+	public ResponseEntity<Alpha> findById(@PathVariable Integer id) {
 		return alphaService.findById(id)
-				.map(alphaMapper::toDto)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
