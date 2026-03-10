@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Personnel;
-import com.dcspa.prism.repositorybase.BaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PersonnelRepository extends BaseRepository<Personnel, Integer> {
+public interface PersonnelRepository extends JpaRepository<Personnel, Long> {
 
 }

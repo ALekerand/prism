@@ -1,8 +1,9 @@
 package com.dcspa.prism.repository;
 
+import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Periodicite;
-import com.dcspa.prism.repositorybase.BaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PeriodiciteRepository extends BaseRepository<Periodicite, Integer> {
+public interface PeriodiciteRepository extends JpaRepository<Periodicite, Long> {
 
 }
