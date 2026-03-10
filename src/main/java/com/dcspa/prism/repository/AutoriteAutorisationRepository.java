@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.AutoriteAutorisation;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface AutoriteAutorisationRepository extends JpaRepository<AutoriteAutorisation, Long> {
+public interface AutoriteAutorisationRepository extends BaseRepository<AutoriteAutorisation, Integer> {
 
 }

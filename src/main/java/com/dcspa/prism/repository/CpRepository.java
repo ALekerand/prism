@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Cp;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface CpRepository extends JpaRepository<Cp, Long> {
+public interface CpRepository extends BaseRepository<Cp, Integer> {
 
 }

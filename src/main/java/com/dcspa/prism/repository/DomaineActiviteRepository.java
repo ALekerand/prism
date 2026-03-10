@@ -1,7 +1,7 @@
 package com.dcspa.prism.repository;
 import com.dcspa.prism.entity.DomaineActivite;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface DomaineActiviteRepository extends JpaRepository<DomaineActivite, Long> {
+public interface DomaineActiviteRepository extends BaseRepository<DomaineActivite, Integer> {
 
 }

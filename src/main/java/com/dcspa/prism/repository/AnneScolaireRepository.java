@@ -1,7 +1,7 @@
 package com.dcspa.prism.repository;
 import com.dcspa.prism.entity.AnneScolaire;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface AnneScolaireRepository extends JpaRepository<AnneScolaire, Long> {
+public interface AnneScolaireRepository extends BaseRepository<AnneScolaire, Integer> {
 
 }

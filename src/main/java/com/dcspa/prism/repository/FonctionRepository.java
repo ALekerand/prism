@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Fonction;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface FonctionRepository extends JpaRepository<Fonction, Long> {
+public interface FonctionRepository extends BaseRepository<Fonction, Integer> {
 
 }

@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Modealphabetisation;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface ModealphabetisationRepository extends JpaRepository<Modealphabetisation, Long> {
+public interface ModealphabetisationRepository extends BaseRepository<Modealphabetisation, Integer> {
 
 }

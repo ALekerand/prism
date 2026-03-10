@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Infrastructure;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface InfrastructureRepository extends JpaRepository<Infrastructure, Long> {
+public interface InfrastructureRepository extends BaseRepository<Infrastructure, Integer> {
 
 }

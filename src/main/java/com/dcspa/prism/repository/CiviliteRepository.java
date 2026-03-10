@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Civilite;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface CiviliteRepository extends JpaRepository<Civilite, Long> {
+public interface CiviliteRepository extends BaseRepository<Civilite, Integer> {
 
 }

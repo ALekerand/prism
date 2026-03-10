@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Designation;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface DesignationRepository extends JpaRepository<Designation, Long> {
+public interface DesignationRepository extends BaseRepository<Designation, Integer> {
 
 }

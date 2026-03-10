@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.ProgrammeAlpha;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface ProgrammeAlphaRepository extends JpaRepository<ProgrammeAlpha, Long> {
+public interface ProgrammeAlphaRepository extends BaseRepository<ProgrammeAlpha, Integer> {
 
 }
