@@ -2,8 +2,8 @@ package com.dcspa.prism.repository;
 
 
 import com.dcspa.prism.entity.MaterielAlpha;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface MaterielAlphaRepository extends JpaRepository<MaterielAlpha, Long> {
+public interface MaterielAlphaRepository extends BaseRepository<MaterielAlpha, Integer> {
 
 }

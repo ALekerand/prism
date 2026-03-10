@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Diplome;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface DiplomeRepository extends JpaRepository<Diplome, Long> {
+public interface DiplomeRepository extends BaseRepository<Diplome, Integer> {
 
 }

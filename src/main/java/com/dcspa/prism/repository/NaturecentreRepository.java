@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Naturecentre;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface NaturecentreRepository extends JpaRepository<Naturecentre, Long> {
+public interface NaturecentreRepository extends BaseRepository<Naturecentre, Integer> {
 
 }

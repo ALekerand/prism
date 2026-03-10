@@ -1,4 +1,4 @@
-package com.dcspa.prism.cotroller;
+package com.dcspa.prism.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,5 +13,3 @@ public class MonController {
 		return "Retour de ma methode";
 	}
 }
-
-

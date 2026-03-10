@@ -2,8 +2,8 @@ package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Campagne;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface CampagneRepository extends JpaRepository<Campagne, Long> {
+public interface CampagneRepository extends BaseRepository<Campagne, Integer> {
 
 }

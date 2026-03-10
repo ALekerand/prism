@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Cec;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface CecRepository extends JpaRepository<Cec, Long> {
+public interface CecRepository extends BaseRepository<Cec, Integer> {
 
 }
