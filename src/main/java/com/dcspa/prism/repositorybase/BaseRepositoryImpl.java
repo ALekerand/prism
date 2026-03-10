@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-
 import java.io.Serializable;
 
 public class BaseRepositoryImpl<T, ID extends Serializable>
