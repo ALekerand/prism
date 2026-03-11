@@ -30,17 +30,14 @@ public class Alpha {
     @JoinColumn(name = "ID_REGIME_ALPHA", nullable = false)
     private Regimealphabetisation idRegimeAlpha;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_PERIODICITE")
-    private Periodicite idPeriodicite;
+    @Column(name = "ID_PERIODICITE")
+    private Integer idPeriodicite;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_AUTORITE_AUTORISATION")
-    private AutoriteAutorisation idAutoriteAutorisation;
+    @Column(name = "ID_AUTORITE_AUTORISATION")
+    private Integer idAutoriteAutorisation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_PROMOTEUR")
-    private Promoteur idPromoteur;
+    @Column(name = "ID_PROMOTEUR")
+    private Integer idPromoteur;
 
     @Column(name = "CODE_CENTRE", length = 50)
     private String codeCentre;
@@ -48,7 +45,7 @@ public class Alpha {
     @Column(name = "AUTORISATION")
     private Boolean autorisation;
 
-    @Column(name = "ENCADREUR_NON_MENA", length = 150)
+    @Column(name = "ENCADREUR_NON__MENA", length = 150)
     private String encadreurNonMena;
 
     @Column(name = "ENCADRER_PAR_MENA")
