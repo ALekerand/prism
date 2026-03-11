@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Sie;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface SieRepository extends JpaRepository<Sie, Long> {
+public interface SieRepository extends BaseRepository<Sie, Integer> {
 
 }

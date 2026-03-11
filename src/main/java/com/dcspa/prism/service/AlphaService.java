@@ -37,9 +37,6 @@ public class AlphaService {
 	}
 
 	private void validateRequiredFields(Alpha alpha) {
-		if (alpha == null) {
-			throw new IllegalArgumentException("L'instance Alpha ne peut pas être nulle.");
-		}
 		if (alpha.getCentre() == null) {
 			throw new IllegalArgumentException("Le centre est obligatoire pour une Alpha.");
 		}
