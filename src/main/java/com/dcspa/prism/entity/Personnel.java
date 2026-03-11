@@ -1,5 +1,6 @@
 package com.dcspa.prism.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -62,6 +63,7 @@ public class Personnel {
     @Column(name = "SEXE_PERSONNEL", length = 10)
     private String sexePersonnel;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "DATE_NAISSANCE_")
     private LocalDate dateNaissance;
 
