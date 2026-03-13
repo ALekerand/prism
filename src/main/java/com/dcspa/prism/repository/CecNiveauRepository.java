@@ -1,8 +1,7 @@
 package com.dcspa.prism.repository;
 
-import com.dcspa.prism.entity.CecNiveau;
+import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface CecNiveauRepository extends BaseRepository<CecNiveau, Integer> {
-
+public interface CecNiveauRepository extends BaseRepository<Alpha, Integer> {
 }
