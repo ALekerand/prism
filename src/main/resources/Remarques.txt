@@ -1,0 +1,6 @@
+======
+====== FICHIER DE RECAPITILATION DES MODIFICATIONS A APPORTER DANS LA CONCEPTION
+
+======================= 16/03/2026 ========================
+ Table CIVILITE: mettre la taille du libéllé à 15
+ Etat traitement : Non

@@ -66,5 +66,4 @@ public class Alpha {
     @Column(name = "LIBELLE_ALPHA", length = 100)
     private String libelleAlpha;
 
-
 }
