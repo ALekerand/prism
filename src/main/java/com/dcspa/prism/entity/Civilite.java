@@ -1,6 +1,7 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,9 +15,11 @@ public class Civilite {
     @Column(name = "ID_CIVILITE", nullable = false)
     private Integer id;
 
+    @Size(max = 10)
     @Column(name = "CODE_CIVILITE", length = 10)
     private String codeCivilite;
 
+    @Size(max = 10)
     @Column(name = "LIBELLE_CIVILITE", length = 10)
     private String libelleCivilite;
 

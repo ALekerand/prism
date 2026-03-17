@@ -1,6 +1,7 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,12 +19,15 @@ public class Personnephysique {
     @JoinColumn(name = "ID_PROMOTEUR", nullable = false)
     private Promoteur promoteur;
 
+    @Size(max = 50)
     @Column(name = "CODE_PROMOTEUR", length = 50)
     private String codePromoteur;
 
-    @Column(name = "CODE_PERSONNE_PHYSIQUE", length = 50)
-    private String codePersonnePhysique;
+    @Size(max = 100)
+    @Column(name = "LIBELLE_PROMOTEUR", length = 100)
+    private String libellePromoteur;
 
+    @Size(max = 100)
     @Column(name = "LIBELLE_PERSONNE_PHYSIQUE", length = 100)
     private String libellePersonnePhysique;
 

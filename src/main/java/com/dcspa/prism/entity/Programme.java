@@ -1,6 +1,7 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,8 +15,9 @@ public class Programme {
     @Column(name = "ID_PROGRAMME", nullable = false)
     private Integer id;
 
-    @Column(name = "CODE_PROGMERAM", length = 50)
-    private String codeProgmeram;
+    @Size(max = 50)
+    @Column(name = "CODE_PROGRAMME", length = 50)
+    private String codeProgramme;
 
 
 }

@@ -1,6 +1,6 @@
 ======
 ====== FICHIER DE RECAPITILATION DES MODIFICATIONS A APPORTER DANS LA CONCEPTION
 
-======================= 16/03/2026 ========================
- Table CIVILITE: mettre la taille du libéllé à 15
- Etat traitement : Non
+======================= 17/03/2026 ========================
+ La tablle IEP à été renommée IEPP y conpris les données ==> le prendre en compte pour prochain mapping
+ et apporter les éventuellle conrections dans les codes

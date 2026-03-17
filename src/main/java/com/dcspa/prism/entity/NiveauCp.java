@@ -1,6 +1,7 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +15,7 @@ public class NiveauCp {
     @Column(name = "ID_NIVEAU_CP", nullable = false)
     private Integer id;
 
+    @Size(max = 100)
     @Column(name = "LIBELLE_NIVEAU_CP", length = 100)
     private String libelleNiveauCp;
 

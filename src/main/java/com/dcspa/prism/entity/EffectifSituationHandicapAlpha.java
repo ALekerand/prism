@@ -1,6 +1,8 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,14 +16,17 @@ public class EffectifSituationHandicapAlpha {
     @Column(name = "ID_EFFECTIF_SITUATION_HANDICAP_ALPHA", nullable = false)
     private Integer id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_PERIODE_ACTIVITE", nullable = false)
     private PeriodeActivite idPeriodeActivite;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CENTRE", nullable = false)
     private Alpha idCentre;
 
+    @Size(max = 10)
     @Column(name = "CODE_EFFECTIF_SITUATION_HANDICAP_ALPHA", length = 10)
     private String codeEffectifSituationHandicapAlpha;
 
@@ -43,11 +48,11 @@ public class EffectifSituationHandicapAlpha {
     @Column(name = "EFFECTIF_SITUATION_HANDICAP__ALPHA_MOINS_15_IVOIRIEN_F")
     private Integer effectifSituationHandicapAlphaMoins15IvoirienF;
 
-    @Column(name = "EFFECTIF_SITUATION_HANDICAP__ALPHA_MOINS_15_HANDICAP_H")
+    @Column(name = "EFFECTIF_SITUATION_HANDICAP_ALPHA_MOINS_15_HANDICAP_H")
     private Integer effectifSituationHandicapAlphaMoins15HandicapH;
 
-    @Column(name = "EFFECTIF_SITUATION_HANDICAPALPHA_MOINS_15_HANDICAP_F")
-    private Integer effectifSituationHandicapalphaMoins15HandicapF;
+    @Column(name = "EFFECTIF_SITUATION_HANDICAP_ALPHA_MOINS_15_HANDICAP_F")
+    private Integer effectifSituationHandicapAlphaMoins15HandicapF;
 
     @Column(name = "EFFECTIF_SITUATION_HANDICAP_ALPHA_15_24_F")
     private Integer effectifSituationHandicapAlpha1524F;
