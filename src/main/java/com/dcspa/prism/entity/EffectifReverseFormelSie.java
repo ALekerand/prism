@@ -1,6 +1,8 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,14 +16,17 @@ public class EffectifReverseFormelSie {
     @Column(name = "ID_EFFECTIF_DEBUT23", nullable = false)
     private Integer id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_NIVEAU_SIE", nullable = false)
     private NiveauSieCec idNiveauSie;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
 
+    @Size(max = 10)
     @Column(name = "CODE_EFFECTIF_REVERSE_FORMEL_SIE", length = 10)
     private String codeEffectifReverseFormelSie;
 
@@ -57,6 +62,9 @@ public class EffectifReverseFormelSie {
 
     @Column(name = "EFFECTIF_REVERSE_FORMEL_SIE_4_6_NON_IVOIRIIEN_H")
     private Integer effectifReverseFormelSie46NonIvoiriienH;
+
+    @Column(name = "EFFECTIF_REVERSE_FORMEL_SIE_4_6_NON_IVOIRIIEN_F")
+    private Integer effectifReverseFormelSie46NonIvoiriienF;
 
     @Column(name = "EFFECTIF_REVERSE_FORMEL_SIE_7_9_IVOIRIEN_H")
     private Integer effectifReverseFormelSie79IvoirienH;

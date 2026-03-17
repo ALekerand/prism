@@ -1,6 +1,8 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,17 +13,25 @@ import lombok.Setter;
 public class EffectifCec {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_EFFECTIF_DEBUT8", nullable = false)
+    @Column(name = "ID_EFFECTIF_CEC", nullable = false)
     private Integer id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_PERIODE_ACTIVITE", nullable = false)
     private PeriodeActivite idPeriodeActivite;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_NIVEAU_SIE", nullable = false)
     private NiveauSieCec idNiveauSie;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ID_CENTRE", nullable = false)
+    private Cec idCentre;
+
+    @Size(max = 10)
     @Column(name = "CODE_EFFECTIF_CEC", length = 10)
     private String codeEffectifCec;
 
@@ -78,6 +88,9 @@ public class EffectifCec {
 
     @Column(name = "EFFECTIF_CEC_6_8_HANDICAP_F")
     private Integer effectifCec68HandicapF;
+
+    @Column(name = "EFFECTIF_CEC_9_11_F")
+    private Integer effectifCec911F;
 
     @Column(name = "EFFECTIF_CEC_9_11_H")
     private Integer effectifCec911H;

@@ -1,6 +1,8 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,14 +16,17 @@ public class EffectifAbondanSie {
     @Column(name = "ID_EFFECTIF_DEBUT21", nullable = false)
     private Integer id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_NIVEAU_SIE", nullable = false)
     private NiveauSieCec idNiveauSie;
 
+    @Size(max = 10)
     @Column(name = "CODE_ABANDON_EFFECTIF_SIE", length = 10)
     private String codeAbandonEffectifSie;
 
@@ -57,6 +62,9 @@ public class EffectifAbondanSie {
 
     @Column(name = "EFFECTIF_ABANDON_SIE_4_6_NON_IVOIRIIEN_H")
     private Integer effectifAbandonSie46NonIvoiriienH;
+
+    @Column(name = "EFFECTIF_ABANDON_SIE_4_6_NON_IVOIRIIEN_F")
+    private Integer effectifAbandonSie46NonIvoiriienF;
 
     @Column(name = "EFFECTIF_ABANDON_SIE_7_9_IVOIRIEN_H")
     private Integer effectifAbandonSie79IvoirienH;
@@ -105,6 +113,12 @@ public class EffectifAbondanSie {
 
     @Column(name = "EFFECTIF_ABANDON_SIE_13_14_ET_PLUS_HANDICAP_H")
     private Integer effectifAbandonSie1314EtPlusHandicapH;
+
+    @Column(name = "EFFECTIF_ABANDON_SIE_13_14_ET_PLUS_NON_IVOIRIEN_F")
+    private Integer effectifAbandonSie1314EtPlusNonIvoirienF;
+
+    @Column(name = "EFFECTIF_ABANDON_SIE_13_14_ET_PLUS_NON_IVOIRIEN_H")
+    private Integer effectifAbandonSie1314EtPlusNonIvoirienH;
 
     @Column(name = "EFFECTIF_ABANDON_SIE_NIVEAU_SIE")
     private Integer effectifAbandonSieNiveauSie;

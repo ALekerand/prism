@@ -1,6 +1,8 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,18 +16,22 @@ public class EffectifAbandonCec {
     @Column(name = "ID_EFFECTIF_DEBUT10", nullable = false)
     private Integer id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_NIVEAU_SIE", nullable = false)
     private NiveauSieCec idNiveauSie;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CENTRE", nullable = false)
     private Cec idCentre;
 
+    @Size(max = 10)
     @Column(name = "CODE_EFFECTIF_ABANDON_CEC", length = 10)
     private String codeEffectifAbandonCec;
 
@@ -85,6 +91,9 @@ public class EffectifAbandonCec {
 
     @Column(name = "EFFECTIF_ABANDON_CEC_9_11_H")
     private Integer effectifAbandonCec911H;
+
+    @Column(name = "EFFECTIF_ABANDON_CEC_9_11_F")
+    private Integer effectifAbandonCec911F;
 
     @Column(name = "EFFECTIF_ABANDON_CEC_9_11_IVOIRIEN_H")
     private Integer effectifAbandonCec911IvoirienH;

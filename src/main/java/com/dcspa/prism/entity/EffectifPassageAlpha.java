@@ -1,6 +1,8 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,14 +16,17 @@ public class EffectifPassageAlpha {
     @Column(name = "ID_EFFECTIF_PASSAGE_ALPHA", nullable = false)
     private Integer id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_PERIODE_ACTIVITE", nullable = false)
     private PeriodeActivite idPeriodeActivite;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CENTRE", nullable = false)
     private Alpha idCentre;
 
+    @Size(max = 10)
     @Column(name = "CODE_EFFECTIF_PASSAGE_ALPHA", length = 10)
     private String codeEffectifPassageAlpha;
 
@@ -43,7 +48,7 @@ public class EffectifPassageAlpha {
     @Column(name = "EFFECTIF_PASSAGE__ALPHA_MOINS_15_IVOIRIEN_F")
     private Integer effectifPassageAlphaMoins15IvoirienF;
 
-    @Column(name = "EFFECTIF_PASSAGE__ALPHA_MOINS_15_HANDICAP_H")
+    @Column(name = "EFFECTIF_PASSAGE_ALPHA_MOINS_15_HANDICAP_H")
     private Integer effectifPassageAlphaMoins15HandicapH;
 
     @Column(name = "EFFECTIF_PASSAGE_ALPHA_MOINS_15_HANDICAP_F")
@@ -76,8 +81,8 @@ public class EffectifPassageAlpha {
     @Column(name = "EFFECTIF_PASSAGE_ALPHA_25_49_IVOIRIEN_F")
     private Integer effectifPassageAlpha2549IvoirienF;
 
-    @Column(name = "EFFECTIF_APASSAGE_ALPHA_25_49_IVOIRIEN_H")
-    private Integer effectifApassageAlpha2549IvoirienH;
+    @Column(name = "EFFECTIF_PASSAGE_ALPHA_25_49_IVOIRIEN_H")
+    private Integer effectifPassageAlpha2549IvoirienH;
 
     @Column(name = "EFFECTIF_PASSAGE_ALPHA_25_49_HANDICAP_H")
     private Integer effectifPassageAlpha2549HandicapH;

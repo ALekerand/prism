@@ -8,22 +8,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "programme_alpha")
-public class ProgrammeAlpha {
+@Table(name = "drena_departement")
+public class DrenaDepartement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_PROGRAMME_ALPHA", nullable = false)
+    @Column(name = "ID_DRENA_DEPART", nullable = false)
     private Integer id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ID_PROGRAMME", nullable = false)
-    private Programme idProgramme;
+    @JoinColumn(name = "ID_DRENA", nullable = false)
+    private Drena idDrena;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ID_CENTRE", nullable = false)
-    private Alpha idCentre;
+    @JoinColumn(name = "ID_DEPARTEMENT", nullable = false)
+    private Departement idDepartement;
 
 
 }

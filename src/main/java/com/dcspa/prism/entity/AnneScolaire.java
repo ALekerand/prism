@@ -1,7 +1,7 @@
 package com.dcspa.prism.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,14 +17,13 @@ public class AnneScolaire {
     @Column(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private Integer id;
 
+    @Size(max = 10)
     @Column(name = "CODE_ANNEE_SCOLAIRE", length = 10)
     private String codeAnneeScolaire;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "DEBUT_ANNEE_SCOLAIRE")
     private LocalDate debutAnneeScolaire;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "FIN_ANNEE_SCOLAIRE")
     private LocalDate finAnneeScolaire;
 
