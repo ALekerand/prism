@@ -1,0 +1,387 @@
+{
+  "info": {
+    "_postman_id": "d7c0b6db-9aa7-4e20-8b74-5b1a3d0ad0d4",
+    "name": "PRISM API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "id", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (JWT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {",
+                  "  const json = pm.response.json();",
+                  "  if (json && json.token) {",
+                  "    pm.collectionVariables.set('token', json.token);",
+                  "  }",
+                  "} catch (e) {}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"nebdev\",\n  \"password\": \"nebdev123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Swagger",
+      "item": [
+        {
+          "name": "OpenAPI JSON",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/v3/api-docs", "host": ["{{baseUrl}}"], "path": ["v3", "api-docs"] }
+          }
+        },
+        {
+          "name": "Swagger UI",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/swagger-ui.html", "host": ["{{baseUrl}}"], "path": ["swagger-ui.html"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "MonController",
+      "item": [
+        {
+          "name": "GET test/string",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/test/string", "host": ["{{baseUrl}}"], "path": ["test", "string"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "CampagneController (/api/campagnes)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/campagnes", "host": ["{{baseUrl}}"], "path": ["api", "campagnes"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/campagnes/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "campagnes", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codeCampagne\": \"C2026\",\n  \"dateDebutCampagne\": \"17/03/2026\",\n  \"dateFinCampagne\": \"31/03/2026\",\n  \"etatCampagne\": true\n}" }, "url": { "raw": "{{baseUrl}}/api/campagnes", "host": ["{{baseUrl}}"], "path": ["api", "campagnes"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codeCampagne\": \"C2026\",\n  \"dateDebutCampagne\": \"17/03/2026\",\n  \"dateFinCampagne\": \"31/03/2026\",\n  \"etatCampagne\": true\n}" }, "url": { "raw": "{{baseUrl}}/api/campagnes/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "campagnes", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/campagnes/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "campagnes", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "MinistereController (/api/ministeres)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/ministeres", "host": ["{{baseUrl}}"], "path": ["api", "ministeres"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/ministeres/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "ministeres", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codeMinistere\": \"MIN\",\n  \"libelleMinistere\": \"Ministère\"\n}" }, "url": { "raw": "{{baseUrl}}/api/ministeres", "host": ["{{baseUrl}}"], "path": ["api", "ministeres"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"codeMinistere\": \"MIN\",\n  \"libelleMinistere\": \"Ministère\"\n}" }, "url": { "raw": "{{baseUrl}}/api/ministeres/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "ministeres", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/ministeres/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "ministeres", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "NiveauCpController (/api/niveaucp)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/niveaucp", "host": ["{{baseUrl}}"], "path": ["api", "niveaucp"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/niveaucp/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "niveaucp", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/niveaucp", "host": ["{{baseUrl}}"], "path": ["api", "niveaucp"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/niveaucp/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "niveaucp", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/niveaucp/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "niveaucp", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "NiveauSieCecController (/api/niveausiecec)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/niveausiecec", "host": ["{{baseUrl}}"], "path": ["api", "niveausiecec"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/niveausiecec/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "niveausiecec", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/niveausiecec", "host": ["{{baseUrl}}"], "path": ["api", "niveausiecec"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/niveausiecec/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "niveausiecec", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/niveausiecec/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "niveausiecec", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "ModeAlphaController (/api/modealpha)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/modealpha", "host": ["{{baseUrl}}"], "path": ["api", "modealpha"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/modealpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "modealpha", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/modealpha", "host": ["{{baseUrl}}"], "path": ["api", "modealpha"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/modealpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "modealpha", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/modealpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "modealpha", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "NatureCentreController (/api/naturecentre)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/naturecentre", "host": ["{{baseUrl}}"], "path": ["api", "naturecentre"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/naturecentre/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "naturecentre", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/naturecentre", "host": ["{{baseUrl}}"], "path": ["api", "naturecentre"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/naturecentre/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "naturecentre", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/naturecentre/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "naturecentre", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "NatureDocumentController (/api/naturedocument)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/naturedocument", "host": ["{{baseUrl}}"], "path": ["api", "naturedocument"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/naturedocument/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "naturedocument", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/naturedocument", "host": ["{{baseUrl}}"], "path": ["api", "naturedocument"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/naturedocument/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "naturedocument", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/naturedocument/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "naturedocument", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "NiveauAlphaController (/api/niveaualpha)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/niveaualpha", "host": ["{{baseUrl}}"], "path": ["api", "niveaualpha"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/niveaualpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "niveaualpha", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/niveaualpha", "host": ["{{baseUrl}}"], "path": ["api", "niveaualpha"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/niveaualpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "niveaualpha", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/niveaualpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "niveaualpha", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "MaterielAlphaController (/api/materielalpha)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/materielalpha", "host": ["{{baseUrl}}"], "path": ["api", "materielalpha"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/materielalpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "materielalpha", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/materielalpha", "host": ["{{baseUrl}}"], "path": ["api", "materielalpha"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/materielalpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "materielalpha", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/materielalpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "materielalpha", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "MaterielPedagogiqueController (/api/materielpedagogiques)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/materielpedagogiques", "host": ["{{baseUrl}}"], "path": ["api", "materielpedagogiques"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/materielpedagogiques/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "materielpedagogiques", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/materielpedagogiques", "host": ["{{baseUrl}}"], "path": ["api", "materielpedagogiques"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/materielpedagogiques/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "materielpedagogiques", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/materielpedagogiques/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "materielpedagogiques", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "CommunauteController (/api/communautes)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/communautes", "host": ["{{baseUrl}}"], "path": ["api", "communautes"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/communautes/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "communautes", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/communautes", "host": ["{{baseUrl}}"], "path": ["api", "communautes"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/communautes/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "communautes", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/communautes/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "communautes", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "CategorieAppuiController (/api/categorieappuis)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/categorieappuis", "host": ["{{baseUrl}}"], "path": ["api", "categorieappuis"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/categorieappuis/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "categorieappuis", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/categorieappuis", "host": ["{{baseUrl}}"], "path": ["api", "categorieappuis"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/categorieappuis/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "categorieappuis", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/categorieappuis/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "categorieappuis", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "CiviliteController (/api/civilite)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/civilite", "host": ["{{baseUrl}}"], "path": ["api", "civilite"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/civilite/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "civilite", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/civilite", "host": ["{{baseUrl}}"], "path": ["api", "civilite"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/civilite/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "civilite", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/civilite/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "civilite", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "CompetenceController (/api/competence)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/competence", "host": ["{{baseUrl}}"], "path": ["api", "competence"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/competence/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "competence", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/competence", "host": ["{{baseUrl}}"], "path": ["api", "competence"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/competence/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "competence", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/competence/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "competence", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "DocumentController (/api/documents)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/documents", "host": ["{{baseUrl}}"], "path": ["api", "documents"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/documents/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "documents", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/documents", "host": ["{{baseUrl}}"], "path": ["api", "documents"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/documents/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "documents", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/documents/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "documents", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "AnneScolaireController (/api/anneescolaire)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/anneescolaire", "host": ["{{baseUrl}}"], "path": ["api", "anneescolaire"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/anneescolaire/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "anneescolaire", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/anneescolaire", "host": ["{{baseUrl}}"], "path": ["api", "anneescolaire"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/anneescolaire/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "anneescolaire", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/anneescolaire/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "anneescolaire", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "AutoriteAutorisationController (/api/autoriteautorisation)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/autoriteautorisation", "host": ["{{baseUrl}}"], "path": ["api", "autoriteautorisation"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/autoriteautorisation/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "autoriteautorisation", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/autoriteautorisation", "host": ["{{baseUrl}}"], "path": ["api", "autoriteautorisation"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/autoriteautorisation/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "autoriteautorisation", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/autoriteautorisation/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "autoriteautorisation", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "PeriodeActiviteController (/api/v1/PeriodeActivites)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/PeriodeActivites", "host": ["{{baseUrl}}"], "path": ["api", "v1", "PeriodeActivites"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/PeriodeActivites/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "PeriodeActivites", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/PeriodeActivites", "host": ["{{baseUrl}}"], "path": ["api", "v1", "PeriodeActivites"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/PeriodeActivites/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "PeriodeActivites", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/PeriodeActivites/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "PeriodeActivites", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "PeriodiciteController (/api/v1/Periodicites)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/Periodicites", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Periodicites"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/Periodicites/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Periodicites", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/Periodicites", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Periodicites"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/Periodicites/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Periodicites", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/Periodicites/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Periodicites", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "PartenaireController (/api/v1/Partenaires)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/Partenaires", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Partenaires"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/Partenaires/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Partenaires", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/Partenaires", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Partenaires"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/Partenaires/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Partenaires", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/Partenaires/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Partenaires", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "CentreController (/api/v1/centres)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/centres", "host": ["{{baseUrl}}"], "path": ["api", "v1", "centres"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/centres/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "centres", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/centres", "host": ["{{baseUrl}}"], "path": ["api", "v1", "centres"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/centres/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "centres", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/centres/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "centres", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "ModealphabetisationController (/api/v1/Modealphabetisations)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/Modealphabetisations", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Modealphabetisations"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/Modealphabetisations/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Modealphabetisations", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/Modealphabetisations", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Modealphabetisations"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/Modealphabetisations/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Modealphabetisations", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/Modealphabetisations/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Modealphabetisations", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "RegimealphabetisationController (/api/v1/Regimealphabetisations)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/Regimealphabetisations", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Regimealphabetisations"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/Regimealphabetisations/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Regimealphabetisations", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/Regimealphabetisations", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Regimealphabetisations"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/Regimealphabetisations/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Regimealphabetisations", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/Regimealphabetisations/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "Regimealphabetisations", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "LangueApprentissageController (/api/v1/LangueApprentissages)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/LangueApprentissages", "host": ["{{baseUrl}}"], "path": ["api", "v1", "LangueApprentissages"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/LangueApprentissages/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "LangueApprentissages", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/LangueApprentissages", "host": ["{{baseUrl}}"], "path": ["api", "v1", "LangueApprentissages"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/LangueApprentissages/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "LangueApprentissages", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/LangueApprentissages/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "LangueApprentissages", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "SupportDidactiqueController (/api/v1/SupportDidactiques)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/SupportDidactiques", "host": ["{{baseUrl}}"], "path": ["api", "v1", "SupportDidactiques"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/SupportDidactiques/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "SupportDidactiques", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/SupportDidactiques", "host": ["{{baseUrl}}"], "path": ["api", "v1", "SupportDidactiques"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/SupportDidactiques/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "SupportDidactiques", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/SupportDidactiques/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "SupportDidactiques", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "FonctionController (/api/v1/fonctions)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/fonctions", "host": ["{{baseUrl}}"], "path": ["api", "v1", "fonctions"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/fonctions/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "fonctions", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/fonctions", "host": ["{{baseUrl}}"], "path": ["api", "v1", "fonctions"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/fonctions/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "fonctions", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/fonctions/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "fonctions", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "TypeDocumentController (/api/v1/TypeDocuments)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/TypeDocuments", "host": ["{{baseUrl}}"], "path": ["api", "v1", "TypeDocuments"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/TypeDocuments/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "TypeDocuments", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/TypeDocuments", "host": ["{{baseUrl}}"], "path": ["api", "v1", "TypeDocuments"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/TypeDocuments/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "TypeDocuments", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/TypeDocuments/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "TypeDocuments", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "TypeAlphaController (/api/v1/TypeAlphas)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/TypeAlphas", "host": ["{{baseUrl}}"], "path": ["api", "v1", "TypeAlphas"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/TypeAlphas/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "TypeAlphas", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/TypeAlphas", "host": ["{{baseUrl}}"], "path": ["api", "v1", "TypeAlphas"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/TypeAlphas/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "TypeAlphas", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/TypeAlphas/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "TypeAlphas", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "AlphaController (/api/v1/alpha)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/alpha", "host": ["{{baseUrl}}"], "path": ["api", "v1", "alpha"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/alpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "alpha", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/alpha", "host": ["{{baseUrl}}"], "path": ["api", "v1", "alpha"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/alpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "alpha", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/alpha/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "alpha", "{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "StatutPersonnelController (/api/v1/StatutPersonnels)",
+      "item": [
+        { "name": "GET all", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/StatutPersonnels", "host": ["{{baseUrl}}"], "path": ["api", "v1", "StatutPersonnels"] } } },
+        { "name": "GET by id", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "GET", "url": { "raw": "{{baseUrl}}/api/v1/StatutPersonnels/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "StatutPersonnels", "{{id}}"] } } },
+        { "name": "POST create", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/StatutPersonnels", "host": ["{{baseUrl}}"], "path": ["api", "v1", "StatutPersonnels"] } } },
+        { "name": "PUT update", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n}" }, "url": { "raw": "{{baseUrl}}/api/v1/StatutPersonnels/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "StatutPersonnels", "{{id}}"] } } },
+        { "name": "DELETE", "request": { "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/v1/StatutPersonnels/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "v1", "StatutPersonnels", "{{id}}"] } } }
+      ]
+    }
+  ]
+}
+
