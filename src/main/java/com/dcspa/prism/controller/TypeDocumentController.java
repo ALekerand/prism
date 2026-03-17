@@ -1,7 +1,7 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.entity.Ministere;
-import com.dcspa.prism.service.MinistereService;
+import com.dcspa.prism.entity.TypeDocument;
+import com.dcspa.prism.service.TypeDocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,41 +16,41 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/ministeres")
+@RequestMapping("/api/v1/TypeDocuments")
 @RequiredArgsConstructor
-public class MinistereController {
+public class TypeDocumentController {
 
-	private final MinistereService ministereService;
+	private final TypeDocumentService TypeDocumentService;
 
 	@GetMapping
-	public ResponseEntity<List<Ministere>> findAll() {
-		List<Ministere> list = ministereService.findAll();
+	public ResponseEntity<List<TypeDocument>> findAll() {
+		List<TypeDocument> list = TypeDocumentService.findAll();
 		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Ministere> findById(@PathVariable Integer id) {
-		return ministereService.findById(id)
+	public ResponseEntity<TypeDocument> findById(@PathVariable Integer id) {
+		return TypeDocumentService.findById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping
-	public ResponseEntity<Ministere> create(@RequestBody Ministere ministere) {
-		Ministere saved = ministereService.save(ministere);
-		return ResponseEntity.status(200).body(saved);
+	public ResponseEntity<TypeDocument> create(@RequestBody TypeDocument TypeDocument) {
+		TypeDocument saved = TypeDocumentService.save(TypeDocument);
+		return ResponseEntity.status(201).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Ministere> update(@PathVariable Integer id, @RequestBody Ministere ministere) {
-		ministere.setId(id);
-		Ministere saved = ministereService.save(ministere);
+	public ResponseEntity<TypeDocument> update(@PathVariable Integer id, @RequestBody TypeDocument TypeDocument) {
+		TypeDocument.setId(id);
+		TypeDocument saved = TypeDocumentService.save(TypeDocument);
 		return ResponseEntity.ok(saved);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-		ministereService.deleteById(id);
+		TypeDocumentService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 }

@@ -1,7 +1,7 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.entity.Ministere;
-import com.dcspa.prism.service.MinistereService;
+import com.dcspa.prism.entity.Fonction;
+import com.dcspa.prism.service.FonctionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,41 +16,41 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/ministeres")
+@RequestMapping("/api/v1/fonctions")
 @RequiredArgsConstructor
-public class MinistereController {
+public class FonctionController {
 
-	private final MinistereService ministereService;
+	private final FonctionService fonctionService;
 
 	@GetMapping
-	public ResponseEntity<List<Ministere>> findAll() {
-		List<Ministere> list = ministereService.findAll();
+	public ResponseEntity<List<Fonction>> findAll() {
+		List<Fonction> list = fonctionService.findAll();
 		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Ministere> findById(@PathVariable Integer id) {
-		return ministereService.findById(id)
+	public ResponseEntity<Fonction> findById(@PathVariable Integer id) {
+		return fonctionService.findById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping
-	public ResponseEntity<Ministere> create(@RequestBody Ministere ministere) {
-		Ministere saved = ministereService.save(ministere);
-		return ResponseEntity.status(200).body(saved);
+	public ResponseEntity<Fonction> create(@RequestBody Fonction fonction) {
+		Fonction saved = fonctionService.save(fonction);
+		return ResponseEntity.status(201).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Ministere> update(@PathVariable Integer id, @RequestBody Ministere ministere) {
-		ministere.setId(id);
-		Ministere saved = ministereService.save(ministere);
+	public ResponseEntity<Fonction> update(@PathVariable Integer id, @RequestBody Fonction fonction) {
+		fonction.setId(id);
+		Fonction saved = fonctionService.save(fonction);
 		return ResponseEntity.ok(saved);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-		ministereService.deleteById(id);
+		fonctionService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 }

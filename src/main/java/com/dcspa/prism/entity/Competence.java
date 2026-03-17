@@ -19,6 +19,4 @@ public class Competence {
 
     @Column(name = "LIBELLE_COMPETENCE", length = 20)
     private String libelleCompetence;
-
-
 }

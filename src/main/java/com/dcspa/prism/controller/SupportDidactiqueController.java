@@ -1,7 +1,7 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.entity.Ministere;
-import com.dcspa.prism.service.MinistereService;
+import com.dcspa.prism.entity.SupportDidactique;
+import com.dcspa.prism.service.SupportDidactiqueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,41 +16,41 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/ministeres")
+@RequestMapping("/api/v1/SupportDidactiques")
 @RequiredArgsConstructor
-public class MinistereController {
+public class SupportDidactiqueController {
 
-	private final MinistereService ministereService;
+	private final SupportDidactiqueService SupportDidactiqueService;
 
 	@GetMapping
-	public ResponseEntity<List<Ministere>> findAll() {
-		List<Ministere> list = ministereService.findAll();
+	public ResponseEntity<List<SupportDidactique>> findAll() {
+		List<SupportDidactique> list = SupportDidactiqueService.findAll();
 		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Ministere> findById(@PathVariable Integer id) {
-		return ministereService.findById(id)
+	public ResponseEntity<SupportDidactique> findById(@PathVariable Integer id) {
+		return SupportDidactiqueService.findById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping
-	public ResponseEntity<Ministere> create(@RequestBody Ministere ministere) {
-		Ministere saved = ministereService.save(ministere);
-		return ResponseEntity.status(200).body(saved);
+	public ResponseEntity<SupportDidactique> create(@RequestBody SupportDidactique SupportDidactique) {
+		SupportDidactique saved = SupportDidactiqueService.save(SupportDidactique);
+		return ResponseEntity.status(201).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Ministere> update(@PathVariable Integer id, @RequestBody Ministere ministere) {
-		ministere.setId(id);
-		Ministere saved = ministereService.save(ministere);
+	public ResponseEntity<SupportDidactique> update(@PathVariable Integer id, @RequestBody SupportDidactique SupportDidactique) {
+		SupportDidactique.setId(id);
+		SupportDidactique saved = SupportDidactiqueService.save(SupportDidactique);
 		return ResponseEntity.ok(saved);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-		ministereService.deleteById(id);
+		SupportDidactiqueService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 }
