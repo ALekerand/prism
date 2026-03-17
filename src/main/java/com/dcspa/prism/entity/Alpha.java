@@ -1,5 +1,7 @@
 package com.dcspa.prism.entity;
 
+import com.dcspa.prism.codegen.AutoCode;
+import com.dcspa.prism.codegen.AutoCodeEntityListener;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +10,8 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "alpha")
+@AutoCode(field = "codeAlpha")
+@EntityListeners(AutoCodeEntityListener.class)
 public class Alpha {
     @Id
     @Column(name = "ID_CENTRE", nullable = false)

@@ -1,6 +1,13 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.dto.CentreRequest;
+import com.dcspa.prism.entity.AutoriteAutorisation;
 import com.dcspa.prism.entity.Centre;
+import com.dcspa.prism.entity.Periodicite;
+import com.dcspa.prism.entity.Promoteur;
+import com.dcspa.prism.repository.AutoriteAutorisationRepository;
+import com.dcspa.prism.repository.PeriodiciteRepository;
+import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.service.CentreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +28,9 @@ import java.util.List;
 public class CentreController {
 
 	private final CentreService centreService;
+	private final PromoteurRepository promoteurRepository;
+	private final PeriodiciteRepository periodiciteRepository;
+	private final AutoriteAutorisationRepository autoriteAutorisationRepository;
 
 	@GetMapping
 	public ResponseEntity<List<Centre>> findAll() {
@@ -36,15 +46,14 @@ public class CentreController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Centre> create(@RequestBody Centre centre) {
-		Centre saved = centreService.save(centre);
+	public ResponseEntity<Centre> create(@RequestBody CentreRequest request) {
+		Centre saved = centreService.save(toEntity(null, request));
 		return ResponseEntity.status(201).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Centre> update(@PathVariable Integer id, @RequestBody Centre centre) {
-		centre.setId(id);
-		Centre saved = centreService.save(centre);
+	public ResponseEntity<Centre> update(@PathVariable Integer id, @RequestBody CentreRequest request) {
+		Centre saved = centreService.save(toEntity(id, request));
 		return ResponseEntity.ok(saved);
 	}
 
@@ -52,5 +61,40 @@ public class CentreController {
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		centreService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private Centre toEntity(Integer id, CentreRequest r) {
+		Centre c = new Centre();
+		c.setId(id);
+
+		Promoteur p = promoteurRepository.findById(toLong(r.getIdPromoteur()))
+				.orElseThrow(() -> new IllegalArgumentException("Promoteur introuvable: " + r.getIdPromoteur()));
+		c.setIdPromoteur(p);
+
+		if (r.getIdPeriodicite() != null) {
+			Periodicite per = periodiciteRepository.findById(toLong(r.getIdPeriodicite()))
+					.orElseThrow(() -> new IllegalArgumentException("Periodicite introuvable: " + r.getIdPeriodicite()));
+			c.setIdPeriodicite(per);
+		}
+
+		if (r.getIdAutoriteAutorisation() != null) {
+			AutoriteAutorisation a = autoriteAutorisationRepository.findById(r.getIdAutoriteAutorisation())
+					.orElseThrow(() -> new IllegalArgumentException("AutoriteAutorisation introuvable: " + r.getIdAutoriteAutorisation()));
+			c.setIdAutoriteAutorisation(a);
+		}
+
+		c.setCodeCentre(r.getCodeCentre());
+		c.setAutorisation(r.getAutorisation());
+		c.setEncadreurNonMena(r.getEncadreurNonMena());
+		c.setEncadrerParMena(r.getEncadrerParMena());
+		c.setEstElectrifie(r.getEstElectrifie());
+		c.setADeLeau(r.getADeLeau());
+		c.setNombreVisite(r.getNombreVisite());
+		return c;
+	}
+
+	private static Long toLong(Integer v) {
+		if (v == null) return null;
+		return v.longValue();
 	}
 }

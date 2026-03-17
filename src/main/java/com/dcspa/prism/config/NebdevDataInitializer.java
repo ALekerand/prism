@@ -29,8 +29,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class NebdevDataInitializer {
 
-    private static final String USERNAME = "admin";
-    private static final String DEFAULT_PASSWORD = "admin123";
+    private static final String USERNAME = "nebdev";
+    private static final String DEFAULT_PASSWORD = "nebdev123";
     private static final String ROLE_CODE = "SUPER_ROOT";
     private static final String ROLE_LIBELLE = "Super Root";
     private static final String ROLE_DESCRIPTION = "Accès total à toutes les fonctionnalités (CRUD partout)";
@@ -43,7 +43,7 @@ public class NebdevDataInitializer {
     private final PasswordEncoder passwordEncoder;
 
     @EventListener(ApplicationReadyEvent.class)
-    @Order(2)
+    @Order(3)
     @Transactional
     public void initNebdev() {
         if (appUserRepository.existsByUsername(USERNAME)) {
