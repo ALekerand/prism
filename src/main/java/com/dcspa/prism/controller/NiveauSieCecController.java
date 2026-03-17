@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/niveaucp")
+@RequestMapping("/api/niveausiecec")
 @RequiredArgsConstructor
 public class NiveauSieCecController {
 

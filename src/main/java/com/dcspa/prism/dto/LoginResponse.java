@@ -1,25 +1,20 @@
 package com.dcspa.prism.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.List;
 
+import lombok.Builder;
+import lombok.Getter;
+
 @Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class LoginResponse {
 
-    private String token;
-    private String type;
-    private Integer userId;
-    private String username;
-    private String email;
-    private List<String> roles;
-    private List<String> permissions;
+    private final String token;
+    private final String type;
+    private final Integer userId;
+    private final String username;
+    private final String email;
+    private final List<String> roles;
+    private final List<String> permissions;
 }
+

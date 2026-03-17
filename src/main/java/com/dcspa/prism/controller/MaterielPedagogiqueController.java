@@ -1,7 +1,7 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.entity.MaterielPedagogique;
-import com.dcspa.prism.service.MaterielPedagogiqueService;
+import com.dcspa.prism.entity.MaterielsPedagogique;
+import com.dcspa.prism.service.MaterielsPedagogiqueService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,31 +21,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MaterielPedagogiqueController {
 
-	private final MaterielPedagogiqueService materielpedagogiqueService;
+	private final MaterielsPedagogiqueService materielpedagogiqueService;
 
 	@GetMapping
-	public ResponseEntity<List<MaterielPedagogique>> findAll() {
-		List<MaterielPedagogique> list = materielpedagogiqueService.findAll();
+	public ResponseEntity<List<MaterielsPedagogique>> findAll() {
+		List<MaterielsPedagogique> list = materielpedagogiqueService.findAll();
 		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<MaterielPedagogique> findById(@PathVariable Integer id) {
+	public ResponseEntity<MaterielsPedagogique> findById(@PathVariable Integer id) {
 		return materielpedagogiqueService.findById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping
-	public ResponseEntity<MaterielPedagogique> create(@RequestBody MaterielPedagogique materielpedagogique) {
-		MaterielPedagogique saved = materielpedagogiqueService.save(materielpedagogique);
+	public ResponseEntity<MaterielsPedagogique> create(@RequestBody MaterielsPedagogique materielpedagogique) {
+		MaterielsPedagogique saved = materielpedagogiqueService.save(materielpedagogique);
 		return ResponseEntity.status(200).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<MaterielPedagogique> update(@PathVariable Integer id, @RequestBody MaterielPedagogique materielpedagogique) {
-		materielalpha.setId(id);
-		MaterielPedagogique saved = materielpedagogiqueService.save(materielpedagogique);
+	public ResponseEntity<MaterielsPedagogique> update(@PathVariable Integer id, @RequestBody MaterielsPedagogique materielpedagogique) {
+		materielpedagogique.setId(id);
+		MaterielsPedagogique saved = materielpedagogiqueService.save(materielpedagogique);
 		return ResponseEntity.ok(saved);
 	}
 

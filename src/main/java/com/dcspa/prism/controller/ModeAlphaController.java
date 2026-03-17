@@ -1,8 +1,7 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.entity.ModeAlpha;
-import com.dcspa.prism.service.ModeAlphaService;
-
+import com.dcspa.prism.entity.Modealphabetisation;
+import com.dcspa.prism.service.ModealphabetisationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,31 +20,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ModeAlphaController {
 
-	private final ModeAlphaService modealphaService;
+	private final ModealphabetisationService modealphaService;
 
 	@GetMapping
-	public ResponseEntity<List<ModeAlpha>> findAll() {
-		List<ModeAlpha> list = modealphaService.findAll();
+	public ResponseEntity<List<Modealphabetisation>> findAll() {
+		List<Modealphabetisation> list = modealphaService.findAll();
 		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ModeAlpha> findById(@PathVariable Integer id) {
+	public ResponseEntity<Modealphabetisation> findById(@PathVariable Integer id) {
 		return modealphaService.findById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping
-	public ResponseEntity<ModeAlpha> create(@RequestBody ModeAlpha modealpha) {
-		ModeAlpha saved = modealphaService.save(modealpha);
+	public ResponseEntity<Modealphabetisation> create(@RequestBody Modealphabetisation modealpha) {
+		Modealphabetisation saved = modealphaService.save(modealpha);
 		return ResponseEntity.status(200).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<ModeAlpha> update(@PathVariable Integer id, @RequestBody ModeAlpha modealpha) {
+	public ResponseEntity<Modealphabetisation> update(@PathVariable Integer id, @RequestBody Modealphabetisation modealpha) {
 		modealpha.setId(id);
-		ModeAlpha saved = modealphaService.save(modealpha);
+		Modealphabetisation saved = modealphaService.save(modealpha);
 		return ResponseEntity.ok(saved);
 	}
 

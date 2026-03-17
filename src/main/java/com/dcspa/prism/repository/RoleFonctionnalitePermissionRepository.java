@@ -8,4 +8,6 @@ import java.util.List;
 public interface RoleFonctionnalitePermissionRepository extends BaseRepository<RoleFonctionnalitePermission, Integer> {
 
     List<RoleFonctionnalitePermission> findByRole_Id(Integer roleId);
+
+    boolean existsByRole_IdAndFonctionnalite_IdAndPermission_Id(Integer roleId, Integer fonctionnaliteId, Integer permissionId);
 }

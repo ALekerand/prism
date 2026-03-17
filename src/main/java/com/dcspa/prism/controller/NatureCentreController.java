@@ -1,7 +1,7 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.entity.NatureCentre;
-import com.dcspa.prism.service.NatureCentreService;
+import com.dcspa.prism.entity.Naturecentre;
+import com.dcspa.prism.service.NaturecentreService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,31 +21,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NatureCentreController {
 
-	private final NatureCentreService naturecentreService;
+	private final NaturecentreService naturecentreService;
 
 	@GetMapping
-	public ResponseEntity<List<NatureCentre>> findAll() {
-		List<NatureCentre> list = naturecentreService.findAll();
+	public ResponseEntity<List<Naturecentre>> findAll() {
+		List<Naturecentre> list = naturecentreService.findAll();
 		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<NatureCentre> findById(@PathVariable Integer id) {
+	public ResponseEntity<Naturecentre> findById(@PathVariable Integer id) {
 		return naturecentreService.findById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping
-	public ResponseEntity<NatureCentre> create(@RequestBody NatureCentre naturecentre) {
-		NatureCentre saved = naturecentreService.save(naturecentre);
+	public ResponseEntity<Naturecentre> create(@RequestBody Naturecentre naturecentre) {
+		Naturecentre saved = naturecentreService.save(naturecentre);
 		return ResponseEntity.status(200).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<NatureCentre> update(@PathVariable Integer id, @RequestBody NatureCentre naturecentre) {
+	public ResponseEntity<Naturecentre> update(@PathVariable Integer id, @RequestBody Naturecentre naturecentre) {
 		naturecentre.setId(id);
-		NatureCentre saved = naturecentreService.save(naturecentre);
+		Naturecentre saved = naturecentreService.save(naturecentre);
 		return ResponseEntity.ok(saved);
 	}
 

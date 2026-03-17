@@ -1,6 +1,7 @@
 package com.dcspa.prism.dto;
 
 import jakarta.validation.constraints.NotBlank;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,9 +9,10 @@ import lombok.Setter;
 @Setter
 public class LoginRequest {
 
-    @NotBlank(message = "Le nom d'utilisateur est obligatoire")
+    @NotBlank
     private String username;
 
-    @NotBlank(message = "Le mot de passe est obligatoire")
+    @NotBlank
     private String password;
 }
+

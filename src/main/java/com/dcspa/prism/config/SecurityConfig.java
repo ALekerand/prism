@@ -33,6 +33,8 @@ public class SecurityConfig {
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .pathMatchers("/api/auth/**").permitAll()
+                        .pathMatchers("/v3/api-docs", "/v3/api-docs/**").permitAll()
+                        .pathMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .anyExchange().authenticated()
                 )
                 .addFilterAt(jwtAuthFilter, SecurityWebFiltersOrder.AUTHENTICATION)

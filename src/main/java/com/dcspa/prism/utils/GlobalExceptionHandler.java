@@ -1,4 +1,4 @@
-package com.dcspa.prism.api;
+package com.dcspa.prism.utils;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
