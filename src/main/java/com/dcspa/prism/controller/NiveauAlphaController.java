@@ -1,6 +1,9 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.dto.NiveauAlphaRequest;
+import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.NiveauAlpha;
+import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.service.NiveauAlphaService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import java.util.List;
 public class NiveauAlphaController {
 
 	private final NiveauAlphaService niveaualphaService;
+	private final AlphaRepository alphaRepository;
 
 	@GetMapping
 	public ResponseEntity<List<NiveauAlpha>> findAll() {
@@ -37,15 +41,14 @@ public class NiveauAlphaController {
 	}
 
 	@PostMapping
-	public ResponseEntity<NiveauAlpha> create(@RequestBody NiveauAlpha niveaualpha) {
-		NiveauAlpha saved = niveaualphaService.save(niveaualpha);
+	public ResponseEntity<NiveauAlpha> create(@RequestBody NiveauAlphaRequest request) {
+		NiveauAlpha saved = niveaualphaService.save(toEntity(null, request));
 		return ResponseEntity.status(200).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<NiveauAlpha> update(@PathVariable Integer id, @RequestBody NiveauAlpha niveaualpha) {
-		niveaualpha.setId(id);
-		NiveauAlpha saved = niveaualphaService.save(niveaualpha);
+	public ResponseEntity<NiveauAlpha> update(@PathVariable Integer id, @RequestBody NiveauAlphaRequest request) {
+		NiveauAlpha saved = niveaualphaService.save(toEntity(id, request));
 		return ResponseEntity.ok(saved);
 	}
 
@@ -53,5 +56,16 @@ public class NiveauAlphaController {
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		niveaualphaService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private NiveauAlpha toEntity(Integer id, NiveauAlphaRequest r) {
+		NiveauAlpha n = new NiveauAlpha();
+		n.setId(id);
+		Alpha centre = alphaRepository.findById(r.getIdCentre())
+				.orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdCentre()));
+		n.setIdCentre(centre);
+		n.setCodeNiveauAlpha(r.getCodeNiveauAlpha());
+		n.setLibelleNiveauAlpha(r.getLibelleNiveauAlpha());
+		return n;
 	}
 }

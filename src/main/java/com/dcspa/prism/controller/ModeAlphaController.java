@@ -1,6 +1,9 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.dto.ModeAlphaRequest;
+import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Modealphabetisation;
+import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.service.ModealphabetisationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,7 @@ import java.util.List;
 public class ModeAlphaController {
 
 	private final ModealphabetisationService modealphaService;
+	private final AlphaRepository alphaRepository;
 
 	@GetMapping
 	public ResponseEntity<List<Modealphabetisation>> findAll() {
@@ -36,15 +40,14 @@ public class ModeAlphaController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Modealphabetisation> create(@RequestBody Modealphabetisation modealpha) {
-		Modealphabetisation saved = modealphaService.save(modealpha);
+	public ResponseEntity<Modealphabetisation> create(@RequestBody ModeAlphaRequest request) {
+		Modealphabetisation saved = modealphaService.save(toEntity(null, request));
 		return ResponseEntity.status(200).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Modealphabetisation> update(@PathVariable Integer id, @RequestBody Modealphabetisation modealpha) {
-		modealpha.setId(id);
-		Modealphabetisation saved = modealphaService.save(modealpha);
+	public ResponseEntity<Modealphabetisation> update(@PathVariable Integer id, @RequestBody ModeAlphaRequest request) {
+		Modealphabetisation saved = modealphaService.save(toEntity(id, request));
 		return ResponseEntity.ok(saved);
 	}
 
@@ -52,5 +55,16 @@ public class ModeAlphaController {
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		modealphaService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private Modealphabetisation toEntity(Integer id, ModeAlphaRequest r) {
+		Modealphabetisation m = new Modealphabetisation();
+		m.setId(id);
+		Alpha centre = alphaRepository.findById(r.getIdCentre())
+				.orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdCentre()));
+		m.setIdCentre(centre);
+		m.setCodeModealpha(r.getCodeModealpha());
+		m.setLibelleModealpha(r.getLibelleModealpha());
+		return m;
 	}
 }

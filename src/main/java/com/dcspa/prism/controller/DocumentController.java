@@ -1,6 +1,13 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.dto.DocumentRequest;
+import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Document;
+import com.dcspa.prism.entity.NatureDocument;
+import com.dcspa.prism.entity.TypeDocument;
+import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.repository.NatureDocumentRepository;
+import com.dcspa.prism.repository.TypeDocumentRepository;
 import com.dcspa.prism.service.DocumentService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +29,9 @@ import java.util.List;
 public class DocumentController {
 
 	private final DocumentService documentService;
+	private final NatureDocumentRepository natureDocumentRepository;
+	private final TypeDocumentRepository typeDocumentRepository;
+	private final AlphaRepository alphaRepository;
 
 	@GetMapping
 	public ResponseEntity<List<Document>> findAll() {
@@ -37,15 +47,14 @@ public class DocumentController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Document> create(@RequestBody Document document) {
-		Document saved = documentService.save(document);
+	public ResponseEntity<Document> create(@RequestBody DocumentRequest request) {
+		Document saved = documentService.save(toEntity(null, request));
 		return ResponseEntity.status(200).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Document> update(@PathVariable Integer id, @RequestBody Document document) {
-		document.setId(id);
-		Document saved = documentService.save(document);
+	public ResponseEntity<Document> update(@PathVariable Integer id, @RequestBody DocumentRequest request) {
+		Document saved = documentService.save(toEntity(id, request));
 		return ResponseEntity.ok(saved);
 	}
 
@@ -53,5 +62,34 @@ public class DocumentController {
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		documentService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private Document toEntity(Integer id, DocumentRequest r) {
+		Document d = new Document();
+		d.setId(id);
+
+		NatureDocument nature = natureDocumentRepository.findById(toLong(r.getIdNatureDocument()))
+				.orElseThrow(() -> new IllegalArgumentException("NatureDocument introuvable: " + r.getIdNatureDocument()));
+		TypeDocument type = typeDocumentRepository.findById(toLong(r.getIdTypeDocument()))
+				.orElseThrow(() -> new IllegalArgumentException("TypeDocument introuvable: " + r.getIdTypeDocument()));
+		Alpha centre = alphaRepository.findById(r.getIdCentre())
+				.orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdCentre()));
+
+		d.setIdNatureDocument(nature);
+		d.setIdTypeDocument(type);
+		d.setIdCentre(centre);
+
+		d.setExiste(r.getExiste());
+		d.setAjour(r.getAjour());
+		d.setBientenu(r.getBientenu());
+		d.setRespmethode(r.getRespmethode());
+		d.setBienrensigne(r.getBienrensigne());
+		d.setCodeDocument(r.getCodeDocument());
+		return d;
+	}
+
+	private static Long toLong(Integer v) {
+		if (v == null) return null;
+		return v.longValue();
 	}
 }
