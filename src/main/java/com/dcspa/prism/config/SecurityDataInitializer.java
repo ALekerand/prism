@@ -35,68 +35,76 @@ public class SecurityDataInitializer {
     @Order(1)
     @Transactional
     public void initSecurityData() {
-        if (appUserRepository.count() > 0) {
-            return;
-        }
+        Permission creer = getOrCreatePermission("CREER", "Créer");
+        Permission lire = getOrCreatePermission("LIRE", "Lire");
+        Permission modifier = getOrCreatePermission("MODIFIER", "Modifier");
+        Permission supprimer = getOrCreatePermission("SUPPRIMER", "Supprimer");
 
-        Permission creer = savePermission("CREER", "Créer");
-        Permission lire = savePermission("LIRE", "Lire");
-        Permission modifier = savePermission("MODIFIER", "Modifier");
-        Permission supprimer = savePermission("SUPPRIMER", "Supprimer");
+        Fonctionnalite campagnes = getOrCreateFonctionnalite("CAMPAGNE", "Gestion des campagnes", "Campagnes");
+        Fonctionnalite centres = getOrCreateFonctionnalite("CENTRE", "Gestion des centres", "Centres");
+        Fonctionnalite alpha = getOrCreateFonctionnalite("ALPHA", "Gestion des dispositifs Alpha", "Alpha");
+        Fonctionnalite personnel = getOrCreateFonctionnalite("PERSONNEL", "Gestion du personnel", "Personnel");
+        Fonctionnalite utilisateurs = getOrCreateFonctionnalite("UTILISATEUR", "Gestion des utilisateurs", "Sécurité");
 
-        Fonctionnalite campagnes = saveFonctionnalite("CAMPAGNE", "Gestion des campagnes", "Campagnes");
-        Fonctionnalite centres = saveFonctionnalite("CENTRE", "Gestion des centres", "Centres");
-        Fonctionnalite alpha = saveFonctionnalite("ALPHA", "Gestion des dispositifs Alpha", "Alpha");
-        Fonctionnalite personnel = saveFonctionnalite("PERSONNEL", "Gestion du personnel", "Personnel");
-        Fonctionnalite utilisateurs = saveFonctionnalite("UTILISATEUR", "Gestion des utilisateurs", "Sécurité");
-
-        AppRole admin = saveRole("ADMIN", "Administrateur", "Accès complet à l'application");
+        AppRole admin = getOrCreateRole("ADMIN", "Administrateur", "Accès complet à l'application");
         grant(admin, campagnes, creer, lire, modifier, supprimer);
         grant(admin, centres, creer, lire, modifier, supprimer);
         grant(admin, alpha, creer, lire, modifier, supprimer);
         grant(admin, personnel, creer, lire, modifier, supprimer);
         grant(admin, utilisateurs, creer, lire, modifier, supprimer);
 
-        AppRole lecteur = saveRole("LECTEUR", "Lecteur", "Consultation seule");
+        AppRole lecteur = getOrCreateRole("LECTEUR", "Lecteur", "Consultation seule");
         grant(lecteur, campagnes, lire);
         grant(lecteur, centres, lire);
         grant(lecteur, alpha, lire);
         grant(lecteur, personnel, lire);
 
-        AppUser userAdmin = new AppUser();
-        userAdmin.setUsername("admin");
-        userAdmin.setPasswordHash(passwordEncoder.encode("admin123"));
-        userAdmin.setEmail("admin@prism.local");
-        userAdmin.setActif(true);
-        userAdmin.setRoles(Set.of(admin));
-        appUserRepository.save(userAdmin);
+        if (!appUserRepository.existsByUsername("admin")) {
+            AppUser userAdmin = new AppUser();
+            userAdmin.setUsername("admin");
+            userAdmin.setPasswordHash(passwordEncoder.encode("admin123"));
+            userAdmin.setEmail("admin@prism.local");
+            userAdmin.setActif(true);
+            userAdmin.setRoles(Set.of(admin));
+            appUserRepository.save(userAdmin);
+        }
     }
 
-    private Permission savePermission(String code, String libelle) {
-        Permission p = new Permission();
-        p.setCodePermission(code);
-        p.setLibellePermission(libelle);
-        return permissionRepository.save(p);
+    private Permission getOrCreatePermission(String code, String libelle) {
+        return permissionRepository.findByCodePermission(code).orElseGet(() -> {
+            Permission p = new Permission();
+            p.setCodePermission(code);
+            p.setLibellePermission(libelle);
+            return permissionRepository.save(p);
+        });
     }
 
-    private Fonctionnalite saveFonctionnalite(String code, String libelle, String module) {
-        Fonctionnalite f = new Fonctionnalite();
-        f.setCodeFonctionnalite(code);
-        f.setLibelleFonctionnalite(libelle);
-        f.setModule(module);
-        return fonctionnaliteRepository.save(f);
+    private Fonctionnalite getOrCreateFonctionnalite(String code, String libelle, String module) {
+        return fonctionnaliteRepository.findByCodeFonctionnalite(code).orElseGet(() -> {
+            Fonctionnalite f = new Fonctionnalite();
+            f.setCodeFonctionnalite(code);
+            f.setLibelleFonctionnalite(libelle);
+            f.setModule(module);
+            return fonctionnaliteRepository.save(f);
+        });
     }
 
-    private AppRole saveRole(String code, String libelle, String description) {
-        AppRole r = new AppRole();
-        r.setCodeRole(code);
-        r.setLibelleRole(libelle);
-        r.setDescriptionRole(description);
-        return appRoleRepository.save(r);
+    private AppRole getOrCreateRole(String code, String libelle, String description) {
+        return appRoleRepository.findByCodeRole(code).orElseGet(() -> {
+            AppRole r = new AppRole();
+            r.setCodeRole(code);
+            r.setLibelleRole(libelle);
+            r.setDescriptionRole(description);
+            return appRoleRepository.save(r);
+        });
     }
 
     private void grant(AppRole role, Fonctionnalite fonctionnalite, Permission... permissions) {
         for (Permission p : permissions) {
+            if (roleFonctionnalitePermissionRepository.existsByRole_IdAndFonctionnalite_IdAndPermission_Id(
+                    role.getId(), fonctionnalite.getId(), p.getId())) {
+                continue;
+            }
             RoleFonctionnalitePermission rfp = new RoleFonctionnalitePermission();
             rfp.setRole(role);
             rfp.setFonctionnalite(fonctionnalite);
