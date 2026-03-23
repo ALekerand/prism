@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories(
-		basePackages = "com.dcspa.prism.repository",
+		basePackages = "com.dcspa.prism",
 		repositoryBaseClass = BaseRepositoryImpl.class
 )
 public class PrismApplication {
