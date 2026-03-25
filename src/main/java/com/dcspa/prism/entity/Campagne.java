@@ -2,6 +2,7 @@ package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,9 +23,11 @@ public class Campagne {
     private String codeCampagne;
 
     @Column(name = "DATE_DEBUT_CAMPAGNE")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dateDebutCampagne;
 
     @Column(name = "DATE_FIN_CAMPAGNE")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dateFinCampagne;
 
     @Column(name = "ETAT_CAMPAGNE")
