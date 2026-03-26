@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.EffectifAbandonCec;
 import com.dcspa.prism.service.EffectifAbandonCecService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class EffectifAbandonCecController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<EffectifAbandonCec> update(@PathVariable Integer id, @RequestBody EffectifAbandonCec body) {
-		body.setId(id);
-		return ResponseEntity.ok(effectifAbandonCecService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, effectifAbandonCecService::findById, effectifAbandonCecService::save);
 	}
 
 	@DeleteMapping("/{id}")

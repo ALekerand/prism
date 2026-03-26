@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.Competence;
 import com.dcspa.prism.service.CompetenceService;
@@ -36,9 +37,7 @@ public class CompetenceController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Competence> update(@PathVariable Integer id, @RequestBody Competence competence) {
-		competence.setId(id);
-		Competence saved = competenceService.save(competence);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, competence, competenceService::findById, competenceService::save);
 	}
 
 	@DeleteMapping("/{id}")

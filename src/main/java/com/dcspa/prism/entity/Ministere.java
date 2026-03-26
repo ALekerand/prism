@@ -1,5 +1,8 @@
 package com.dcspa.prism.entity;
 
+import com.dcspa.prism.codegen.AutoCode;
+import com.dcspa.prism.codegen.AutoCodeEntityListener;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -9,6 +12,9 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "ministere")
+@JsonIgnoreProperties({"personnemorale", "hibernateLazyInitializer", "handler"})
+@AutoCode(field = "codePromoteur")
+@EntityListeners(AutoCodeEntityListener.class)
 public class Ministere {
     @Id
     @Column(name = "ID_PROMOTEUR", nullable = false)

@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.AutoriteAutorisation;
 import com.dcspa.prism.service.AutoriteAutorisationService;
@@ -36,9 +37,7 @@ public class AutoriteAutorisationController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<AutoriteAutorisation> update(@PathVariable Integer id, @RequestBody AutoriteAutorisation autoriteAutorisation) {
-		autoriteAutorisation.setId(id);
-		AutoriteAutorisation saved = autoriteAutorisationService.save(autoriteAutorisation);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, autoriteAutorisation, autoriteAutorisationService::findById, autoriteAutorisationService::save);
 	}
 
 	@DeleteMapping("/{id}")

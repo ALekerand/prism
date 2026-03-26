@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +24,7 @@ public class AppUser {
     private String username;
 
     @Column(name = "PASSWORD_HASH", nullable = false, length = 255)
+    @JsonIgnore
     private String passwordHash;
 
     @Column(name = "EMAIL", length = 150)
@@ -36,5 +39,6 @@ public class AppUser {
             joinColumns = @JoinColumn(name = "ID_USER"),
             inverseJoinColumns = @JoinColumn(name = "ID_ROLE")
     )
+    @JsonIgnore
     private Set<AppRole> roles = new HashSet<>();
 }

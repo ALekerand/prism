@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.CecNiveau;
 import com.dcspa.prism.service.CecNiveauService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class CecNiveauController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<CecNiveau> update(@PathVariable Integer id, @RequestBody CecNiveau body) {
-		body.setId(id);
-		return ResponseEntity.ok(cecNiveauService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, cecNiveauService::findById, cecNiveauService::save);
 	}
 
 	@DeleteMapping("/{id}")

@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.service.PeriodeActiviteService;
@@ -43,9 +44,7 @@ public class PeriodeActiviteController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<PeriodeActivite> update(@PathVariable Integer id, @RequestBody PeriodeActivite PeriodeActivite) {
-		PeriodeActivite.setId(id);
-		PeriodeActivite saved = PeriodeActiviteService.save(PeriodeActivite);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, PeriodeActivite, PeriodeActiviteService::findById, PeriodeActiviteService::save);
 	}
 
 	@DeleteMapping("/{id}")

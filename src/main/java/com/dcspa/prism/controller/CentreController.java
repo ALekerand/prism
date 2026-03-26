@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/centres")
@@ -33,8 +35,15 @@ public class CentreController {
 	private final AutoriteAutorisationRepository autoriteAutorisationRepository;
 
 	@GetMapping
-	public ResponseEntity<List<Centre>> findAll() {
-		List<Centre> list = centreService.findAll();
+	public ResponseEntity<List<Map<String, Object>>> findAll() {
+		// Evite les LazyInitializationException sur les associations (Iep, Localite, Promoteur...)
+		// Le frontend a besoin de { id, codeCentre } pour la sélection.
+		List<Map<String, Object>> list = centreService.findAll().stream()
+				.map(c -> Map.<String, Object>of(
+						"id", c.getId(),
+						"codeCentre", c.getCodeCentre()
+				))
+				.collect(Collectors.toList());
 		return ResponseEntity.ok(list);
 	}
 

@@ -10,7 +10,8 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class CodeGeneratorService {
 
-    private static final int DEFAULT_PAD = 6;
+    /** Nombre de chiffres après le préfixe 3 lettres (ex. {@code ALP0000001}). */
+    private static final int DEFAULT_PAD = 7;
 
     private final CodeSequenceRepository codeSequenceRepository;
 

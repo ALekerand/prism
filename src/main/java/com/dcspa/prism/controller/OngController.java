@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Ong;
 import com.dcspa.prism.service.OngService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class OngController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Ong> update(@PathVariable Integer id, @RequestBody Ong body) {
-		body.setId(id);
-		return ResponseEntity.ok(ongService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, ongService::findById, ongService::save);
 	}
 
 	@DeleteMapping("/{id}")

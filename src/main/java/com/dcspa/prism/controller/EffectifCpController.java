@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.EffectifCp;
 import com.dcspa.prism.service.EffectifCpService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class EffectifCpController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<EffectifCp> update(@PathVariable Integer id, @RequestBody EffectifCp body) {
-		body.setId(id);
-		return ResponseEntity.ok(effectifCpService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, effectifCpService::findById, effectifCpService::save);
 	}
 
 	@DeleteMapping("/{id}")

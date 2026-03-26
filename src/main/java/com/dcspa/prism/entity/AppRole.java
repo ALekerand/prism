@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.dcspa.prism.codegen.AutoCode;
+import com.dcspa.prism.codegen.AutoCodeEntityListener;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,6 +15,8 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "app_role")
+@AutoCode(field = "codeRole")
+@EntityListeners(AutoCodeEntityListener.class)
 public class AppRole {
 
     @Id
@@ -28,8 +34,10 @@ public class AppRole {
     private String descriptionRole;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<AppUser> users = new HashSet<>();
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<RoleFonctionnalitePermission> roleFonctionnalitePermissions = new HashSet<>();
 }

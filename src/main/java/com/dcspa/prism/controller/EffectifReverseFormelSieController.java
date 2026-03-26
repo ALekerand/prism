@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.EffectifReverseFormelSie;
 import com.dcspa.prism.service.EffectifReverseFormelSieService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class EffectifReverseFormelSieController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<EffectifReverseFormelSie> update(@PathVariable Integer id, @RequestBody EffectifReverseFormelSie body) {
-		body.setId(id);
-		return ResponseEntity.ok(effectifReverseFormelSieService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, effectifReverseFormelSieService::findById, effectifReverseFormelSieService::save);
 	}
 
 	@DeleteMapping("/{id}")

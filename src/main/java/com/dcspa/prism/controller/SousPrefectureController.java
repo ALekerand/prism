@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.SousPrefecture;
 import com.dcspa.prism.service.SousPrefectureService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class SousPrefectureController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<SousPrefecture> update(@PathVariable Integer id, @RequestBody SousPrefecture body) {
-		body.setId(id);
-		return ResponseEntity.ok(sousPrefectureService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, sousPrefectureService::findById, sousPrefectureService::save);
 	}
 
 	@DeleteMapping("/{id}")

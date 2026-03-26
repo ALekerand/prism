@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Ptf;
 import com.dcspa.prism.service.PtfService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class PtfController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Ptf> update(@PathVariable Integer id, @RequestBody Ptf body) {
-		body.setId(id);
-		return ResponseEntity.ok(ptfService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, ptfService::findById, ptfService::save);
 	}
 
 	@DeleteMapping("/{id}")

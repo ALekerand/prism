@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Naturecentre;
 import com.dcspa.prism.service.NaturecentreService;
 
@@ -44,9 +46,7 @@ public class NatureCentreController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Naturecentre> update(@PathVariable Integer id, @RequestBody Naturecentre naturecentre) {
-		naturecentre.setId(id);
-		Naturecentre saved = naturecentreService.save(naturecentre);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, naturecentre, naturecentreService::findById, naturecentreService::save);
 	}
 
 	@DeleteMapping("/{id}")

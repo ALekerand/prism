@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.StructureFormationCertification;
 import com.dcspa.prism.service.StructureFormationCertificationService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class StructureFormationCertificationController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<StructureFormationCertification> update(@PathVariable Integer id, @RequestBody StructureFormationCertification body) {
-		body.setId(id);
-		return ResponseEntity.ok(structureFormationCertificationService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, structureFormationCertificationService::findById, structureFormationCertificationService::save);
 	}
 
 	@DeleteMapping("/{id}")

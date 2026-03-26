@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.MilieuImplantation;
 import com.dcspa.prism.service.MilieuImplantationService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class MilieuImplantationController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<MilieuImplantation> update(@PathVariable Integer id, @RequestBody MilieuImplantation body) {
-		body.setId(id);
-		return ResponseEntity.ok(milieuImplantationService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, milieuImplantationService::findById, milieuImplantationService::save);
 	}
 
 	@DeleteMapping("/{id}")

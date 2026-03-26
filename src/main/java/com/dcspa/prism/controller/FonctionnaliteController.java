@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Fonctionnalite;
 import com.dcspa.prism.service.FonctionnaliteService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class FonctionnaliteController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Fonctionnalite> update(@PathVariable Integer id, @RequestBody Fonctionnalite body) {
-		body.setId(id);
-		return ResponseEntity.ok(fonctionnaliteService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, fonctionnaliteService::findById, fonctionnaliteService::save);
 	}
 
 	@DeleteMapping("/{id}")

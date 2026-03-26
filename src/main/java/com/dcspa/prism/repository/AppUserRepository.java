@@ -16,5 +16,15 @@ public interface AppUserRepository extends BaseRepository<AppUser, Integer> {
     })
     Optional<AppUser> findByUsername(String username);
 
+    /**
+     * Surcharge `findAll()` pour charger les rôles (évite Lazy + N+1 dans l'admin).
+     * Attention : nom "findAllWithRoles" n'est pas un finder Spring Data valide sans @Query.
+     */
+    @Override
+    @EntityGraph(attributePaths = { "roles" })
+    java.util.List<AppUser> findAll();
+
+    boolean existsByRoles_Id(Integer roleId);
+
     boolean existsByUsername(String username);
 }

@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.EffectifAbondanSie;
 import com.dcspa.prism.service.EffectifAbondanSieService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class EffectifAbondanSieController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<EffectifAbondanSie> update(@PathVariable Integer id, @RequestBody EffectifAbondanSie body) {
-		body.setId(id);
-		return ResponseEntity.ok(effectifAbondanSieService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, effectifAbondanSieService::findById, effectifAbondanSieService::save);
 	}
 
 	@DeleteMapping("/{id}")

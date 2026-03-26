@@ -1,4 +1,4 @@
--- Table de séquence utilisée par la génération de codes (PREFIX + 000001...)
+-- Table de séquence utilisée par la génération de codes (préfixe 3 lettres + 7 chiffres, ex. ALP0000001)
 -- Compatible MySQL / MariaDB
 
 CREATE TABLE IF NOT EXISTS code_sequence (

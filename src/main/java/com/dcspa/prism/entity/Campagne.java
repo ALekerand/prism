@@ -1,8 +1,9 @@
 package com.dcspa.prism.entity;
 
+import com.dcspa.prism.codegen.AutoCode;
+import com.dcspa.prism.codegen.AutoCodeEntityListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,8 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "campagne")
+@AutoCode(field = "codeCampagne")
+@EntityListeners(AutoCodeEntityListener.class)
 public class Campagne {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +26,9 @@ public class Campagne {
     private String codeCampagne;
 
     @Column(name = "DATE_DEBUT_CAMPAGNE")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dateDebutCampagne;
 
     @Column(name = "DATE_FIN_CAMPAGNE")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate dateFinCampagne;
 
     @Column(name = "ETAT_CAMPAGNE")

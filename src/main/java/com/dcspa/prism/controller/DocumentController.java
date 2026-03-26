@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.codegen.AutoCodePutMerge;
 import com.dcspa.prism.dto.DocumentRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Document;
@@ -84,7 +85,13 @@ public class DocumentController {
 		d.setBientenu(r.getBientenu());
 		d.setRespmethode(r.getRespmethode());
 		d.setBienrensigne(r.getBienrensigne());
-		d.setCodeDocument(r.getCodeDocument());
+		String codeDocument = r.getCodeDocument();
+		if (id != null) {
+			codeDocument = documentService.findById(id)
+					.map(ex -> AutoCodePutMerge.mergeCodeString(r.getCodeDocument(), ex.getCodeDocument()))
+					.orElse(codeDocument);
+		}
+		d.setCodeDocument(codeDocument);
 		return d;
 	}
 

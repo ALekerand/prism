@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.StatutPersonnel;
 import com.dcspa.prism.service.StatutPersonnelService;
@@ -43,9 +44,7 @@ public class StatutPersonnelController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<StatutPersonnel> update(@PathVariable Integer id, @RequestBody StatutPersonnel StatutPersonnel) {
-		StatutPersonnel.setId(id);
-		StatutPersonnel saved = StatutPersonnelService.save(StatutPersonnel);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, StatutPersonnel, StatutPersonnelService::findById, StatutPersonnelService::save);
 	}
 
 	@DeleteMapping("/{id}")

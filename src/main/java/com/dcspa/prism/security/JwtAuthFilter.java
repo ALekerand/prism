@@ -34,14 +34,14 @@ public class JwtAuthFilter implements WebFilter {
             return chain.filter(exchange);
         }
         String username = jwtUtil.getUsernameFromToken(token);
+        // chain.filter → Mono<Void>: no onNext, so switchIfEmpty after flatMap would run the chain twice (204 then UOE).
         return Mono.fromCallable(() -> authService.loadUserWithPermissions(username))
                 .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(authUser -> {
                     Authentication auth = new JwtAuthenticationToken(authUser, authUser.getAuthorities());
                     return chain.filter(exchange)
                             .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth));
-                })
-                .switchIfEmpty(chain.filter(exchange));
+                });
     }
 
     private String extractToken(ServerHttpRequest request) {

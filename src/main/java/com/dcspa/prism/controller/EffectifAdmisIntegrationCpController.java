@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.EffectifAdmisIntegrationCp;
 import com.dcspa.prism.service.EffectifAdmisIntegrationCpService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class EffectifAdmisIntegrationCpController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<EffectifAdmisIntegrationCp> update(@PathVariable Integer id, @RequestBody EffectifAdmisIntegrationCp body) {
-		body.setId(id);
-		return ResponseEntity.ok(effectifAdmisIntegrationCpService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, effectifAdmisIntegrationCpService::findById, effectifAdmisIntegrationCpService::save);
 	}
 
 	@DeleteMapping("/{id}")

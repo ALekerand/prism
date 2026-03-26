@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.Modealphabetisation;
 import com.dcspa.prism.service.ModealphabetisationService;
@@ -43,9 +44,7 @@ public class ModealphabetisationController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Modealphabetisation> update(@PathVariable Integer id, @RequestBody Modealphabetisation Modealphabetisation) {
-		Modealphabetisation.setId(id);
-		Modealphabetisation saved = ModealphabetisationService.save(Modealphabetisation);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, Modealphabetisation, ModealphabetisationService::findById, ModealphabetisationService::save);
 	}
 
 	@DeleteMapping("/{id}")

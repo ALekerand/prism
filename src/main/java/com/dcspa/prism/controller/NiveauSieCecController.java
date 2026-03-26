@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.NiveauSieCec;
 import com.dcspa.prism.service.NiveauSieCecService;
 
@@ -44,9 +46,7 @@ public class NiveauSieCecController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<NiveauSieCec> update(@PathVariable Integer id, @RequestBody NiveauSieCec niveausiecec) {
-		niveausiecec.setId(id);
-		NiveauSieCec saved = niveausiececService.save(niveausiecec);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, niveausiecec, niveausiececService::findById, niveausiececService::save);
 	}
 
 	@DeleteMapping("/{id}")

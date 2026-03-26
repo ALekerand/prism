@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.Civilite;
 import com.dcspa.prism.service.CiviliteService;
@@ -36,9 +37,7 @@ public class CiviliteController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Civilite> update(@PathVariable Integer id, @RequestBody Civilite civilite) {
-		civilite.setId(id);
-		Civilite saved = civiliteService.save(civilite);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, civilite, civiliteService::findById, civiliteService::save);
 	}
 
 	@DeleteMapping("/{id}")

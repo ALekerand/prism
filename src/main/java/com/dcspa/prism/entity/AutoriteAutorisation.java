@@ -1,5 +1,7 @@
 package com.dcspa.prism.entity;
 
+import com.dcspa.prism.codegen.AutoCode;
+import com.dcspa.prism.codegen.AutoCodeEntityListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -9,6 +11,8 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "autorite_autorisation")
+@AutoCode(field = "codeAutorisation")
+@EntityListeners(AutoCodeEntityListener.class)
 public class AutoriteAutorisation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Drena;
 import com.dcspa.prism.service.DrenaService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class DrenaController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Drena> update(@PathVariable Integer id, @RequestBody Drena body) {
-		body.setId(id);
-		return ResponseEntity.ok(drenaService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, drenaService::findById, drenaService::save);
 	}
 
 	@DeleteMapping("/{id}")

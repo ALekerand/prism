@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.RessourceFinanciereMateriel;
 import com.dcspa.prism.service.RessourceFinanciereMaterielService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class RessourceFinanciereMaterielController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<RessourceFinanciereMateriel> update(@PathVariable Integer id, @RequestBody RessourceFinanciereMateriel body) {
-		body.setId(id);
-		return ResponseEntity.ok(ressourceFinanciereMaterielService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, ressourceFinanciereMaterielService::findById, ressourceFinanciereMaterielService::save);
 	}
 
 	@DeleteMapping("/{id}")

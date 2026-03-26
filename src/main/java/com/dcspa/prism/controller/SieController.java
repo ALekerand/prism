@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Sie;
 import com.dcspa.prism.service.SieService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class SieController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Sie> update(@PathVariable Integer id, @RequestBody Sie body) {
-		body.setId(id);
-		return ResponseEntity.ok(sieService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, sieService::findById, sieService::save);
 	}
 
 	@DeleteMapping("/{id}")

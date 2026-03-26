@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.Regimealphabetisation;
 import com.dcspa.prism.service.RegimealphabetisationService;
@@ -43,9 +44,7 @@ public class RegimealphabetisationController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Regimealphabetisation> update(@PathVariable Integer id, @RequestBody Regimealphabetisation Regimealphabetisation) {
-		Regimealphabetisation.setId(id);
-		Regimealphabetisation saved = RegimealphabetisationService.save(Regimealphabetisation);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, Regimealphabetisation, RegimealphabetisationService::findById, RegimealphabetisationService::save);
 	}
 
 	@DeleteMapping("/{id}")

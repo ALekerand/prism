@@ -1,5 +1,7 @@
 package com.dcspa.prism.entity;
 
+import com.dcspa.prism.codegen.AutoCode;
+import com.dcspa.prism.codegen.AutoCodeEntityListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -11,6 +13,8 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "anne_scolaire")
+@AutoCode(field = "codeAnneeScolaire")
+@EntityListeners(AutoCodeEntityListener.class)
 public class AnneScolaire {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

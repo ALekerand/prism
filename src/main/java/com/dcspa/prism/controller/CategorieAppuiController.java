@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.CategorieAppui;
 import com.dcspa.prism.service.CategorieAppuiService;
@@ -44,9 +45,7 @@ public class CategorieAppuiController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<CategorieAppui> update(@PathVariable Integer id, @RequestBody CategorieAppui categorieappui) {
-		categorieappui.setId(id);
-		CategorieAppui saved = categorieappuiService.save(categorieappui);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, categorieappui, categorieappuiService::findById, categorieappuiService::save);
 	}
 
 	@DeleteMapping("/{id}")

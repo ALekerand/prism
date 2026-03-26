@@ -8,9 +8,15 @@ import java.lang.annotation.Target;
 /**
  * Active la génération automatique d'un code sur insertion.
  * Par défaut:
- * - prefix = 3 premières lettres du nom de table (annotation @Table), en uppercase
+ * - prefix = 3 lettres majuscules dérivées du nom {@link jakarta.persistence.Table} :
+ *   segment unique → 3 premières lettres ({@code alpha} → {@code ALP}) ;
+ *   deux segments {@code _} → 1ʳᵉ lettre du 1ᵉʳ mot, 1ʳᵉ et 2ᵉ du 2ᵉ ({@code anne_scolaire} → {@code ASC}) ;
+ *   trois segments ou plus → initiale des trois premiers mots.
  * - field = 1er champ String "code*" (ou précisé via field())
- * - format = PREFIX + 6 chiffres (000001, 000002, ...)
+ * - format = PREFIX + 7 chiffres ({@code ALP0000001}, {@code ALP0000002}, …)
+ * <p>
+ * Si le champ cible est déjà renseigné (non vide) avant {@code persist}, la valeur est conservée
+ * (saisie manuelle ou import possible).
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

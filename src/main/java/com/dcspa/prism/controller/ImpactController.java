@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Impact;
 import com.dcspa.prism.service.ImpactService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class ImpactController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Impact> update(@PathVariable Integer id, @RequestBody Impact body) {
-		body.setId(id);
-		return ResponseEntity.ok(impactService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, impactService::findById, impactService::save);
 	}
 
 	@DeleteMapping("/{id}")

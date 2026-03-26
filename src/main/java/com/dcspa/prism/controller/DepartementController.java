@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Departement;
 import com.dcspa.prism.service.DepartementService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class DepartementController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Departement> update(@PathVariable Integer id, @RequestBody Departement body) {
-		body.setId(id);
-		return ResponseEntity.ok(departementService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, departementService::findById, departementService::save);
 	}
 
 	@DeleteMapping("/{id}")

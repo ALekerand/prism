@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.AppRole;
 import com.dcspa.prism.service.AppRoleService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class AppRoleController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<AppRole> update(@PathVariable Integer id, @RequestBody AppRole body) {
-		body.setId(id);
-		return ResponseEntity.ok(appRoleService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, appRoleService::findById, appRoleService::save);
 	}
 
 	@DeleteMapping("/{id}")

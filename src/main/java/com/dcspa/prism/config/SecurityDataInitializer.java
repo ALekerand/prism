@@ -39,6 +39,8 @@ public class SecurityDataInitializer {
         Permission lire = getOrCreatePermission("LIRE", "Lire");
         Permission modifier = getOrCreatePermission("MODIFIER", "Modifier");
         Permission supprimer = getOrCreatePermission("SUPPRIMER", "Supprimer");
+        Permission valider = getOrCreatePermission("VALIDER", "Valider");
+        Permission exporter = getOrCreatePermission("EXPORTER", "Exporter");
 
         Fonctionnalite campagnes = getOrCreateFonctionnalite("CAMPAGNE", "Gestion des campagnes", "Campagnes");
         Fonctionnalite centres = getOrCreateFonctionnalite("CENTRE", "Gestion des centres", "Centres");
@@ -47,11 +49,11 @@ public class SecurityDataInitializer {
         Fonctionnalite utilisateurs = getOrCreateFonctionnalite("UTILISATEUR", "Gestion des utilisateurs", "Sécurité");
 
         AppRole admin = getOrCreateRole("ADMIN", "Administrateur", "Accès complet à l'application");
-        grant(admin, campagnes, creer, lire, modifier, supprimer);
-        grant(admin, centres, creer, lire, modifier, supprimer);
-        grant(admin, alpha, creer, lire, modifier, supprimer);
-        grant(admin, personnel, creer, lire, modifier, supprimer);
-        grant(admin, utilisateurs, creer, lire, modifier, supprimer);
+        grant(admin, campagnes, creer, lire, modifier, supprimer, valider, exporter);
+        grant(admin, centres, creer, lire, modifier, supprimer, valider, exporter);
+        grant(admin, alpha, creer, lire, modifier, supprimer, valider, exporter);
+        grant(admin, personnel, creer, lire, modifier, supprimer, valider, exporter);
+        grant(admin, utilisateurs, creer, lire, modifier, supprimer, valider, exporter);
 
         AppRole lecteur = getOrCreateRole("LECTEUR", "Lecteur", "Consultation seule");
         grant(lecteur, campagnes, lire);

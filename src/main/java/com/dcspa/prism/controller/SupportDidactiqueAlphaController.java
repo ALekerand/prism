@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.SupportDidactiqueAlpha;
 import com.dcspa.prism.service.SupportDidactiqueAlphaService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class SupportDidactiqueAlphaController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<SupportDidactiqueAlpha> update(@PathVariable Integer id, @RequestBody SupportDidactiqueAlpha body) {
-		body.setId(id);
-		return ResponseEntity.ok(supportDidactiqueAlphaService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, supportDidactiqueAlphaService::findById, supportDidactiqueAlphaService::save);
 	}
 
 	@DeleteMapping("/{id}")

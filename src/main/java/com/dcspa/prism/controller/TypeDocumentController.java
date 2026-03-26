@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.TypeDocument;
 import com.dcspa.prism.service.TypeDocumentService;
@@ -43,9 +44,7 @@ public class TypeDocumentController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<TypeDocument> update(@PathVariable Integer id, @RequestBody TypeDocument TypeDocument) {
-		TypeDocument.setId(id);
-		TypeDocument saved = TypeDocumentService.save(TypeDocument);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, TypeDocument, TypeDocumentService::findById, TypeDocumentService::save);
 	}
 
 	@DeleteMapping("/{id}")

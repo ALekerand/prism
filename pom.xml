@@ -109,6 +109,8 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<mainClass>com.dcspa.prism.PrismApplication</mainClass>
+					<jvmArguments>-Xms192m -Xmx768m -XX:MaxMetaspaceSize=160m</jvmArguments>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>

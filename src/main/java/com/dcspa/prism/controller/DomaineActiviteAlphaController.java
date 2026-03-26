@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.DomaineActiviteAlpha;
 import com.dcspa.prism.service.DomaineActiviteAlphaService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class DomaineActiviteAlphaController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<DomaineActiviteAlpha> update(@PathVariable Integer id, @RequestBody DomaineActiviteAlpha body) {
-		body.setId(id);
-		return ResponseEntity.ok(domaineActiviteAlphaService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, domaineActiviteAlphaService::findById, domaineActiviteAlphaService::save);
 	}
 
 	@DeleteMapping("/{id}")

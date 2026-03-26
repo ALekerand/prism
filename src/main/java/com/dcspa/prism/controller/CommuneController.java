@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Commune;
 import com.dcspa.prism.service.CommuneService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class CommuneController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Commune> update(@PathVariable Integer id, @RequestBody Commune body) {
-		body.setId(id);
-		return ResponseEntity.ok(communeService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, communeService::findById, communeService::save);
 	}
 
 	@DeleteMapping("/{id}")

@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.CompetenceCentre;
 import com.dcspa.prism.service.CompetenceCentreService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class CompetenceCentreController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<CompetenceCentre> update(@PathVariable Integer id, @RequestBody CompetenceCentre body) {
-		body.setId(id);
-		return ResponseEntity.ok(competenceCentreService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, competenceCentreService::findById, competenceCentreService::save);
 	}
 
 	@DeleteMapping("/{id}")

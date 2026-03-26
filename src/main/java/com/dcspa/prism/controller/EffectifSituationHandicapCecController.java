@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.EffectifSituationHandicapCec;
 import com.dcspa.prism.service.EffectifSituationHandicapCecService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class EffectifSituationHandicapCecController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<EffectifSituationHandicapCec> update(@PathVariable Integer id, @RequestBody EffectifSituationHandicapCec body) {
-		body.setId(id);
-		return ResponseEntity.ok(effectifSituationHandicapCecService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, effectifSituationHandicapCecService::findById, effectifSituationHandicapCecService::save);
 	}
 
 	@DeleteMapping("/{id}")

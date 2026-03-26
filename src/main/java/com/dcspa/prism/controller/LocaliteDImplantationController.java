@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.LocaliteDImplantation;
 import com.dcspa.prism.service.LocaliteDImplantationService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class LocaliteDImplantationController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<LocaliteDImplantation> update(@PathVariable Integer id, @RequestBody LocaliteDImplantation body) {
-		body.setId(id);
-		return ResponseEntity.ok(localiteDImplantationService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, localiteDImplantationService::findById, localiteDImplantationService::save);
 	}
 
 	@DeleteMapping("/{id}")

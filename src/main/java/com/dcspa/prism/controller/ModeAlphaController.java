@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.codegen.AutoCodePutMerge;
 import com.dcspa.prism.dto.ModeAlphaRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Modealphabetisation;
@@ -63,7 +64,13 @@ public class ModeAlphaController {
 		Alpha centre = alphaRepository.findById(r.getIdCentre())
 				.orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdCentre()));
 		m.setIdCentre(centre);
-		m.setCodeModealpha(r.getCodeModealpha());
+		String codeModealpha = r.getCodeModealpha();
+		if (id != null) {
+			codeModealpha = modealphaService.findById(id)
+					.map(ex -> AutoCodePutMerge.mergeCodeString(r.getCodeModealpha(), ex.getCodeModealpha()))
+					.orElse(codeModealpha);
+		}
+		m.setCodeModealpha(codeModealpha);
 		m.setLibelleModealpha(r.getLibelleModealpha());
 		return m;
 	}

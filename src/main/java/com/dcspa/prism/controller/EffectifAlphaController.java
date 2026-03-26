@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.EffectifAlpha;
 import com.dcspa.prism.service.EffectifAlphaService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class EffectifAlphaController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<EffectifAlpha> update(@PathVariable Integer id, @RequestBody EffectifAlpha body) {
-		body.setId(id);
-		return ResponseEntity.ok(effectifAlphaService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, effectifAlphaService::findById, effectifAlphaService::save);
 	}
 
 	@DeleteMapping("/{id}")

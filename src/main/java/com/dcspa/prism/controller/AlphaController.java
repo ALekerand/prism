@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.service.AlphaService;
@@ -43,9 +44,7 @@ public class AlphaController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Alpha> update(@PathVariable Integer id, @RequestBody Alpha alpha) {
-		alpha.setId(id);
-		Alpha saved = alphaService.save(alpha);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, alpha, alphaService::findById, alphaService::save);
 	}
 
 	@DeleteMapping("/{id}")

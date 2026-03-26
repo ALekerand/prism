@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Iep;
 import com.dcspa.prism.service.IepService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class IepController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Iep> update(@PathVariable Integer id, @RequestBody Iep body) {
-		body.setId(id);
-		return ResponseEntity.ok(iepService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, iepService::findById, iepService::save);
 	}
 
 	@DeleteMapping("/{id}")

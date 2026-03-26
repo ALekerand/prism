@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.codegen.AutoCodePutMerge;
 import com.dcspa.prism.dto.NiveauAlphaRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.NiveauAlpha;
@@ -64,7 +65,13 @@ public class NiveauAlphaController {
 		Alpha centre = alphaRepository.findById(r.getIdCentre())
 				.orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdCentre()));
 		n.setIdCentre(centre);
-		n.setCodeNiveauAlpha(r.getCodeNiveauAlpha());
+		String codeNiveauAlpha = r.getCodeNiveauAlpha();
+		if (id != null) {
+			codeNiveauAlpha = niveaualphaService.findById(id)
+					.map(ex -> AutoCodePutMerge.mergeCodeString(r.getCodeNiveauAlpha(), ex.getCodeNiveauAlpha()))
+					.orElse(codeNiveauAlpha);
+		}
+		n.setCodeNiveauAlpha(codeNiveauAlpha);
 		n.setLibelleNiveauAlpha(r.getLibelleNiveauAlpha());
 		return n;
 	}

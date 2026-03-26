@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.RoleFonctionnalitePermission;
 import com.dcspa.prism.service.RoleFonctionnalitePermissionService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class RoleFonctionnalitePermissionController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<RoleFonctionnalitePermission> update(@PathVariable Integer id, @RequestBody RoleFonctionnalitePermission body) {
-		body.setId(id);
-		return ResponseEntity.ok(roleFonctionnalitePermissionService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, roleFonctionnalitePermissionService::findById, roleFonctionnalitePermissionService::save);
 	}
 
 	@DeleteMapping("/{id}")

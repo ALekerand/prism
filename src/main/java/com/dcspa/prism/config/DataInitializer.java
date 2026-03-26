@@ -27,7 +27,7 @@ import java.util.Set;
  */
 @Component
 @RequiredArgsConstructor
-public class NebdevDataInitializer {
+public class DataInitializer {
 
     private static final String USERNAME = "nebdev";
     private static final String DEFAULT_PASSWORD = "nebdev123";

@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Difficulte;
 import com.dcspa.prism.service.DifficulteService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class DifficulteController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Difficulte> update(@PathVariable Integer id, @RequestBody Difficulte body) {
-		body.setId(id);
-		return ResponseEntity.ok(difficulteService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, difficulteService::findById, difficulteService::save);
 	}
 
 	@DeleteMapping("/{id}")

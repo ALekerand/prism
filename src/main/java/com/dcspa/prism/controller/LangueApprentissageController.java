@@ -1,6 +1,9 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.dto.LangueApprentissageRequest;
+import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.LangueApprentissage;
+import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.service.LangueApprentissageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,7 @@ import java.util.List;
 public class LangueApprentissageController {
 
 	private final LangueApprentissageService LangueApprentissageService;
+	private final CentreRepository centreRepository;
 
 	@GetMapping
 	public ResponseEntity<List<LangueApprentissage>> findAll() {
@@ -36,15 +40,14 @@ public class LangueApprentissageController {
 	}
 
 	@PostMapping
-	public ResponseEntity<LangueApprentissage> create(@RequestBody LangueApprentissage LangueApprentissage) {
-		LangueApprentissage saved = LangueApprentissageService.save(LangueApprentissage);
+	public ResponseEntity<LangueApprentissage> create(@RequestBody LangueApprentissageRequest request) {
+		LangueApprentissage saved = LangueApprentissageService.save(toEntity(null, request));
 		return ResponseEntity.status(201).body(saved);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<LangueApprentissage> update(@PathVariable Integer id, @RequestBody LangueApprentissage LangueApprentissage) {
-		LangueApprentissage.setId(id);
-		LangueApprentissage saved = LangueApprentissageService.save(LangueApprentissage);
+	public ResponseEntity<LangueApprentissage> update(@PathVariable Integer id, @RequestBody LangueApprentissageRequest request) {
+		LangueApprentissage saved = LangueApprentissageService.save(toEntity(id, request));
 		return ResponseEntity.ok(saved);
 	}
 
@@ -52,6 +55,19 @@ public class LangueApprentissageController {
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		LangueApprentissageService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private LangueApprentissage toEntity(Integer id, LangueApprentissageRequest r) {
+		if (r.getIdCentre() == null) {
+			throw new IllegalArgumentException("idCentre est obligatoire.");
+		}
+		LangueApprentissage la = new LangueApprentissage();
+		la.setId(id);
+		Centre centre = centreRepository.findById(r.getIdCentre())
+				.orElseThrow(() -> new IllegalArgumentException("Centre introuvable: " + r.getIdCentre()));
+		la.setIdCentre(centre);
+		la.setLibelleLangue(r.getLibelleLangue());
+		return la;
 	}
 }
 

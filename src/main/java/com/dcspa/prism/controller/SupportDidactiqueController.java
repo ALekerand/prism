@@ -1,4 +1,5 @@
 package com.dcspa.prism.controller;
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.SupportDidactique;
 import com.dcspa.prism.service.SupportDidactiqueService;
@@ -43,9 +44,7 @@ public class SupportDidactiqueController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<SupportDidactique> update(@PathVariable Integer id, @RequestBody SupportDidactique SupportDidactique) {
-		SupportDidactique.setId(id);
-		SupportDidactique saved = SupportDidactiqueService.save(SupportDidactique);
-		return ResponseEntity.ok(saved);
+		return ReferentialPutHelper.putPreservingAutoCode(id, SupportDidactique, SupportDidactiqueService::findById, SupportDidactiqueService::save);
 	}
 
 	@DeleteMapping("/{id}")

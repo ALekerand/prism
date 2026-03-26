@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Cp;
 import com.dcspa.prism.service.CpService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class CpController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Cp> update(@PathVariable Integer id, @RequestBody Cp body) {
-		body.setId(id);
-		return ResponseEntity.ok(cpService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, cpService::findById, cpService::save);
 	}
 
 	@DeleteMapping("/{id}")

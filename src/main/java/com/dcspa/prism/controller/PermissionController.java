@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.Permission;
 import com.dcspa.prism.service.PermissionService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class PermissionController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Permission> update(@PathVariable Integer id, @RequestBody Permission body) {
-		body.setId(id);
-		return ResponseEntity.ok(permissionService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, permissionService::findById, permissionService::save);
 	}
 
 	@DeleteMapping("/{id}")

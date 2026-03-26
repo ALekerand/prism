@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.EffectifPromuCec;
 import com.dcspa.prism.service.EffectifPromuCecService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class EffectifPromuCecController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<EffectifPromuCec> update(@PathVariable Integer id, @RequestBody EffectifPromuCec body) {
-		body.setId(id);
-		return ResponseEntity.ok(effectifPromuCecService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, effectifPromuCecService::findById, effectifPromuCecService::save);
 	}
 
 	@DeleteMapping("/{id}")

@@ -1,5 +1,7 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ReferentialPutHelper;
+
 import com.dcspa.prism.entity.ProgrammeAlpha;
 import com.dcspa.prism.service.ProgrammeAlphaService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +43,7 @@ public class ProgrammeAlphaController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<ProgrammeAlpha> update(@PathVariable Integer id, @RequestBody ProgrammeAlpha body) {
-		body.setId(id);
-		return ResponseEntity.ok(programmeAlphaService.save(body));
+		return ReferentialPutHelper.putPreservingAutoCode(id, body, programmeAlphaService::findById, programmeAlphaService::save);
 	}
 
 	@DeleteMapping("/{id}")
