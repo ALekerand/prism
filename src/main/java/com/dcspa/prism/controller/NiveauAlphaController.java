@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/niveaualpha")
@@ -29,28 +32,32 @@ public class NiveauAlphaController {
 	private final AlphaRepository alphaRepository;
 
 	@GetMapping
-	public ResponseEntity<List<NiveauAlpha>> findAll() {
-		List<NiveauAlpha> list = niveaualphaService.findAll();
+	public ResponseEntity<List<Map<String, Object>>> findAll() {
+		List<Map<String, Object>> list = niveaualphaService.findAll()
+				.stream()
+				.map(this::toRow)
+				.collect(Collectors.toList());
 		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<NiveauAlpha> findById(@PathVariable Integer id) {
+	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return niveaualphaService.findById(id)
+				.map(this::toRow)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping
-	public ResponseEntity<NiveauAlpha> create(@RequestBody NiveauAlphaRequest request) {
+	public ResponseEntity<Map<String, Object>> create(@RequestBody NiveauAlphaRequest request) {
 		NiveauAlpha saved = niveaualphaService.save(toEntity(null, request));
-		return ResponseEntity.status(200).body(saved);
+		return ResponseEntity.status(200).body(toRow(saved));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<NiveauAlpha> update(@PathVariable Integer id, @RequestBody NiveauAlphaRequest request) {
+	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody NiveauAlphaRequest request) {
 		NiveauAlpha saved = niveaualphaService.save(toEntity(id, request));
-		return ResponseEntity.ok(saved);
+		return ResponseEntity.ok(toRow(saved));
 	}
 
 	@DeleteMapping("/{id}")
@@ -74,5 +81,14 @@ public class NiveauAlphaController {
 		n.setCodeNiveauAlpha(codeNiveauAlpha);
 		n.setLibelleNiveauAlpha(r.getLibelleNiveauAlpha());
 		return n;
+	}
+
+	private Map<String, Object> toRow(NiveauAlpha n) {
+		Map<String, Object> m = new LinkedHashMap<>();
+		m.put("id", n.getId());
+		m.put("idCentre", n.getIdCentre() != null ? n.getIdCentre().getId() : null);
+		m.put("codeNiveauAlpha", n.getCodeNiveauAlpha());
+		m.put("libelleNiveauAlpha", n.getLibelleNiveauAlpha());
+		return m;
 	}
 }

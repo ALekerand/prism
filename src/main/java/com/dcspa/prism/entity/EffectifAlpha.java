@@ -1,5 +1,7 @@
 package com.dcspa.prism.entity;
 
+import com.dcspa.prism.codegen.AutoCode;
+import com.dcspa.prism.codegen.AutoCodeEntityListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,6 +12,8 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "effectif_alpha")
+@AutoCode(field = "codeEffectifAlpha")
+@EntityListeners(AutoCodeEntityListener.class)
 public class EffectifAlpha {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +29,10 @@ public class EffectifAlpha {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CENTRE", nullable = false)
     private Alpha idCentre;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_NIVEAU_ALPHA")
+    private NiveauAlpha idNiveauAlpha;
 
     @Size(max = 10)
     @Column(name = "CODE_EFFECTIF_ALPHA", length = 10)

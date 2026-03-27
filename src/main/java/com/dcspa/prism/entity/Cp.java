@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Getter
 @Setter
@@ -17,6 +18,7 @@ public class Cp {
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CENTRE", nullable = false)
+    @JsonIgnore
     private Centre centre;
 
     @Column(name = "ID_LOCALITE")

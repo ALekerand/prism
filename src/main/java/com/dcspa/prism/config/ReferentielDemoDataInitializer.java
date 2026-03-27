@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Données de démonstration pour les référentiels sans dépendances FK complexes.
@@ -29,6 +30,9 @@ public class ReferentielDemoDataInitializer {
     private static final String DEMO_CENTRE_CEC = "CTR-CEC-01";
     private static final String DEMO_CENTRE_CP = "CTR-CP-01";
     private static final String DEMO_CENTRE_SIE = "CTR-SIE-01";
+    private static final List<String> NIVEAUX_ALPHA_REELS = List.of("NIVEAU_1", "NIVEAU_2", "POST_ALPHA");
+    private static final List<String> NIVEAUX_CEC_SIE_REELS = List.of("PS", "MS", "GS", "PRE_PRIMAIRE", "CP1", "CP2", "CE1", "CE2", "CM1", "CM2");
+    private static final List<String> NIVEAUX_CP_REELS = List.of("CPU", "CEU", "CMU");
 
     private final AnneScolaireRepository anneScolaireRepository;
     private final AutoriteAutorisationRepository autoriteAutorisationRepository;
@@ -46,6 +50,7 @@ public class ReferentielDemoDataInitializer {
     private final NaturecentreRepository naturecentreRepository;
     private final NatureDocumentRepository natureDocumentRepository;
     private final NiveauPersonnelRepository niveauPersonnelRepository;
+    private final NiveauAlphaRepository niveauAlphaRepository;
     private final NiveauCpRepository niveauCpRepository;
     private final NiveauSieCecRepository niveauSieCecRepository;
     private final PartenaireRepository partenaireRepository;
@@ -62,6 +67,7 @@ public class ReferentielDemoDataInitializer {
     private final CecRepository cecRepository;
     private final CpRepository cpRepository;
     private final SieRepository sieRepository;
+    private final AppRoleRepository appRoleRepository;
 
     // Dépendances nécessaires pour créer des centres + personnel de démo
     private final DepartementRepository departementRepository;
@@ -124,9 +130,104 @@ public class ReferentielDemoDataInitializer {
 
         // "Typage" métier des centres (un centre appartient à Alpha/Cec/Cp/Sie)
         seedAlphaCentre();
+        seedNiveauxAlpha();
         seedCecCentre();
         seedCpCentre();
         seedSieCentre();
+
+        // Synchronisation "réalité" non destructive (libellés/codes + inserts manquants)
+        syncReferenceRealiteLabels();
+    }
+
+    private void syncReferenceRealiteLabels() {
+        syncRolesRealite();
+        syncMilieuxRealite();
+        syncBasicGeoLabels();
+        syncNiveauxRealite();
+    }
+
+    private void syncRolesRealite() {
+        upsertRole("CONSEILLER", "Conseiller", "Niveau 1");
+        upsertRole("COORDONNATEUR", "Coordonnateur", "Niveau 2");
+        upsertRole("SUPERVISEUR", "Superviseur", "Niveau 3");
+        upsertRole("DIRECTEUR", "Directeur", "Niveau 4");
+        upsertRole("CABINET", "Cabinet", "Niveau 5");
+        upsertRole("AGENT_ARCHIVE", "Agent archive", "Niveau 6");
+        upsertRole("SUPER_ADMIN", "Super admin", "Niveau 7");
+    }
+
+    private void upsertRole(String code, String libelle, String description) {
+        AppRole role = appRoleRepository.findByCodeRole(code).orElseGet(AppRole::new);
+        role.setCodeRole(code);
+        role.setLibelleRole(libelle);
+        role.setDescriptionRole(description);
+        appRoleRepository.save(role);
+    }
+
+    private void syncMilieuxRealite() {
+        upsertMilieu("URB", "URBAIN");
+        upsertMilieu("RUR", "RURAL");
+        upsertMilieu("ABJ", "ABIDJAN");
+    }
+
+    private void upsertMilieu(String code, String libelle) {
+        MilieuImplantation m = milieuImplantationRepository.findAll().stream()
+                .filter(x -> code.equalsIgnoreCase(String.valueOf(x.getCodeMilieuImplentation())))
+                .findFirst()
+                .orElseGet(MilieuImplantation::new);
+        m.setCodeMilieuImplentation(code);
+        m.setLibelleTypeImplentation(libelle);
+        milieuImplantationRepository.save(m);
+    }
+
+    private void syncBasicGeoLabels() {
+        departementRepository.findAll().stream()
+                .filter(d -> "ABJ".equalsIgnoreCase(String.valueOf(d.getCodeDepartement())))
+                .findFirst()
+                .ifPresent(d -> {
+                    d.setNomDepartement("Abidjan");
+                    departementRepository.save(d);
+                });
+
+        sousPrefectureRepository.findAll().stream()
+                .filter(s -> "SPABJ".equalsIgnoreCase(String.valueOf(s.getCodeSousPrefecture())))
+                .findFirst()
+                .ifPresent(s -> {
+                    s.setNomSousPrefecture("Abidjan");
+                    sousPrefectureRepository.save(s);
+                });
+
+        communeRepository.findAll().stream()
+                .filter(c -> "COC".equalsIgnoreCase(String.valueOf(c.getCodeCommune())))
+                .findFirst()
+                .ifPresent(c -> {
+                    c.setNomCommune("Cocody");
+                    communeRepository.save(c);
+                });
+
+        drenaRepository.findAll().stream()
+                .filter(d -> "DABJ".equalsIgnoreCase(String.valueOf(d.getCodeDrena())))
+                .findFirst()
+                .ifPresent(d -> {
+                    d.setNomDrena("DRENA Abidjan");
+                    drenaRepository.save(d);
+                });
+
+        ieppRepository.findAll().stream()
+                .filter(i -> "IEP1".equalsIgnoreCase(String.valueOf(i.getCodeIep())))
+                .findFirst()
+                .ifPresent(i -> {
+                    i.setNomIep("IEP Cocody");
+                    ieppRepository.save(i);
+                });
+
+        localiteDImplantationRepository.findAll().stream()
+                .filter(l -> "LOC1".equalsIgnoreCase(String.valueOf(l.getCodeLocalite())))
+                .findFirst()
+                .ifPresent(l -> {
+                    l.setNomLocalite("Cocody Angré");
+                    localiteDImplantationRepository.save(l);
+                });
     }
 
     private void seedCampagnes() {
@@ -636,9 +737,9 @@ public class ReferentielDemoDataInitializer {
         if (niveauCpRepository.count() > 0) {
             return;
         }
-        saveNiveauCp("CP1");
-        saveNiveauCp("CP2");
-        saveNiveauCp("CE1");
+        for (String libelle : NIVEAUX_CP_REELS) {
+            saveNiveauCp(libelle);
+        }
     }
 
     private void saveNiveauCp(String libelle) {
@@ -651,15 +752,87 @@ public class ReferentielDemoDataInitializer {
         if (niveauSieCecRepository.count() > 0) {
             return;
         }
-        saveNiveauSieCec("Niveau 1");
-        saveNiveauSieCec("Niveau 2");
-        saveNiveauSieCec("Niveau 3");
+        for (String libelle : NIVEAUX_CEC_SIE_REELS) {
+            saveNiveauSieCec(libelle);
+        }
     }
 
     private void saveNiveauSieCec(String libelle) {
         NiveauSieCec e = new NiveauSieCec();
         e.setLibelleNiveauSie(libelle.length() > 100 ? libelle.substring(0, 100) : libelle);
         niveauSieCecRepository.save(e);
+    }
+
+    private void seedNiveauxAlpha() {
+        if (niveauAlphaRepository.count() > 0) return;
+        Alpha alpha = alphaRepository.findAll().stream().findFirst().orElse(null);
+        if (alpha == null) return;
+        for (String libelle : NIVEAUX_ALPHA_REELS) {
+            saveNiveauAlpha(alpha, libelle);
+        }
+    }
+
+    private void saveNiveauAlpha(Alpha alpha, String libelle) {
+        NiveauAlpha n = new NiveauAlpha();
+        n.setIdCentre(alpha);
+        n.setLibelleNiveauAlpha(libelle.length() > 100 ? libelle.substring(0, 100) : libelle);
+        niveauAlphaRepository.save(n);
+    }
+
+    private void syncNiveauxRealite() {
+        syncNiveauxCpRealite();
+        syncNiveauxSieCecRealite();
+        syncNiveauxAlphaRealite();
+    }
+
+    private void syncNiveauxCpRealite() {
+        for (String libelle : NIVEAUX_CP_REELS) {
+            upsertNiveauCp(libelle);
+        }
+    }
+
+    private void upsertNiveauCp(String libelle) {
+        boolean exists = niveauCpRepository.findAll().stream()
+                .anyMatch(x -> libelle.equalsIgnoreCase(String.valueOf(x.getLibelleNiveauCp())));
+        if (!exists) {
+            saveNiveauCp(libelle);
+        }
+    }
+
+    private void syncNiveauxSieCecRealite() {
+        for (String libelle : NIVEAUX_CEC_SIE_REELS) {
+            upsertNiveauSieCec(libelle);
+        }
+    }
+
+    private void upsertNiveauSieCec(String libelle) {
+        boolean exists = niveauSieCecRepository.findAll().stream()
+                .anyMatch(x -> libelle.equalsIgnoreCase(String.valueOf(x.getLibelleNiveauSie())));
+        if (!exists) {
+            saveNiveauSieCec(libelle);
+        }
+    }
+
+    private void syncNiveauxAlphaRealite() {
+        List<Alpha> alphas = alphaRepository.findAll();
+        if (alphas.isEmpty()) return;
+        for (Alpha a : alphas) {
+            for (String libelle : NIVEAUX_ALPHA_REELS) {
+                upsertNiveauAlpha(a, libelle);
+            }
+        }
+    }
+
+    private void upsertNiveauAlpha(Alpha alpha, String libelle) {
+        boolean exists = niveauAlphaRepository.findAll().stream()
+                .anyMatch(x ->
+                        x.getIdCentre() != null &&
+                                alpha.getId().equals(x.getIdCentre().getId()) &&
+                                libelle.equalsIgnoreCase(String.valueOf(x.getLibelleNiveauAlpha()))
+                );
+        if (!exists) {
+            saveNiveauAlpha(alpha, libelle);
+        }
     }
 
     private void seedPartenaires() {

@@ -1,5 +1,7 @@
 package com.dcspa.prism.entity;
 
+import com.dcspa.prism.codegen.AutoCode;
+import com.dcspa.prism.codegen.AutoCodeEntityListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,6 +12,8 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "effectif_situation_handicap_sie")
+@AutoCode(field = "codeEffectifSituationHandicapSie")
+@EntityListeners(AutoCodeEntityListener.class)
 public class EffectifSituationHandicapSie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/iep")
@@ -25,8 +27,16 @@ public class IepController {
 	private final IepService iepService;
 
 	@GetMapping
-	public ResponseEntity<List<Iep>> findAll() {
-		return ResponseEntity.ok(iepService.findAll());
+	public ResponseEntity<List<Map<String, Object>>> findAll() {
+		// Evite LazyInitializationException sur drena
+		List<Map<String, Object>> list = iepService.findAll().stream()
+				.map(i -> Map.<String, Object>of(
+						"id", i.getId(),
+						"codeIep", i.getCodeIep(),
+						"nomIep", i.getNomIep()
+				))
+				.collect(Collectors.toList());
+		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/{id}")

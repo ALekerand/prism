@@ -1,8 +1,8 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.Promoteur;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
 
-public interface PromoteurRepository extends JpaRepository<Promoteur, Long> {
+public interface PromoteurRepository extends BaseRepository<Promoteur, Integer> {
 
 }

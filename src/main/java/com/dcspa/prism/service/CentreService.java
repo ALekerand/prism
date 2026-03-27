@@ -40,8 +40,5 @@ public class CentreService {
 		if (centre.getIdPromoteur() == null) {
 			throw new IllegalArgumentException("Le promoteur est obligatoire pour un centre.");
 		}
-		if (centre.getCodeCentre() == null || centre.getCodeCentre().isBlank()) {
-			throw new IllegalArgumentException("Le code du centre est obligatoire.");
-		}
 	}
 }

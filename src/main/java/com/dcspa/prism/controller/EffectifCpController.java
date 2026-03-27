@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/effectif-cp")
@@ -25,13 +27,14 @@ public class EffectifCpController {
 	private final EffectifCpService effectifCpService;
 
 	@GetMapping
-	public ResponseEntity<List<EffectifCp>> findAll() {
-		return ResponseEntity.ok(effectifCpService.findAll());
+	public ResponseEntity<List<Map<String, Object>>> findAll() {
+		return ResponseEntity.ok(effectifCpService.findAll().stream().map(this::toRow).toList());
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<EffectifCp> findById(@PathVariable Integer id) {
+	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifCpService.findById(id)
+				.map(this::toRow)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
@@ -50,5 +53,34 @@ public class EffectifCpController {
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		effectifCpService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private Map<String, Object> toRow(EffectifCp entity) {
+		Map<String, Object> row = new LinkedHashMap<>();
+		row.put("id", entity.getId());
+		row.put("idNiveauCp", entity.getIdNiveauCp() != null ? entity.getIdNiveauCp().getId() : null);
+		row.put("idAnneeScolaire", entity.getIdAnneeScolaire() != null ? entity.getIdAnneeScolaire().getId() : null);
+		row.put("idCentre", entity.getIdCentre() != null ? entity.getIdCentre().getId() : null);
+		row.put("codeEffectifCp", entity.getCodeEffectifCp());
+		row.put("effectifCp911IvoirienH", entity.getEffectifCp911IvoirienH());
+		row.put("effectifCp911IvoirienF", entity.getEffectifCp911IvoirienF());
+		row.put("effectifCp911HandicapH", entity.getEffectifCp911HandicapH());
+		row.put("effectifCp911HandicapF", entity.getEffectifCp911HandicapF());
+		row.put("effectifCp911NonIvoirienF", entity.getEffectifCp911NonIvoirienF());
+		row.put("effectifCp911NonIvoirienH", entity.getEffectifCp911NonIvoirienH());
+		row.put("effectifCp1213IvoirienF", entity.getEffectifCp1213IvoirienF());
+		row.put("effectifCp1213IvoirienH", entity.getEffectifCp1213IvoirienH());
+		row.put("effectifCp1213HandicapH", entity.getEffectifCp1213HandicapH());
+		row.put("effectifCp1213HandicapF", entity.getEffectifCp1213HandicapF());
+		row.put("effectifCp1213NonIvoiriienH", entity.getEffectifCp1213NonIvoiriienH());
+		row.put("effectifCp1213NonIvoiriienF", entity.getEffectifCp1213NonIvoiriienF());
+		row.put("effectifCp14IvoirienH", entity.getEffectifCp14IvoirienH());
+		row.put("effectifCp14IvoirienF", entity.getEffectifCp14IvoirienF());
+		row.put("effectifCp14HandicapH", entity.getEffectifCp14HandicapH());
+		row.put("effectifCp14HandicapF", entity.getEffectifCp14HandicapF());
+		row.put("effectifCp14NonIvoirienF", entity.getEffectifCp14NonIvoirienF());
+		row.put("effectifCp14NonIvoirienH", entity.getEffectifCp14NonIvoirienH());
+		row.put("effectifCpNiveauCp", entity.getEffectifCpNiveauCp());
+		return row;
 	}
 }

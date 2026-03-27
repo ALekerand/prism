@@ -76,12 +76,12 @@ public class CentreController {
 		Centre c = new Centre();
 		c.setId(id);
 
-		Promoteur p = promoteurRepository.findById(toLong(r.getIdPromoteur()))
+		Promoteur p = promoteurRepository.findById(r.getIdPromoteur())
 				.orElseThrow(() -> new IllegalArgumentException("Promoteur introuvable: " + r.getIdPromoteur()));
 		c.setIdPromoteur(p);
 
 		if (r.getIdPeriodicite() != null) {
-			Periodicite per = periodiciteRepository.findById(toLong(r.getIdPeriodicite()))
+			Periodicite per = periodiciteRepository.findById(r.getIdPeriodicite().longValue())
 					.orElseThrow(() -> new IllegalArgumentException("Periodicite introuvable: " + r.getIdPeriodicite()));
 			c.setIdPeriodicite(per);
 		}
@@ -100,10 +100,5 @@ public class CentreController {
 		c.setADeLeau(r.getADeLeau());
 		c.setNombreVisite(r.getNombreVisite());
 		return c;
-	}
-
-	private static Long toLong(Integer v) {
-		if (v == null) return null;
-		return v.longValue();
 	}
 }
