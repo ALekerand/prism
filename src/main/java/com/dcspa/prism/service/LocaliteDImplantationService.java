@@ -16,7 +16,9 @@ public class LocaliteDImplantationService {
 	private final LocaliteDImplantationRepository repository;
 
 	@Transactional(readOnly = true)
-	public List<LocaliteDImplantation> findAll() { return repository.findAll(); }
+	public List<LocaliteDImplantation> findAll() {
+		return repository.findAllWithReferentials();
+	}
 
 	@Transactional(readOnly = true)
 	public Optional<LocaliteDImplantation> findById(Integer id) {
