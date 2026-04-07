@@ -23,5 +23,7 @@ public class CentreTypeListItem {
     private Integer nombreVisite;
     private String localisationCentre;
     private String nomMilieuImplentation;
+    private String encadreurNonMena;
+    private Boolean encadrerParMena;
 }
 

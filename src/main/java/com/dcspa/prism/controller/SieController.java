@@ -72,7 +72,9 @@ public class SieController {
 						s.getADeLeau(),
 						s.getNombreVisite(),
 						s.getLocalisationCentre(),
-						s.getNomMilieuImplentation()
+						s.getNomMilieuImplentation(),
+						s.getEncadreurNonMena(),
+						s.getEncadrerParMena()
 				))
 				.toList();
 		return ResponseEntity.ok(list);
@@ -128,7 +130,9 @@ public class SieController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 
@@ -229,7 +233,9 @@ public class SieController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 
@@ -259,7 +265,9 @@ public class SieController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 
@@ -280,6 +288,8 @@ public class SieController {
 			existing.setNombreVisite(req.getNombreVisite());
 			existing.setLocalisationCentre(req.getLocalisationCentre());
 			existing.setNomMilieuImplentation(req.getNomMilieuImplentation());
+			existing.setEncadreurNonMena(req.getEncadreurNonMena());
+			existing.setEncadrerParMena(req.getEncadrerParMena());
 		}
 		Sie saved = sieService.save(existing);
 		return ResponseEntity.ok(new CentreTypeListItem(
@@ -297,7 +307,9 @@ public class SieController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 

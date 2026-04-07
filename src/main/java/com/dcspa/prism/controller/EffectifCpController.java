@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.EffectifCp;
@@ -58,9 +59,9 @@ public class EffectifCpController {
 	private Map<String, Object> toRow(EffectifCp entity) {
 		Map<String, Object> row = new LinkedHashMap<>();
 		row.put("id", entity.getId());
-		row.put("idNiveauCp", entity.getIdNiveauCp() != null ? entity.getIdNiveauCp().getId() : null);
-		row.put("idAnneeScolaire", entity.getIdAnneeScolaire() != null ? entity.getIdAnneeScolaire().getId() : null);
-		row.put("idCentre", entity.getIdCentre() != null ? entity.getIdCentre().getId() : null);
+		row.put("idNiveauCp", JpaAssociationIds.intIdOrNull(entity.getIdNiveauCp()));
+		row.put("idAnneeScolaire", JpaAssociationIds.intIdOrNull(entity.getIdAnneeScolaire()));
+		row.put("idCentre", JpaAssociationIds.intIdOrNull(entity.getIdCentre()));
 		row.put("codeEffectifCp", entity.getCodeEffectifCp());
 		row.put("effectifCp911IvoirienH", entity.getEffectifCp911IvoirienH());
 		row.put("effectifCp911IvoirienF", entity.getEffectifCp911IvoirienF());

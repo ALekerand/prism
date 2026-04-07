@@ -457,9 +457,7 @@ public class ReferentielDemoDataInitializer {
         a.setIdCategorieCentreAlpha(categorie);
         a.setIdTypeAlpha(typeAlpha);
         a.setIdRegimeAlpha(regime);
-        a.setCodeCentre(centre.getCodeCentre());
-        a.setLocalisationCentre(centre.getLocalisationCentre());
-        a.setNomMilieuImplentation(centre.getNomMilieuImplentation());
+        mirrorDenormalizedCentreFields(centre, a);
         a.setLibelleAlpha("Alpha - " + centre.getCodeCentre());
         alphaRepository.save(a);
     }
@@ -471,9 +469,7 @@ public class ReferentielDemoDataInitializer {
 
         Cec c = new Cec();
         c.setCentre(centre);
-        c.setCodeCentre(centre.getCodeCentre());
-        c.setLocalisationCentre(centre.getLocalisationCentre());
-        c.setNomMilieuImplentation(centre.getNomMilieuImplentation());
+        mirrorDenormalizedCentreFields(centre, c);
         c.setLibelleCec("CEC - " + centre.getCodeCentre());
         cecRepository.save(c);
     }
@@ -485,9 +481,7 @@ public class ReferentielDemoDataInitializer {
 
         Cp cp = new Cp();
         cp.setCentre(centre);
-        cp.setCodeCentre(centre.getCodeCentre());
-        cp.setLocalisationCentre(centre.getLocalisationCentre());
-        cp.setNomMilieuImplentation(centre.getNomMilieuImplentation());
+        mirrorDenormalizedCentreFields(centre, cp);
         cp.setLibellleCp("CP - " + centre.getCodeCentre());
         cpRepository.save(cp);
     }
@@ -499,11 +493,95 @@ public class ReferentielDemoDataInitializer {
 
         Sie s = new Sie();
         s.setCentre(centre);
-        s.setCodeCentre(centre.getCodeCentre());
-        s.setLocalisationCentre(centre.getLocalisationCentre());
-        s.setNomMilieuImplentation(centre.getNomMilieuImplentation());
+        mirrorDenormalizedCentreFields(centre, s);
         s.setLibelleSie("SIE - " + centre.getCodeCentre());
         sieRepository.save(s);
+    }
+
+    /**
+     * Même logique que les contrôleurs (création) : les listes API lisent les colonnes dénormalisées
+     * sur alpha / cec / cp / sie, pas une jointure vers {@link Centre} à la volée.
+     */
+    private void mirrorDenormalizedCentreFields(Centre centre, Object typedRow) {
+        Integer idLocalite = centre.getIdLocalite() != null ? centre.getIdLocalite().getId() : null;
+        Integer idPeriodicite = centre.getIdPeriodicite() != null ? centre.getIdPeriodicite().getId() : null;
+        Integer idIep = centre.getIdIep() != null ? centre.getIdIep().getId() : null;
+        Integer idAutoriteAutorisation =
+                centre.getIdAutoriteAutorisation() != null ? centre.getIdAutoriteAutorisation().getId() : null;
+        Integer idNaturecentre = centre.getIdNaturecentre() != null ? centre.getIdNaturecentre().getId() : null;
+        Integer idPromoteur = centre.getIdPromoteur() != null ? centre.getIdPromoteur().getId() : null;
+
+        switch (typedRow) {
+            case Alpha a -> {
+                a.setIdLocalite(idLocalite);
+                a.setIdPeriodicite(idPeriodicite);
+                a.setIdIep(idIep);
+                a.setIdAutoriteAutorisation(idAutoriteAutorisation);
+                a.setIdNaturecentre(idNaturecentre);
+                a.setIdPromoteur(idPromoteur);
+                a.setCodeCentre(centre.getCodeCentre());
+                a.setAutorisation(centre.getAutorisation());
+                a.setEncadreurNonMena(centre.getEncadreurNonMena());
+                a.setEncadrerParMena(centre.getEncadrerParMena());
+                a.setEstElectrifie(centre.getEstElectrifie());
+                a.setADeLeau(centre.getADeLeau());
+                a.setNombreVisite(centre.getNombreVisite());
+                a.setLocalisationCentre(centre.getLocalisationCentre());
+                a.setNomMilieuImplentation(centre.getNomMilieuImplentation());
+            }
+            case Cec c -> {
+                c.setIdLocalite(idLocalite);
+                c.setIdPeriodicite(idPeriodicite);
+                c.setIdIep(idIep);
+                c.setIdAutoriteAutorisation(idAutoriteAutorisation);
+                c.setIdNaturecentre(idNaturecentre);
+                c.setIdPromoteur(idPromoteur);
+                c.setCodeCentre(centre.getCodeCentre());
+                c.setAutorisation(centre.getAutorisation());
+                c.setEncadreurNonMena(centre.getEncadreurNonMena());
+                c.setEncadrerParMena(centre.getEncadrerParMena());
+                c.setEstElectrifie(centre.getEstElectrifie());
+                c.setADeLeau(centre.getADeLeau());
+                c.setNombreVisite(centre.getNombreVisite());
+                c.setLocalisationCentre(centre.getLocalisationCentre());
+                c.setNomMilieuImplentation(centre.getNomMilieuImplentation());
+            }
+            case Cp cp -> {
+                cp.setIdLocalite(idLocalite);
+                cp.setIdPeriodicite(idPeriodicite);
+                cp.setIdIep(idIep);
+                cp.setIdAutoriteAutorisation(idAutoriteAutorisation);
+                cp.setIdNaturecentre(idNaturecentre);
+                cp.setIdPromoteur(idPromoteur);
+                cp.setCodeCentre(centre.getCodeCentre());
+                cp.setAutorisation(centre.getAutorisation());
+                cp.setEncadreurNonMena(centre.getEncadreurNonMena());
+                cp.setEncadrerParMena(centre.getEncadrerParMena());
+                cp.setEstElectrifie(centre.getEstElectrifie());
+                cp.setADeLeau(centre.getADeLeau());
+                cp.setNombreVisite(centre.getNombreVisite());
+                cp.setLocalisationCentre(centre.getLocalisationCentre());
+                cp.setNomMilieuImplentation(centre.getNomMilieuImplentation());
+            }
+            case Sie s -> {
+                s.setIdLocalite(idLocalite);
+                s.setIdPeriodicite(idPeriodicite);
+                s.setIdIep(idIep);
+                s.setIdAutoriteAutorisation(idAutoriteAutorisation);
+                s.setIdNaturecentre(idNaturecentre);
+                s.setIdPromoteur(idPromoteur);
+                s.setCodeCentre(centre.getCodeCentre());
+                s.setAutorisation(centre.getAutorisation());
+                s.setEncadreurNonMena(centre.getEncadreurNonMena());
+                s.setEncadrerParMena(centre.getEncadrerParMena());
+                s.setEstElectrifie(centre.getEstElectrifie());
+                s.setADeLeau(centre.getADeLeau());
+                s.setNombreVisite(centre.getNombreVisite());
+                s.setLocalisationCentre(centre.getLocalisationCentre());
+                s.setNomMilieuImplentation(centre.getNomMilieuImplentation());
+            }
+            default -> throw new IllegalArgumentException("Type non géré: " + typedRow.getClass().getName());
+        }
     }
 
     private void seedAnneScolaires() {

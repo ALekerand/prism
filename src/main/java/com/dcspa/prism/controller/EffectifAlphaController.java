@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.dto.EffectifAlphaRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.EffectifAlpha;
@@ -143,12 +144,22 @@ public class EffectifAlphaController {
 	private Map<String, Object> toRow(EffectifAlpha e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idPeriodeActivite", e.getIdPeriodeActivite() != null ? e.getIdPeriodeActivite().getId() : null);
-		m.put("libellePeriodeActivite", e.getIdPeriodeActivite() != null ? e.getIdPeriodeActivite().getLibellePeriodeActivite() : null);
-		m.put("idCentre", e.getIdCentre() != null ? e.getIdCentre().getId() : null);
-		m.put("libelleCentre", e.getIdCentre() != null ? e.getIdCentre().getLibelleAlpha() : null);
-		m.put("idNiveauAlpha", e.getIdNiveauAlpha() != null ? e.getIdNiveauAlpha().getId() : null);
-		m.put("libelleNiveauAlpha", e.getIdNiveauAlpha() != null ? e.getIdNiveauAlpha().getLibelleNiveauAlpha() : null);
+		Integer idPeriodeActivite = JpaAssociationIds.intIdOrNull(e.getIdPeriodeActivite());
+		m.put("idPeriodeActivite", idPeriodeActivite);
+		m.put("libellePeriodeActivite", idPeriodeActivite == null ? null
+				: periodeActiviteRepository.findById(idPeriodeActivite.longValue())
+						.map(PeriodeActivite::getLibellePeriodeActivite)
+						.orElse(null));
+		Integer idCentre = JpaAssociationIds.intIdOrNull(e.getIdCentre());
+		m.put("idCentre", idCentre);
+		m.put("libelleCentre", idCentre == null ? null
+				: alphaRepository.findById(idCentre).map(Alpha::getLibelleAlpha).orElse(null));
+		Integer idNiveauAlpha = JpaAssociationIds.intIdOrNull(e.getIdNiveauAlpha());
+		m.put("idNiveauAlpha", idNiveauAlpha);
+		m.put("libelleNiveauAlpha", idNiveauAlpha == null ? null
+				: niveauAlphaRepository.findById(idNiveauAlpha.longValue())
+						.map(NiveauAlpha::getLibelleNiveauAlpha)
+						.orElse(null));
 		m.put("codeEffectifAlpha", e.getCodeEffectifAlpha());
 		m.put("effectifAlphaNiveauH", e.getEffectifAlphaNiveauH());
 		m.put("effectifAlphaNiveauF", e.getEffectifAlphaNiveauF());

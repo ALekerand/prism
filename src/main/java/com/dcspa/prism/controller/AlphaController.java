@@ -83,7 +83,9 @@ public class AlphaController {
 						a.getADeLeau(),
 						a.getNombreVisite(),
 						a.getLocalisationCentre(),
-						a.getNomMilieuImplentation()
+						a.getNomMilieuImplentation(),
+						a.getEncadreurNonMena(),
+						a.getEncadrerParMena()
 				))
 				.toList();
 		return ResponseEntity.ok(list);
@@ -154,7 +156,9 @@ public class AlphaController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 
@@ -277,7 +281,9 @@ public class AlphaController {
 				savedAlpha.getADeLeau(),
 				savedAlpha.getNombreVisite(),
 				savedAlpha.getLocalisationCentre(),
-				savedAlpha.getNomMilieuImplentation()
+				savedAlpha.getNomMilieuImplentation(),
+				savedAlpha.getEncadreurNonMena(),
+				savedAlpha.getEncadrerParMena()
 		));
 	}
 
@@ -307,7 +313,9 @@ public class AlphaController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 
@@ -328,6 +336,8 @@ public class AlphaController {
 			existing.setNombreVisite(req.getNombreVisite());
 			existing.setLocalisationCentre(req.getLocalisationCentre());
 			existing.setNomMilieuImplentation(req.getNomMilieuImplentation());
+			existing.setEncadreurNonMena(req.getEncadreurNonMena());
+			existing.setEncadrerParMena(req.getEncadrerParMena());
 		}
 		Alpha saved = alphaService.save(existing);
 		return ResponseEntity.ok(new CentreTypeListItem(
@@ -345,7 +355,9 @@ public class AlphaController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 

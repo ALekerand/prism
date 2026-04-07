@@ -72,7 +72,9 @@ public class CecController {
 						c.getADeLeau(),
 						c.getNombreVisite(),
 						c.getLocalisationCentre(),
-						c.getNomMilieuImplentation()
+						c.getNomMilieuImplentation(),
+						c.getEncadreurNonMena(),
+						c.getEncadrerParMena()
 				))
 				.toList();
 		return ResponseEntity.ok(list);
@@ -128,7 +130,9 @@ public class CecController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 
@@ -229,7 +233,9 @@ public class CecController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 
@@ -259,7 +265,9 @@ public class CecController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 
@@ -280,6 +288,8 @@ public class CecController {
 			existing.setNombreVisite(req.getNombreVisite());
 			existing.setLocalisationCentre(req.getLocalisationCentre());
 			existing.setNomMilieuImplentation(req.getNomMilieuImplentation());
+			existing.setEncadreurNonMena(req.getEncadreurNonMena());
+			existing.setEncadrerParMena(req.getEncadrerParMena());
 		}
 		Cec saved = cecService.save(existing);
 		return ResponseEntity.ok(new CentreTypeListItem(
@@ -297,7 +307,9 @@ public class CecController {
 				saved.getADeLeau(),
 				saved.getNombreVisite(),
 				saved.getLocalisationCentre(),
-				saved.getNomMilieuImplentation()
+				saved.getNomMilieuImplentation(),
+				saved.getEncadreurNonMena(),
+				saved.getEncadrerParMena()
 		));
 	}
 

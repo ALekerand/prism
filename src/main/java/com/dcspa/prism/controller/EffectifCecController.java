@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.entity.EffectifCec;
@@ -58,9 +59,9 @@ public class EffectifCecController {
 	private Map<String, Object> toRow(EffectifCec entity) {
 		Map<String, Object> row = new LinkedHashMap<>();
 		row.put("id", entity.getId());
-		row.put("idPeriodeActivite", entity.getIdPeriodeActivite() != null ? entity.getIdPeriodeActivite().getId() : null);
-		row.put("idNiveauSie", entity.getIdNiveauSie() != null ? entity.getIdNiveauSie().getId() : null);
-		row.put("idCentre", entity.getIdCentre() != null ? entity.getIdCentre().getId() : null);
+		row.put("idPeriodeActivite", JpaAssociationIds.intIdOrNull(entity.getIdPeriodeActivite()));
+		row.put("idNiveauSie", JpaAssociationIds.intIdOrNull(entity.getIdNiveauSie()));
+		row.put("idCentre", JpaAssociationIds.intIdOrNull(entity.getIdCentre()));
 		row.put("codeEffectifCec", entity.getCodeEffectifCec());
 		row.put("effectifCecMoins3F", entity.getEffectifCecMoins3F());
 		row.put("effectifCecMoins3H", entity.getEffectifCecMoins3H());

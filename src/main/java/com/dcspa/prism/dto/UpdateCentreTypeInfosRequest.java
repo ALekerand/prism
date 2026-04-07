@@ -21,5 +21,7 @@ public class UpdateCentreTypeInfosRequest {
 
     private String localisationCentre;
     private String nomMilieuImplentation;
+    private String encadreurNonMena;
+    private Boolean encadrerParMena;
 }
 
