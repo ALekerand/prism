@@ -2,6 +2,8 @@ package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.AppUser;
 import com.dcspa.prism.repositorybase.BaseRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 
 import java.util.Optional;
@@ -23,6 +25,10 @@ public interface AppUserRepository extends BaseRepository<AppUser, Integer> {
     @Override
     @EntityGraph(attributePaths = { "roles" })
     java.util.List<AppUser> findAll();
+
+    @Override
+    @EntityGraph(attributePaths = { "roles" })
+    Page<AppUser> findAll(Pageable pageable);
 
     boolean existsByRoles_Id(Integer roleId);
 

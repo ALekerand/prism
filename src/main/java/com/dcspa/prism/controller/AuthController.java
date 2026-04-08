@@ -25,6 +25,7 @@ public class AuthController {
 
     private final AuthService authService;
 
+    // Authentifie l’utilisateur et renvoie le jeton JWT.
     @PostMapping("/login")
     public Mono<ResponseEntity<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         return Mono.fromCallable(() -> authService.login(request))
@@ -33,15 +34,12 @@ public class AuthController {
                         e -> Mono.just(ResponseEntity.status(401).build()));
     }
 
+    // Retourne l’identité et les permissions du jeton courant.
     @GetMapping("/me")
     public Mono<ResponseEntity<Map<String, Object>>> me(@AuthenticationPrincipal AuthUser user) {
         if (user == null) {
             return Mono.just(ResponseEntity.status(401).build());
         }
-        return Mono.just(ResponseEntity.ok(Map.of(
-                "userId", user.getUserId(),
-                "username", user.getUsername(),
-                "permissions", user.getPermissions()
-        )));
+        return Mono.just(ResponseEntity.ok(authService.buildAuthenticatedUserPayload(user)));
     }
 }

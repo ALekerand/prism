@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +29,7 @@ public class AuthService implements UserDetailsService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
+    // Charge l’utilisateur Spring Security à partir du nom de connexion.
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -36,6 +38,7 @@ public class AuthService implements UserDetailsService {
         return toAuthUser(user);
     }
 
+    // Même chargement que loadUserByUsername, typé AuthUser (permissions incluses).
     @Transactional(readOnly = true)
     public AuthUser loadUserWithPermissions(String username) {
         AppUser user = appUserRepository.findByUsername(username)
@@ -43,6 +46,7 @@ public class AuthService implements UserDetailsService {
         return toAuthUser(user);
     }
 
+    // Vérifie mot de passe et compte actif, puis émet la réponse avec JWT et rôles.
     public LoginResponse login(LoginRequest request) {
         UserDetails userDetails = loadUserByUsername(request.getUsername());
         if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
@@ -68,6 +72,16 @@ public class AuthService implements UserDetailsService {
                 .build();
     }
 
+    // Corps JSON pour GET /api/auth/me.
+    public Map<String, Object> buildAuthenticatedUserPayload(AuthUser user) {
+        return Map.of(
+                "userId", user.getUserId(),
+                "username", user.getUsername(),
+                "permissions", user.getPermissions()
+        );
+    }
+
+    // Construit le principal avec la liste des permissions fonctionnelles.
     private AuthUser toAuthUser(AppUser user) {
         List<String> permissions = new ArrayList<>();
         for (AppRole role : user.getRoles()) {

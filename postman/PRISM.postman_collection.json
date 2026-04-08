@@ -2582,6 +2582,77 @@
       ]
     },
     {
+      "name": "VisitesController (/api/visites)",
+      "item": [
+        {
+          "name": "GET liste paginée",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/visites?page=0&size=20&sort=id,asc&q=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "visites"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "Page 0-based"
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "Taille de page"
+                },
+                {
+                  "key": "sort",
+                  "value": "id,asc",
+                  "description": "Tri"
+                },
+                {
+                  "key": "q",
+                  "value": "",
+                  "description": "Recherche (code doc., centre, nature, type, id si entier)"
+                },
+                {
+                  "key": "idCentre",
+                  "value": "",
+                  "description": "Filtrer par id centre Alpha (optionnel)",
+                  "disabled": true
+                },
+                {
+                  "key": "idNatureDocument",
+                  "value": "",
+                  "description": "Optionnel",
+                  "disabled": true
+                },
+                {
+                  "key": "idTypeDocument",
+                  "value": "",
+                  "description": "Optionnel",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "AnneScolaireController (/api/anneescolaire)",
       "item": [
         {
@@ -4708,7 +4779,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/alpha",
+              "raw": "{{baseUrl}}/api/v1/alpha?page=0&size=20&sort=id,asc&q=",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4716,6 +4787,28 @@
                 "api",
                 "v1",
                 "alpha"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0",
+                  "description": "Page 0-based (Spring Data)"
+                },
+                {
+                  "key": "size",
+                  "value": "20",
+                  "description": "Taille de page (plafonnée côté serveur)"
+                },
+                {
+                  "key": "sort",
+                  "value": "id,asc",
+                  "description": "Tri (ex. id,asc)"
+                },
+                {
+                  "key": "q",
+                  "value": "",
+                  "description": "Recherche globale optionnelle (OR sur colonnes texte + égalité id si entier). Autres filtres nommés possibles (vides ignorés)."
+                }
               ]
             }
           }
@@ -5511,13 +5604,35 @@
                   ]
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/cec",
+                  "raw": "{{baseUrl}}/api/cec?page=0&size=20&sort=id,asc&q=",
                   "host": [
                     "{{baseUrl}}"
                   ],
                   "path": [
                     "api",
                     "cec"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0",
+                      "description": "Page 0-based"
+                    },
+                    {
+                      "key": "size",
+                      "value": "20",
+                      "description": "Taille de page"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "id,asc",
+                      "description": "Tri"
+                    },
+                    {
+                      "key": "q",
+                      "value": "",
+                      "description": "Recherche globale optionnelle (OR texte + id). Filtres nommés en plus (vides ignorés)."
+                    }
                   ]
                 }
               }
@@ -6143,13 +6258,35 @@
                   ]
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/cp",
+                  "raw": "{{baseUrl}}/api/cp?page=0&size=20&sort=id,asc&q=",
                   "host": [
                     "{{baseUrl}}"
                   ],
                   "path": [
                     "api",
                     "cp"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0",
+                      "description": "Page 0-based"
+                    },
+                    {
+                      "key": "size",
+                      "value": "20",
+                      "description": "Taille de page"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "id,asc",
+                      "description": "Tri"
+                    },
+                    {
+                      "key": "q",
+                      "value": "",
+                      "description": "Recherche globale optionnelle (OR texte + id). Filtres nommés en plus (vides ignorés)."
+                    }
                   ]
                 }
               }
@@ -14517,13 +14654,35 @@
                   ]
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/sie",
+                  "raw": "{{baseUrl}}/api/sie?page=0&size=20&sort=id,asc&q=",
                   "host": [
                     "{{baseUrl}}"
                   ],
                   "path": [
                     "api",
                     "sie"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0",
+                      "description": "Page 0-based"
+                    },
+                    {
+                      "key": "size",
+                      "value": "20",
+                      "description": "Taille de page"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "id,asc",
+                      "description": "Tri"
+                    },
+                    {
+                      "key": "q",
+                      "value": "",
+                      "description": "Recherche globale optionnelle (OR texte + id). Filtres nommés en plus (vides ignorés)."
+                    }
                   ]
                 }
               }

@@ -5,6 +5,9 @@ import com.dcspa.prism.controller.support.ReferentialPutHelper;
 import com.dcspa.prism.entity.Promoteur;
 import com.dcspa.prism.service.PromoteurService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +30,13 @@ public class PromoteurController {
 	@GetMapping
 	public ResponseEntity<List<Promoteur>> findAll() {
 		return ResponseEntity.ok(promoteurService.findAll());
+	}
+
+	/** Liste paginée (écran « Promoteurs ») ; {@link #findAll()} reste utilisé pour les sélecteurs (chargement complet). */
+	@GetMapping("/paged")
+	public ResponseEntity<Page<Promoteur>> findAllPaged(
+			@PageableDefault(size = 20, sort = "id") Pageable pageable) {
+		return ResponseEntity.ok(promoteurService.findAll(pageable));
 	}
 
 	@GetMapping("/{id}")

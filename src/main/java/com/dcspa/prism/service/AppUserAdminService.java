@@ -7,7 +7,10 @@ import com.dcspa.prism.entity.AppRole;
 import com.dcspa.prism.entity.AppUser;
 import com.dcspa.prism.repository.AppRoleRepository;
 import com.dcspa.prism.repository.AppUserRepository;
+import com.dcspa.prism.service.pagination.PageableUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +30,9 @@ public class AppUserAdminService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public List<AppUserAdminResponse> findAllWithRoles() {
-        // AppUserRepository.findAll() est surchargé avec @EntityGraph(roles)
-        return appUserRepository.findAll()
-                .stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public Page<AppUserAdminResponse> findAllWithRoles(Pageable pageable) {
+        Pageable p = PageableUtils.cap(pageable);
+        return appUserRepository.findAll(p).map(this::toDto);
     }
 
     @Transactional

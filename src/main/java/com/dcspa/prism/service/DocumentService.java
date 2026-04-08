@@ -1,8 +1,15 @@
 package com.dcspa.prism.service;
 
+import com.dcspa.prism.dto.DocumentListFilter;
+import com.dcspa.prism.dto.DocumentListItem;
 import com.dcspa.prism.entity.Document;
 import com.dcspa.prism.repository.DocumentRepository;
+import com.dcspa.prism.repository.spec.DocumentSpecifications;
+import com.dcspa.prism.service.pagination.PageableUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +25,14 @@ public class DocumentService {
 	@Transactional(readOnly = true)
 	public List<Document> findAll() {
 		return documentRepository.findAll();
+	}
+
+	/** Liste paginée pour le module Visites (même donnée que {@code Document}, forme aplatie). */
+	@Transactional(readOnly = true)
+	public Page<DocumentListItem> findAllListItems(Pageable pageable, DocumentListFilter filter) {
+		Pageable p = PageableUtils.cap(pageable);
+		Specification<Document> spec = DocumentSpecifications.fromFilter(filter);
+		return documentRepository.findAll(spec, p).map(DocumentListItemMapper::fromDocument);
 	}
 
 	@Transactional(readOnly = true)

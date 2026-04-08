@@ -5,10 +5,12 @@ import com.dcspa.prism.dto.AppUserAdminUpsertRequest;
 import com.dcspa.prism.dto.AppUserUpdateRolesRequest;
 import com.dcspa.prism.service.AppUserAdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/app-users")
@@ -18,8 +20,9 @@ public class AppUserAdminController {
     private final AppUserAdminService appUserAdminService;
 
     @GetMapping
-    public ResponseEntity<List<AppUserAdminResponse>> findAll() {
-        return ResponseEntity.ok(appUserAdminService.findAllWithRoles());
+    public ResponseEntity<Page<AppUserAdminResponse>> findAll(
+            @PageableDefault(size = 20, sort = "id") Pageable pageable) {
+        return ResponseEntity.ok(appUserAdminService.findAllWithRoles(pageable));
     }
 
     @PostMapping

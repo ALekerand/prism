@@ -2,6 +2,7 @@ package com.dcspa.prism.service;
 
 import com.dcspa.prism.dto.PersonnelAdminRequest;
 import com.dcspa.prism.dto.PersonnelAdminResponse;
+import com.dcspa.prism.dto.PersonnelListFilter;
 import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.Civilite;
 import com.dcspa.prism.entity.Fonction;
@@ -16,11 +17,14 @@ import com.dcspa.prism.repository.NiveauPersonnelRepository;
 import com.dcspa.prism.repository.PersonnelRepository;
 import com.dcspa.prism.repository.StatutPersonnelRepository;
 import com.dcspa.prism.repository.StructureFormationCertificationRepository;
+import com.dcspa.prism.repository.spec.PersonnelSpecifications;
+import com.dcspa.prism.service.pagination.PageableUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,11 +38,10 @@ public class PersonnelAdminService {
     private final StatutPersonnelRepository statutPersonnelRepository;
 
     @Transactional(readOnly = true)
-    public List<PersonnelAdminResponse> listByCentre(Integer centreId) {
-        return personnelRepository.findByIdCentre_Id(centreId)
-                .stream()
-                .map(this::toDto)
-                .toList();
+    public Page<PersonnelAdminResponse> listByCentre(Integer centreId, PersonnelListFilter filter, Pageable pageable) {
+        Pageable p = PageableUtils.cap(pageable);
+        Specification<Personnel> spec = PersonnelSpecifications.byCentreAndFilter(centreId, filter);
+        return personnelRepository.findAll(spec, p).map(this::toDto);
     }
 
     @Transactional(readOnly = true)
