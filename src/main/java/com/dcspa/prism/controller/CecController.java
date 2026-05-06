@@ -3,6 +3,8 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.dto.CecListFilter;
+import com.dcspa.prism.dto.CentreSearchRequest;
+import com.dcspa.prism.dto.CentreWithPromoteurItem;
 import com.dcspa.prism.dto.CentreTypeListItem;
 import com.dcspa.prism.dto.SimpleCentreCreateRequest;
 import com.dcspa.prism.dto.SimpleCentreTypeFullCreateRequest;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/cec")
 @RequiredArgsConstructor
@@ -42,22 +46,27 @@ public class CecController {
 
 	// Détail d’un CEC par identifiant.
 	@GetMapping("/{id}")
-	public ResponseEntity<Cec> findById(@PathVariable Integer id) {
-		return cecService.findById(id)
+	public ResponseEntity<CentreWithPromoteurItem> findById(@PathVariable Integer id) {
+		return cecService.findDetailedById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
-	// Crée un CEC rattaché à un centre existant.
-	@PostMapping
-	public ResponseEntity<CentreTypeListItem> create(@RequestBody SimpleCentreCreateRequest req) {
-		return ResponseEntity.status(201).body(cecService.create(req));
+	@PostMapping("/search")
+	public ResponseEntity<List<CentreWithPromoteurItem>> search(@RequestBody(required = false) CentreSearchRequest request) {
+		return ResponseEntity.ok(cecService.searchDetailed(request));
 	}
 
-	// Création complète : promoteur, centre puis fiche CEC.
-	@PostMapping("/full")
-	public ResponseEntity<CentreTypeListItem> createFull(@RequestBody SimpleCentreTypeFullCreateRequest req) {
+	// Création principale : promoteur, centre puis fiche CEC.
+	@PostMapping
+	public ResponseEntity<CentreTypeListItem> create(@RequestBody SimpleCentreTypeFullCreateRequest req) {
 		return ResponseEntity.status(201).body(cecService.createFull(req));
+	}
+
+	// Ancien endpoint simple conservé avec préfixe old.
+	@PostMapping("/old")
+	public ResponseEntity<CentreTypeListItem> createOld(@RequestBody SimpleCentreCreateRequest req) {
+		return ResponseEntity.status(201).body(cecService.create(req));
 	}
 
 	// Mise à jour d’un CEC en conservant les champs auto-générés.

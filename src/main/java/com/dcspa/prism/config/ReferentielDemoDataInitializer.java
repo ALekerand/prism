@@ -78,6 +78,8 @@ public class ReferentielDemoDataInitializer {
     private final DrenaRepository drenaRepository;
     private final IeppRepository ieppRepository;
     private final PromoteurRepository promoteurRepository;
+    private final PersonnephysiqueRepository personnephysiqueRepository;
+    private final TypePersonneMoraleRepository typePersonneMoraleRepository;
     private final CentreRepository centreRepository;
     private final PersonnelRepository personnelRepository;
 
@@ -93,6 +95,7 @@ public class ReferentielDemoDataInitializer {
         seedLocalites();
         seedDrenas();
         seedIeps();
+        seedTypePersonneMorale();
         seedPromoteurs();
         seedNiveauxPersonnel();
 
@@ -339,7 +342,33 @@ public class ReferentielDemoDataInitializer {
         Promoteur p = new Promoteur();
         p.setCodePromoteur("PROMO1");
         p.setLibellePromoteur("Promoteur Démo");
-        promoteurRepository.save(p);
+        p.setTypePromoteur(TypePromoteur.PHYSIQUE);
+        Promoteur saved = promoteurRepository.save(p);
+
+        Personnephysique physique = new Personnephysique();
+        physique.setPromoteur(saved);
+        physique.setCodePromoteur(saved.getCodePromoteur());
+        physique.setLibellePromoteur(saved.getLibellePromoteur());
+        physique.setLibellePersonnePhysique("Promoteur Démo");
+        personnephysiqueRepository.save(physique);
+    }
+
+    private void seedTypePersonneMorale() {
+        if (typePersonneMoraleRepository.count() > 0) return;
+        saveTypePersonneMorale("PTF");
+        saveTypePersonneMorale("MINISTERE");
+        saveTypePersonneMorale("ONG");
+        saveTypePersonneMorale("SOCIETE CIVILE");
+        saveTypePersonneMorale("ASSOCIATION");
+        saveTypePersonneMorale("COMMUNAUTE");
+        saveTypePersonneMorale("PARTICULIER");
+        saveTypePersonneMorale("AUTRE");
+    }
+
+    private void saveTypePersonneMorale(String libelle) {
+        TypePersonneMorale type = new TypePersonneMorale();
+        type.setLibelle(libelle);
+        typePersonneMoraleRepository.save(type);
     }
 
     private void seedNiveauxPersonnel() {

@@ -20,12 +20,12 @@ public class PersonnephysiqueService {
 
 	@Transactional(readOnly = true)
 	public Optional<Personnephysique> findById(Integer id) {
-		return id == null ? Optional.empty() : repository.findById(id.longValue());
+		return id == null ? Optional.empty() : repository.findById(id);
 	}
 
 	@Transactional
 	public Personnephysique save(Personnephysique entity) { return repository.save(entity); }
 
 	@Transactional
-	public void deleteById(Integer id) { if (id != null) repository.deleteById(id.longValue()); }
+	public void deleteById(Integer id) { if (id != null) repository.deleteById(id); }
 }

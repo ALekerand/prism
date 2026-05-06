@@ -58,7 +58,7 @@ public class DataInitializer {
         AppUser nebdev = new AppUser();
         nebdev.setUsername(USERNAME);
         nebdev.setPasswordHash(passwordEncoder.encode(DEFAULT_PASSWORD));
-        nebdev.setEmail("nebdev@prism.local");
+        nebdev.setEmail("nebdev@yopmail.com");
         nebdev.setActif(true);
         nebdev.setRoles(Set.of(superRoot));
         appUserRepository.save(nebdev);

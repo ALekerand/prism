@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/LangueApprentissages")
+@RequestMapping("/api/LangueApprentissages")
 @RequiredArgsConstructor
 public class LangueApprentissageController {
 
@@ -70,4 +70,5 @@ public class LangueApprentissageController {
 		return la;
 	}
 }
+
 

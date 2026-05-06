@@ -1,0 +1,64 @@
+package com.dcspa.prism.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "controle")
+public class Controle {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_CONTROLE", nullable = false)
+	private Integer id;
+
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "ID_ALPHA", nullable = false)
+	private Alpha idAlpha;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_DISCIPLINE")
+	private Discipline idDiscipline;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_MANUEL")
+	private Manuel idManuel;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_NIVEAU_CONTROLE")
+	private NiveauControle idNiveauControle;
+
+	@Column(name = "DATE_DEMARRAGE_APPREN")
+	private LocalDate dateDemarrageAppren;
+
+	@Column(name = "JOUR_HEURE_FORMATION", length = 100)
+	private String jourHeureFormation;
+
+	@Column(name = "NOMBRE_KIT_MANUELS_SYLLABAIRE")
+	private Integer nombreKitManuelsSyllabaire;
+
+	@Column(name = "NOMBRE_KIT_MANUELS_CALCULAIRE")
+	private Integer nombreKitManuelsCalculaire;
+
+	@Column(name = "NOMBRE_KIT_MANUELS_CVC")
+	private Integer nombreKitManuelsCvc;
+
+	@Column(name = "NOMBRE_KIT_AUTRE")
+	private Integer nombreKitAutre;
+
+	@Column(name = "CONFORMITE_PROGRAMME")
+	private Boolean conformiteProgramme;
+}

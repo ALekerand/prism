@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/TypeAlphas")
+@RequestMapping("/api/TypeAlphas")
 @RequiredArgsConstructor
 public class TypeAlphaController {
 
@@ -53,3 +53,4 @@ public class TypeAlphaController {
 		return ResponseEntity.noContent().build();
 	}
 }
+

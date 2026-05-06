@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/Regimealphabetisations")
+@RequestMapping("/api/Regimealphabetisations")
 @RequiredArgsConstructor
 public class RegimealphabetisationController {
 
@@ -53,3 +53,4 @@ public class RegimealphabetisationController {
 		return ResponseEntity.noContent().build();
 	}
 }
+

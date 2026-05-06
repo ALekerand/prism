@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/TypeDocuments")
+@RequestMapping("/api/TypeDocuments")
 @RequiredArgsConstructor
 public class TypeDocumentController {
 
@@ -53,3 +53,4 @@ public class TypeDocumentController {
 		return ResponseEntity.noContent().build();
 	}
 }
+

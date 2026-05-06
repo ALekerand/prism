@@ -1,5 +1,6 @@
 package com.dcspa.prism.dto;
 
+import com.dcspa.prism.entity.TypePromoteur;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,5 +15,30 @@ public class PromoteurUpsertRequest {
 
     private String codePromoteur;
     private String libellePromoteur;
+    private TypePromoteur typePromoteur;
+    private PersonnePhysiquePayload personnePhysique;
+    private PersonneMoralePayload personneMorale;
+
+    @Getter
+    @Setter
+    public static class PersonnePhysiquePayload {
+        private String libellePersonnePhysique;
+        private String nom;
+        private String prenom;
+        private String contact;
+        private String fonction;
+    }
+
+    @Getter
+    @Setter
+    public static class PersonneMoralePayload {
+        private String denomination;
+        private String nomProgramme;
+        private String nomRepresentant;
+        private String contact;
+        private String boitePostale;
+        private String mail;
+        private Integer idTypePersonneMorale;
+    }
 }
 

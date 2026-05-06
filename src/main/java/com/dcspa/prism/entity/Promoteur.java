@@ -27,5 +27,8 @@ public class Promoteur {
     @Column(name = "LIBELLE_PROMOTEUR", length = 100)
     private String libellePromoteur;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TYPE_PROMOTEUR", length = 20)
+    private TypePromoteur typePromoteur;
 
 }

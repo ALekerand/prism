@@ -13,6 +13,7 @@ public class UpdateCentreTypeInfosRequest {
     private Integer idNaturecentre;
     private Integer idPeriodicite;
     private Integer idAutoriteAutorisation;
+    private Integer idMilieuImplentation;
 
     private Boolean autorisation;
     private Boolean estElectrifie;

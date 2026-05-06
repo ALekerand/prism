@@ -4,7 +4,9 @@ import com.dcspa.prism.controller.support.ReferentialPutHelper;
 import com.dcspa.prism.dto.AlphaCreateRequest;
 import com.dcspa.prism.dto.AlphaFullCreateRequest;
 import com.dcspa.prism.dto.AlphaListFilter;
+import com.dcspa.prism.dto.CentreSearchRequest;
 import com.dcspa.prism.dto.CentreTypeListItem;
+import com.dcspa.prism.dto.CentreWithPromoteurItem;
 import com.dcspa.prism.dto.UpdateCentreTypeInfosRequest;
 import com.dcspa.prism.dto.UpdateLibelleRequest;
 import com.dcspa.prism.entity.Alpha;
@@ -24,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v1/alpha")
+@RequestMapping("/api/alpha")
 @RequiredArgsConstructor
 public class AlphaController {
 
@@ -41,22 +45,27 @@ public class AlphaController {
 
 	// Détail d’un enregistrement Alpha par identifiant.
 	@GetMapping("/{id}")
-	public ResponseEntity<Alpha> findById(@PathVariable Integer id) {
-		return alphaService.findById(id)
+	public ResponseEntity<CentreWithPromoteurItem> findById(@PathVariable Integer id) {
+		return alphaService.findDetailedById(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
-	// Crée un Alpha lié à un centre et aux références métier (campagne, type, etc.).
-	@PostMapping
-	public ResponseEntity<CentreTypeListItem> create(@RequestBody AlphaCreateRequest req) {
-		return ResponseEntity.status(201).body(alphaService.create(req));
+	@PostMapping("/search")
+	public ResponseEntity<List<CentreWithPromoteurItem>> search(@RequestBody(required = false) CentreSearchRequest request) {
+		return ResponseEntity.ok(alphaService.searchDetailed(request));
 	}
 
-	// Création complète : promoteur, centre puis Alpha (codes auto côté persistance).
-	@PostMapping("/full")
-	public ResponseEntity<CentreTypeListItem> createFull(@RequestBody AlphaFullCreateRequest req) {
+	// Création principale : promoteur, centre puis Alpha.
+	@PostMapping
+	public ResponseEntity<CentreTypeListItem> create(@RequestBody AlphaFullCreateRequest req) {
 		return ResponseEntity.status(201).body(alphaService.createFull(req));
+	}
+
+	// Ancien endpoint simple conservé avec préfixe old.
+	@PostMapping("/old")
+	public ResponseEntity<CentreTypeListItem> createOld(@RequestBody AlphaCreateRequest req) {
+		return ResponseEntity.status(201).body(alphaService.create(req));
 	}
 
 	// Mise à jour d’un Alpha en conservant les champs auto-générés.
@@ -88,3 +97,4 @@ public class AlphaController {
 		return ResponseEntity.noContent().build();
 	}
 }
+

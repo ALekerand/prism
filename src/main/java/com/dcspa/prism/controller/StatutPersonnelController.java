@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/StatutPersonnels")
+@RequestMapping("/api/StatutPersonnels")
 @RequiredArgsConstructor
 public class StatutPersonnelController {
 
@@ -53,3 +53,4 @@ public class StatutPersonnelController {
 		return ResponseEntity.noContent().build();
 	}
 }
+

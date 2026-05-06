@@ -1,6 +1,8 @@
 package com.dcspa.prism.service;
 
 import com.dcspa.prism.dto.CentreCreatePayload;
+import com.dcspa.prism.dto.CentreSearchRequest;
+import com.dcspa.prism.dto.CentreWithPromoteurItem;
 import com.dcspa.prism.dto.CentreTypeListItem;
 import com.dcspa.prism.dto.SimpleCentreCreateRequest;
 import com.dcspa.prism.dto.SieListFilter;
@@ -11,16 +13,22 @@ import com.dcspa.prism.entity.AutoriteAutorisation;
 import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.Iep;
 import com.dcspa.prism.entity.LocaliteDImplantation;
+import com.dcspa.prism.entity.MilieuImplantation;
 import com.dcspa.prism.entity.Naturecentre;
 import com.dcspa.prism.entity.Periodicite;
+import com.dcspa.prism.entity.Personnephysique;
+import com.dcspa.prism.entity.Personnemorale;
 import com.dcspa.prism.entity.Promoteur;
 import com.dcspa.prism.entity.Sie;
 import com.dcspa.prism.repository.AutoriteAutorisationRepository;
 import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.repository.IeppRepository;
 import com.dcspa.prism.repository.LocaliteDImplantationRepository;
+import com.dcspa.prism.repository.MilieuImplantationRepository;
 import com.dcspa.prism.repository.NaturecentreRepository;
 import com.dcspa.prism.repository.PeriodiciteRepository;
+import com.dcspa.prism.repository.PersonnephysiqueRepository;
+import com.dcspa.prism.repository.PersonnemoraleRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.repository.SieRepository;
 import com.dcspa.prism.repository.spec.SimpleCentreTypeSpecifications;
@@ -33,6 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,12 +52,16 @@ public class SieService {
 	private final SieRepository sieRepository;
 	private final CentreRepository centreRepository;
 	private final CentreService centreService;
-	private final PromoteurRepository promoteurRepository;
+	private final PromoteurUpsertService promoteurUpsertService;
 	private final LocaliteDImplantationRepository localiteRepository;
+	private final MilieuImplantationRepository milieuImplantationRepository;
 	private final IeppRepository iepRepository;
 	private final NaturecentreRepository naturecentreRepository;
 	private final PeriodiciteRepository periodiciteRepository;
 	private final AutoriteAutorisationRepository autoriteAutorisationRepository;
+	private final PromoteurRepository promoteurRepository;
+	private final PersonnephysiqueRepository personnephysiqueRepository;
+	private final PersonnemoraleRepository personnemoraleRepository;
 
 	// Charge tous les SIE.
 	@Transactional(readOnly = true)
@@ -68,6 +81,20 @@ public class SieService {
 	@Transactional(readOnly = true)
 	public Optional<Sie> findById(Integer id) {
 		return sieRepository.findById(id);
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<CentreWithPromoteurItem> findDetailedById(Integer id) {
+		return findById(id).map(this::toDetailedItem);
+	}
+
+	@Transactional(readOnly = true)
+	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request) {
+		Map<String, String> criteria = request == null ? null : request.getCriteria();
+		return sieRepository.findAll().stream()
+				.map(this::toDetailedItem)
+				.filter(item -> CentreDetailedSearchSupport.matchesCriteria(item, criteria))
+				.toList();
 	}
 
 	// Persistance avec contrôle du centre obligatoire.
@@ -100,16 +127,7 @@ public class SieService {
 		if (req.getPromoteur() == null) throw new IllegalArgumentException("promoteur est obligatoire");
 
 		CentreCreatePayload c = req.getCentre();
-		Promoteur promoteur;
-		if (req.getPromoteur().getId() != null) {
-			promoteur = promoteurRepository.findById(req.getPromoteur().getId())
-					.orElseThrow(() -> new IllegalArgumentException("Promoteur introuvable: " + req.getPromoteur().getId()));
-		} else {
-			promoteur = new Promoteur();
-			promoteur.setCodePromoteur(req.getPromoteur().getCodePromoteur());
-			promoteur.setLibellePromoteur(req.getPromoteur().getLibellePromoteur());
-			promoteur = promoteurRepository.save(promoteur);
-		}
+		Promoteur promoteur = promoteurUpsertService.resolveOrCreate(req.getPromoteur());
 
 		LocaliteDImplantation localite = localiteRepository.findById(Objects.requireNonNull(c.getLocaliteId(), "localiteId est obligatoire"))
 				.orElseThrow(() -> new IllegalArgumentException("Localite introuvable: " + c.getLocaliteId()));
@@ -144,7 +162,7 @@ public class SieService {
 		centre.setADeLeau(c.getADeLeau());
 		centre.setNombreVisite(c.getNombreVisite());
 		centre.setLocalisationCentre(c.getLocalisationCentre());
-		centre.setNomMilieuImplentation(c.getNomMilieuImplentation());
+		centre.setNomMilieuImplentation(resolveNomMilieuImplentation(c.getIdMilieuImplentation(), localite));
 		Centre savedCentre = centreService.save(centre);
 
 		Sie entity = new Sie();
@@ -182,7 +200,7 @@ public class SieService {
 			existing.setADeLeau(req.getADeLeau());
 			existing.setNombreVisite(req.getNombreVisite());
 			existing.setLocalisationCentre(req.getLocalisationCentre());
-			existing.setNomMilieuImplentation(req.getNomMilieuImplentation());
+			existing.setNomMilieuImplentation(resolveNomMilieuImplentationForUpdate(req, existing.getIdLocalite()));
 			existing.setEncadreurNonMena(req.getEncadreurNonMena());
 			existing.setEncadrerParMena(req.getEncadrerParMena());
 		}
@@ -220,4 +238,135 @@ public class SieService {
 		sie.setLocalisationCentre(centre.getLocalisationCentre());
 		sie.setNomMilieuImplentation(centre.getNomMilieuImplentation());
 	}
+
+	private CentreWithPromoteurItem toDetailedItem(Sie sie) {
+		CentreWithPromoteurItem item = new CentreWithPromoteurItem();
+		item.setIdCentre(sie.getId());
+		item.setCodeCentre(sie.getCodeCentre());
+		item.setLibelle(sie.getLibelleSie());
+		item.setIdLocalite(sie.getIdLocalite());
+		item.setIdIep(sie.getIdIep());
+		item.setIdNaturecentre(sie.getIdNaturecentre());
+		item.setIdPeriodicite(sie.getIdPeriodicite());
+		item.setIdAutoriteAutorisation(sie.getIdAutoriteAutorisation());
+		item.setAutorisation(sie.getAutorisation());
+		item.setEstElectrifie(sie.getEstElectrifie());
+		item.setADeLeau(sie.getADeLeau());
+		item.setNombreVisite(sie.getNombreVisite());
+		item.setLocalisationCentre(sie.getLocalisationCentre());
+		item.setNomMilieuImplentation(sie.getNomMilieuImplentation());
+		item.setEncadreurNonMena(sie.getEncadreurNonMena());
+		item.setEncadrerParMena(sie.getEncadrerParMena());
+		attachReferences(item, sie);
+		attachPromoteur(item, sie.getIdPromoteur());
+		return item;
+	}
+
+	private void attachReferences(CentreWithPromoteurItem item, Sie sie) {
+		if (sie.getIdLocalite() != null) {
+			localiteRepository.findById(sie.getIdLocalite()).ifPresent(localite -> {
+				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+				ref.setId(localite.getId());
+				ref.setCode(localite.getCodeLocalite());
+				ref.setLibelle(localite.getNomLocalite());
+				item.setLocalite(ref);
+			});
+		}
+		if (sie.getIdIep() != null) {
+			iepRepository.findById(sie.getIdIep()).ifPresent(iep -> {
+				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+				ref.setId(iep.getId());
+				ref.setCode(iep.getCodeIep());
+				ref.setLibelle(iep.getNomIep());
+				item.setIep(ref);
+			});
+		}
+		if (sie.getIdNaturecentre() != null) {
+			naturecentreRepository.findById(sie.getIdNaturecentre()).ifPresent(nature -> {
+				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+				ref.setId(nature.getId());
+				ref.setCode(nature.getCodeNatureCentre());
+				ref.setLibelle(nature.getLibelleNatureCentre());
+				item.setNaturecentre(ref);
+			});
+		}
+		if (sie.getIdPeriodicite() != null) {
+			periodiciteRepository.findById(sie.getIdPeriodicite().longValue()).ifPresent(periodicite -> {
+				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+				ref.setId(periodicite.getId().intValue());
+				ref.setCode(periodicite.getCodePeriodicite());
+				ref.setLibelle(periodicite.getLibellePeriodicite());
+				item.setPeriodicite(ref);
+			});
+		}
+		if (sie.getIdAutoriteAutorisation() != null) {
+			autoriteAutorisationRepository.findById(sie.getIdAutoriteAutorisation()).ifPresent(autorite -> {
+				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+				ref.setId(autorite.getId());
+				ref.setCode(autorite.getCodeAutorisation());
+				ref.setLibelle(autorite.getLibelleAutoriteAutorisation());
+				item.setAutoriteAutorisation(ref);
+			});
+		}
+	}
+
+	private String resolveNomMilieuImplentation(Integer milieuId, LocaliteDImplantation localite) {
+		if (milieuId != null) {
+			MilieuImplantation milieu = milieuImplantationRepository.findById(milieuId)
+					.orElseThrow(() -> new IllegalArgumentException("Milieu implantation introuvable: " + milieuId));
+			return milieu.getLibelleTypeImplentation();
+		}
+		if (localite != null && localite.getIdMilieuImplentation() != null) {
+			return localite.getIdMilieuImplentation().getLibelleTypeImplentation();
+		}
+		return null;
+	}
+
+	private String resolveNomMilieuImplentationForUpdate(UpdateCentreTypeInfosRequest req, Integer currentLocaliteId) {
+		Integer localiteId = req.getIdLocalite() != null ? req.getIdLocalite() : currentLocaliteId;
+		LocaliteDImplantation localite = null;
+		if (localiteId != null) {
+			localite = localiteRepository.findById(localiteId).orElse(null);
+		}
+		return resolveNomMilieuImplentation(req.getIdMilieuImplentation(), localite);
+	}
+
+	private void attachPromoteur(CentreWithPromoteurItem item, Integer promoteurId) {
+		if (promoteurId == null) return;
+		Promoteur promoteur = promoteurRepository.findById(promoteurId).orElse(null);
+		if (promoteur == null) return;
+
+		CentreWithPromoteurItem.PromoteurDetails details = new CentreWithPromoteurItem.PromoteurDetails();
+		details.setIdPromoteur(promoteur.getId());
+		details.setCodePromoteur(promoteur.getCodePromoteur());
+		details.setLibellePromoteur(promoteur.getLibellePromoteur());
+		details.setTypePromoteur(promoteur.getTypePromoteur());
+
+		Personnephysique pp = personnephysiqueRepository.findById(promoteurId).orElse(null);
+		if (pp != null) {
+			CentreWithPromoteurItem.PersonnePhysiqueDetails p = new CentreWithPromoteurItem.PersonnePhysiqueDetails();
+			p.setLibellePersonnePhysique(pp.getLibellePersonnePhysique());
+			p.setNom(pp.getNom());
+			p.setPrenom(pp.getPrenom());
+			p.setContact(pp.getContact());
+			p.setFonction(pp.getFonction());
+			details.setPersonnePhysique(p);
+		}
+
+		Personnemorale pm = personnemoraleRepository.findById(promoteurId).orElse(null);
+		if (pm != null) {
+			CentreWithPromoteurItem.PersonneMoraleDetails m = new CentreWithPromoteurItem.PersonneMoraleDetails();
+			m.setDenomination(pm.getDenomination());
+			m.setNomProgramme(pm.getNomProgramme());
+			m.setNomRepresentant(pm.getNomRepresentantLegalStructure());
+			m.setContact(pm.getContact());
+			m.setBoitePostale(pm.getBoitePostale());
+			m.setMail(pm.getMail());
+			m.setIdTypePersonneMorale(pm.getTypePersonneMorale() != null ? pm.getTypePersonneMorale().getId() : null);
+			m.setLibelleTypePersonneMorale(pm.getTypePersonneMorale() != null ? pm.getTypePersonneMorale().getLibelle() : null);
+			details.setPersonneMorale(m);
+		}
+		item.setPromoteur(details);
+	}
+
 }

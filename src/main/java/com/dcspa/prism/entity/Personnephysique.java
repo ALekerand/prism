@@ -31,5 +31,21 @@ public class Personnephysique {
     @Column(name = "LIBELLE_PERSONNE_PHYSIQUE", length = 100)
     private String libellePersonnePhysique;
 
+    @Size(max = 100)
+    @Column(name = "NOM", length = 100)
+    private String nom;
+
+    @Size(max = 100)
+    @Column(name = "PRENOM", length = 100)
+    private String prenom;
+
+    @Size(max = 20)
+    @Column(name = "CONTACT", length = 20)
+    private String contact;
+
+    @Size(max = 100)
+    @Column(name = "FONCTION", length = 100)
+    private String fonction;
+
 
 }

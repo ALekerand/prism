@@ -51,5 +51,9 @@ public class Personnemorale {
     @Column(name = "MAIL", length = 100)
     private String mail;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_TYPE_PERSONNE_MORALE")
+    private TypePersonneMorale typePersonneMorale;
+
 
 }

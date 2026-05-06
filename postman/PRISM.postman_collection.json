@@ -30,6 +30,10 @@
       "value": "1"
     },
     {
+      "key": "typePersonneMoraleId",
+      "value": "1"
+    },
+    {
       "key": "periodiciteId",
       "value": "1"
     },
@@ -75,6 +79,10 @@
     },
     {
       "key": "natureCentreId",
+      "value": "1"
+    },
+    {
+      "key": "milieuImplentationId",
       "value": "1"
     }
   ],
@@ -2969,7 +2977,7 @@
       ]
     },
     {
-      "name": "PeriodeActiviteController (/api/v1/PeriodeActivites)",
+      "name": "PeriodeActiviteController (/api/PeriodeActivites)",
       "item": [
         {
           "name": "GET all",
@@ -2986,7 +2994,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/PeriodeActivites",
+              "raw": "{{baseUrl}}/api/PeriodeActivites",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3013,7 +3021,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/PeriodeActivites/{{id}}",
+              "raw": "{{baseUrl}}/api/PeriodeActivites/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3051,7 +3059,7 @@
               "raw": "{\n  \"codePeriodeActivite\": \"PA1\",\n  \"libellePeriodeActivite\": \"Période 1\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/PeriodeActivites",
+              "raw": "{{baseUrl}}/api/PeriodeActivites",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3088,7 +3096,7 @@
               "raw": "{\n  \"codePeriodeActivite\": \"PA1\",\n  \"libellePeriodeActivite\": \"Période 1\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/PeriodeActivites/{{id}}",
+              "raw": "{{baseUrl}}/api/PeriodeActivites/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3116,7 +3124,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/PeriodeActivites/{{id}}",
+              "raw": "{{baseUrl}}/api/PeriodeActivites/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3132,7 +3140,7 @@
       ]
     },
     {
-      "name": "PeriodiciteController (/api/v1/Periodicites)",
+      "name": "PeriodiciteController (/api/Periodicites)",
       "item": [
         {
           "name": "GET all",
@@ -3149,7 +3157,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Periodicites",
+              "raw": "{{baseUrl}}/api/Periodicites",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3176,7 +3184,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Periodicites/{{id}}",
+              "raw": "{{baseUrl}}/api/Periodicites/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3214,7 +3222,7 @@
               "raw": "{\n  \"codePeriodicite\": \"MENS\",\n  \"libellePeriodicite\": \"Mensuelle\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Periodicites",
+              "raw": "{{baseUrl}}/api/Periodicites",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3251,7 +3259,7 @@
               "raw": "{\n  \"codePeriodicite\": \"MENS\",\n  \"libellePeriodicite\": \"Mensuelle\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Periodicites/{{id}}",
+              "raw": "{{baseUrl}}/api/Periodicites/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3279,7 +3287,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Periodicites/{{id}}",
+              "raw": "{{baseUrl}}/api/Periodicites/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3295,7 +3303,7 @@
       ]
     },
     {
-      "name": "PartenaireController (/api/v1/Partenaires)",
+      "name": "PartenaireController (/api/Partenaires)",
       "item": [
         {
           "name": "GET all",
@@ -3312,7 +3320,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Partenaires",
+              "raw": "{{baseUrl}}/api/Partenaires",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3339,7 +3347,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Partenaires/{{id}}",
+              "raw": "{{baseUrl}}/api/Partenaires/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3377,7 +3385,7 @@
               "raw": "{\n  \"codePartenaire\": \"PART1\",\n  \"libellePartenaire\": \"Partenaire 1\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Partenaires",
+              "raw": "{{baseUrl}}/api/Partenaires",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3414,7 +3422,7 @@
               "raw": "{\n  \"codePartenaire\": \"PART1\",\n  \"libellePartenaire\": \"Partenaire 1\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Partenaires/{{id}}",
+              "raw": "{{baseUrl}}/api/Partenaires/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3442,7 +3450,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Partenaires/{{id}}",
+              "raw": "{{baseUrl}}/api/Partenaires/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3458,7 +3466,7 @@
       ]
     },
     {
-      "name": "CentreController (/api/v1/centres)",
+      "name": "CentreController (/api/centres)",
       "item": [
         {
           "name": "GET all",
@@ -3475,7 +3483,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/centres",
+              "raw": "{{baseUrl}}/api/centres",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3502,7 +3510,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/centres/{{id}}",
+              "raw": "{{baseUrl}}/api/centres/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3540,7 +3548,7 @@
               "raw": "{\n  \"idLocalite\": {{localiteId}},\n  \"idPeriodicite\": {{periodiciteId}},\n  \"idIep\": {{iepId}},\n  \"idAutoriteAutorisation\": {{autoriteAutorisationId}},\n  \"idNaturecentre\": {{natureCentreId}},\n  \"idPromoteur\": {{promoteurId}},\n  \"codeCentre\": \"CEN001\",\n  \"autorisation\": true,\n  \"encadreurNonMena\": \"Encadreur 1\",\n  \"encadrerParMena\": true,\n  \"estElectrifie\": true,\n  \"aDeLeau\": true,\n  \"nombreVisite\": 0,\n  \"localisationCentre\": \"Zone test\",\n  \"nomMilieuImplentation\": \"Village test\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/centres",
+              "raw": "{{baseUrl}}/api/centres",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3577,7 +3585,7 @@
               "raw": "{\n  \"idLocalite\": {{localiteId}},\n  \"idPeriodicite\": {{periodiciteId}},\n  \"idIep\": {{iepId}},\n  \"idAutoriteAutorisation\": {{autoriteAutorisationId}},\n  \"idNaturecentre\": {{natureCentreId}},\n  \"idPromoteur\": {{promoteurId}},\n  \"codeCentre\": \"CEN001\",\n  \"autorisation\": true,\n  \"encadreurNonMena\": \"Encadreur 1\",\n  \"encadrerParMena\": true,\n  \"estElectrifie\": true,\n  \"aDeLeau\": true,\n  \"nombreVisite\": 0,\n  \"localisationCentre\": \"Zone test\",\n  \"nomMilieuImplentation\": \"Village test\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/centres/{{id}}",
+              "raw": "{{baseUrl}}/api/centres/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3605,7 +3613,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/centres/{{id}}",
+              "raw": "{{baseUrl}}/api/centres/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3621,7 +3629,7 @@
       ]
     },
     {
-      "name": "ModealphabetisationController (/api/v1/Modealphabetisations)",
+      "name": "ModealphabetisationController (/api/Modealphabetisations)",
       "item": [
         {
           "name": "GET all",
@@ -3638,7 +3646,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Modealphabetisations",
+              "raw": "{{baseUrl}}/api/Modealphabetisations",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3665,7 +3673,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Modealphabetisations/{{id}}",
+              "raw": "{{baseUrl}}/api/Modealphabetisations/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3703,7 +3711,7 @@
               "raw": "{\n  \"idCentre\": {{alphaId}},\n  \"codeModealpha\": \"MA1\",\n  \"libelleModealpha\": \"Mode test\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Modealphabetisations",
+              "raw": "{{baseUrl}}/api/Modealphabetisations",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3740,7 +3748,7 @@
               "raw": "{\n  \"idCentre\": {{alphaId}},\n  \"codeModealpha\": \"MA1\",\n  \"libelleModealpha\": \"Mode test\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Modealphabetisations/{{id}}",
+              "raw": "{{baseUrl}}/api/Modealphabetisations/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3768,7 +3776,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Modealphabetisations/{{id}}",
+              "raw": "{{baseUrl}}/api/Modealphabetisations/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3784,7 +3792,7 @@
       ]
     },
     {
-      "name": "RegimealphabetisationController (/api/v1/Regimealphabetisations)",
+      "name": "RegimealphabetisationController (/api/Regimealphabetisations)",
       "item": [
         {
           "name": "GET all",
@@ -3801,7 +3809,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Regimealphabetisations",
+              "raw": "{{baseUrl}}/api/Regimealphabetisations",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3828,7 +3836,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Regimealphabetisations/{{id}}",
+              "raw": "{{baseUrl}}/api/Regimealphabetisations/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3866,7 +3874,7 @@
               "raw": "{\n  \"libelleRegimeAlpha\": \"Regime test\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Regimealphabetisations",
+              "raw": "{{baseUrl}}/api/Regimealphabetisations",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3903,7 +3911,7 @@
               "raw": "{\n  \"libelleRegimeAlpha\": \"Regime test\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Regimealphabetisations/{{id}}",
+              "raw": "{{baseUrl}}/api/Regimealphabetisations/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3931,7 +3939,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/Regimealphabetisations/{{id}}",
+              "raw": "{{baseUrl}}/api/Regimealphabetisations/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3947,7 +3955,7 @@
       ]
     },
     {
-      "name": "LangueApprentissageController (/api/v1/LangueApprentissages)",
+      "name": "LangueApprentissageController (/api/LangueApprentissages)",
       "item": [
         {
           "name": "GET all",
@@ -3964,7 +3972,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/LangueApprentissages",
+              "raw": "{{baseUrl}}/api/LangueApprentissages",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -3991,7 +3999,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/LangueApprentissages/{{id}}",
+              "raw": "{{baseUrl}}/api/LangueApprentissages/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4029,7 +4037,7 @@
               "raw": "{\n  \"idCentre\": {{centreId}},\n  \"libelleLangue\": \"Francais\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/LangueApprentissages",
+              "raw": "{{baseUrl}}/api/LangueApprentissages",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4066,7 +4074,7 @@
               "raw": "{\n  \"idCentre\": {{centreId}},\n  \"libelleLangue\": \"Francais\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/LangueApprentissages/{{id}}",
+              "raw": "{{baseUrl}}/api/LangueApprentissages/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4094,7 +4102,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/LangueApprentissages/{{id}}",
+              "raw": "{{baseUrl}}/api/LangueApprentissages/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4110,7 +4118,7 @@
       ]
     },
     {
-      "name": "SupportDidactiqueController (/api/v1/SupportDidactiques)",
+      "name": "SupportDidactiqueController (/api/SupportDidactiques)",
       "item": [
         {
           "name": "GET all",
@@ -4127,7 +4135,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/SupportDidactiques",
+              "raw": "{{baseUrl}}/api/SupportDidactiques",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4154,7 +4162,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/SupportDidactiques/{{id}}",
+              "raw": "{{baseUrl}}/api/SupportDidactiques/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4192,7 +4200,7 @@
               "raw": "{\n  \"libelleSupportDidactique\": \"Tableau\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/SupportDidactiques",
+              "raw": "{{baseUrl}}/api/SupportDidactiques",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4229,7 +4237,7 @@
               "raw": "{\n  \"libelleSupportDidactique\": \"Tableau\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/SupportDidactiques/{{id}}",
+              "raw": "{{baseUrl}}/api/SupportDidactiques/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4257,7 +4265,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/SupportDidactiques/{{id}}",
+              "raw": "{{baseUrl}}/api/SupportDidactiques/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4273,7 +4281,7 @@
       ]
     },
     {
-      "name": "FonctionController (/api/v1/fonctions)",
+      "name": "FonctionController (/api/fonctions)",
       "item": [
         {
           "name": "GET all",
@@ -4290,7 +4298,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/fonctions",
+              "raw": "{{baseUrl}}/api/fonctions",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4317,7 +4325,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/fonctions/{{id}}",
+              "raw": "{{baseUrl}}/api/fonctions/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4355,7 +4363,7 @@
               "raw": "{\n  \"codeFonction\": \"F1\",\n  \"libelleFonction\": \"Formateur\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/fonctions",
+              "raw": "{{baseUrl}}/api/fonctions",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4392,7 +4400,7 @@
               "raw": "{\n  \"codeFonction\": \"F1\",\n  \"libelleFonction\": \"Formateur\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/fonctions/{{id}}",
+              "raw": "{{baseUrl}}/api/fonctions/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4420,7 +4428,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/fonctions/{{id}}",
+              "raw": "{{baseUrl}}/api/fonctions/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4436,7 +4444,7 @@
       ]
     },
     {
-      "name": "TypeDocumentController (/api/v1/TypeDocuments)",
+      "name": "TypeDocumentController (/api/TypeDocuments)",
       "item": [
         {
           "name": "GET all",
@@ -4453,7 +4461,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/TypeDocuments",
+              "raw": "{{baseUrl}}/api/TypeDocuments",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4480,7 +4488,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/TypeDocuments/{{id}}",
+              "raw": "{{baseUrl}}/api/TypeDocuments/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4518,7 +4526,7 @@
               "raw": "{\n  \"codeTypeDocument\": \"TD1\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/TypeDocuments",
+              "raw": "{{baseUrl}}/api/TypeDocuments",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4555,7 +4563,7 @@
               "raw": "{\n  \"codeTypeDocument\": \"TD1\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/TypeDocuments/{{id}}",
+              "raw": "{{baseUrl}}/api/TypeDocuments/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4583,7 +4591,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/TypeDocuments/{{id}}",
+              "raw": "{{baseUrl}}/api/TypeDocuments/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4599,7 +4607,7 @@
       ]
     },
     {
-      "name": "TypeAlphaController (/api/v1/TypeAlphas)",
+      "name": "TypeAlphaController (/api/TypeAlphas)",
       "item": [
         {
           "name": "GET all",
@@ -4616,7 +4624,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/TypeAlphas",
+              "raw": "{{baseUrl}}/api/TypeAlphas",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4643,7 +4651,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/TypeAlphas/{{id}}",
+              "raw": "{{baseUrl}}/api/TypeAlphas/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4681,7 +4689,7 @@
               "raw": "{\n  \"libelleTypeAlpha\": \"Type Alpha test\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/TypeAlphas",
+              "raw": "{{baseUrl}}/api/TypeAlphas",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4718,7 +4726,7 @@
               "raw": "{\n  \"libelleTypeAlpha\": \"Type Alpha test\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/TypeAlphas/{{id}}",
+              "raw": "{{baseUrl}}/api/TypeAlphas/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4746,7 +4754,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/TypeAlphas/{{id}}",
+              "raw": "{{baseUrl}}/api/TypeAlphas/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4762,7 +4770,7 @@
       ]
     },
     {
-      "name": "AlphaController (/api/v1/alpha)",
+      "name": "StatutPersonnelController (/api/StatutPersonnels)",
       "item": [
         {
           "name": "GET all",
@@ -4779,192 +4787,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/alpha?page=0&size=20&sort=id,asc&q=",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "alpha"
-              ],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "0",
-                  "description": "Page 0-based (Spring Data)"
-                },
-                {
-                  "key": "size",
-                  "value": "20",
-                  "description": "Taille de page (plafonnée côté serveur)"
-                },
-                {
-                  "key": "sort",
-                  "value": "id,asc",
-                  "description": "Tri (ex. id,asc)"
-                },
-                {
-                  "key": "q",
-                  "value": "",
-                  "description": "Recherche globale optionnelle (OR sur colonnes texte + égalité id si entier). Autres filtres nommés possibles (vides ignorés)."
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "GET by id",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/alpha/{{id}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "alpha",
-                "{{id}}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "POST create",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"idCompagne\": {\"id\": {{campagneId}}},\n  \"idCategorieCentreAlpha\": {\"id\": {{categorieCentreAlphaId}}},\n  \"idTypeAlpha\": {\"id\": {{typeAlphaId}}},\n  \"idRegimeAlpha\": {\"id\": {{regimeAlphaId}}},\n  \"idLocalite\": {{localiteId}},\n  \"idPeriodicite\": {{periodiciteId}},\n  \"idIep\": {{iepId}},\n  \"idAutoriteAutorisation\": {{autoriteAutorisationId}},\n  \"idNaturecentre\": {{natureCentreId}},\n  \"idPromoteur\": {{promoteurId}},\n  \"codeCentre\": \"CEN001\",\n  \"autorisation\": true,\n  \"encadreurNonMena\": \"Encadreur test\",\n  \"encadrerParMena\": true,\n  \"estElectrifie\": true,\n  \"aDeLeau\": true,\n  \"nombreVisite\": 0,\n  \"localisationCentre\": \"Zone test\",\n  \"nomMilieuImplentation\": \"Village test\",\n  \"codeAlpha\": \"ALPHA001\",\n  \"libelleAlpha\": \"Alpha test\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/alpha",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "alpha"
-              ]
-            }
-          }
-        },
-        {
-          "name": "PUT update",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"idCompagne\": {\"id\": {{campagneId}}},\n  \"idCategorieCentreAlpha\": {\"id\": {{categorieCentreAlphaId}}},\n  \"idTypeAlpha\": {\"id\": {{typeAlphaId}}},\n  \"idRegimeAlpha\": {\"id\": {{regimeAlphaId}}},\n  \"idLocalite\": {{localiteId}},\n  \"idPeriodicite\": {{periodiciteId}},\n  \"idIep\": {{iepId}},\n  \"idAutoriteAutorisation\": {{autoriteAutorisationId}},\n  \"idNaturecentre\": {{natureCentreId}},\n  \"idPromoteur\": {{promoteurId}},\n  \"codeCentre\": \"CEN001\",\n  \"autorisation\": true,\n  \"encadreurNonMena\": \"Encadreur test\",\n  \"encadrerParMena\": true,\n  \"estElectrifie\": true,\n  \"aDeLeau\": true,\n  \"nombreVisite\": 0,\n  \"localisationCentre\": \"Zone test\",\n  \"nomMilieuImplentation\": \"Village test\",\n  \"codeAlpha\": \"ALPHA001\",\n  \"libelleAlpha\": \"Alpha test\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/alpha/{{id}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "alpha",
-                "{{id}}"
-              ]
-            }
-          }
-        },
-        {
-          "name": "DELETE",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "DELETE",
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/alpha/{{id}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "alpha",
-                "{{id}}"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "StatutPersonnelController (/api/v1/StatutPersonnels)",
-      "item": [
-        {
-          "name": "GET all",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/StatutPersonnels",
+              "raw": "{{baseUrl}}/api/StatutPersonnels",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -4991,7 +4814,7 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/StatutPersonnels/{{id}}",
+              "raw": "{{baseUrl}}/api/StatutPersonnels/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -5029,7 +4852,7 @@
               "raw": "{\n  \"codeStatutPersonnel\": \"SP1\",\n  \"libelleStatutPersonnel\": \"Titulaire\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/StatutPersonnels",
+              "raw": "{{baseUrl}}/api/StatutPersonnels",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -5066,7 +4889,7 @@
               "raw": "{\n  \"codeStatutPersonnel\": \"SP1\",\n  \"libelleStatutPersonnel\": \"Titulaire\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/v1/StatutPersonnels/{{id}}",
+              "raw": "{{baseUrl}}/api/StatutPersonnels/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -5094,7 +4917,7 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/StatutPersonnels/{{id}}",
+              "raw": "{{baseUrl}}/api/StatutPersonnels/{{id}}",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -5110,7 +4933,7 @@
       ]
     },
     {
-      "name": "Auto CRUD (généré) — endpoints ajoutés",
+      "name": "Auto CRUD — endpoints ajoutés",
       "item": [
         {
           "name": "AppRoleController (/api/app-role)",
@@ -5169,7 +4992,7 @@
               }
             },
             {
-              "name": "POST create",
+              "name": "POST old create",
               "request": {
                 "method": "POST",
                 "auth": {
@@ -5200,7 +5023,43 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codePromoteur\": \"PROM-NEW\",\n  \"libellePromoteur\": \"Promoteur Test\",\n  \"typePromoteur\": \"PHYSIQUE\"\n}"
+                }
+              }
+            },
+            {
+              "name": "POST create full",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/cec",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "cec"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"libelle\": \"CEC Full\",\n  \"promoteur\": {\n    \"codePromoteur\": \"PROM-CEC-PHY\",\n    \"libellePromoteur\": \"Promoteur CEC\",\n    \"typePromoteur\": \"PHYSIQUE\",\n    \"personnePhysique\": {\n      \"libellePersonnePhysique\": \"M. CEC\",\n      \"nom\": \"KOFFI\",\n      \"prenom\": \"Marc\",\n      \"contact\": \"0700000010\",\n      \"fonction\": \"Promoteur\"\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"codeCentre\": \"CEN-CEC-FULL\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\",\n    \"nomMilieuImplentation\": \"Village test\"\n  }\n}"
                 }
               }
             },
@@ -5237,7 +5096,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codePromoteur\": \"PROM-UPD\",\n  \"libellePromoteur\": \"Promoteur Test MAJ\",\n  \"typePromoteur\": \"MORALE\"\n}"
                 }
               }
             },
@@ -5327,7 +5186,7 @@
               }
             },
             {
-              "name": "POST create",
+              "name": "POST old create",
               "request": {
                 "method": "POST",
                 "auth": {
@@ -5359,6 +5218,42 @@
                 "body": {
                   "mode": "raw",
                   "raw": "{}"
+                }
+              }
+            },
+            {
+              "name": "POST create full",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/cp",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "cp"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"libelle\": \"CP Full\",\n  \"promoteur\": {\n    \"codePromoteur\": \"PROM-CP-MOR\",\n    \"libellePromoteur\": \"Promoteur CP\",\n    \"typePromoteur\": \"MORALE\",\n    \"personneMorale\": {\n      \"denomination\": \"ONG CP\",\n      \"nomProgramme\": \"Programme CP\",\n      \"nomRepresentant\": \"M. Traore\",\n      \"contact\": \"0700000020\",\n      \"boitePostale\": \"01 BP 200\",\n      \"mail\": \"cp@ong.test\",\n      \"idTypePersonneMorale\": {{typePersonneMoraleId}}\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"codeCentre\": \"CEN-CP-FULL\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\",\n    \"nomMilieuImplentation\": \"Village test\"\n  }\n}"
                 }
               }
             },
@@ -5485,7 +5380,7 @@
               }
             },
             {
-              "name": "POST create",
+              "name": "POST old create",
               "request": {
                 "method": "POST",
                 "auth": {
@@ -5517,6 +5412,42 @@
                 "body": {
                   "mode": "raw",
                   "raw": "{}"
+                }
+              }
+            },
+            {
+              "name": "POST create full",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/sie",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sie"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"libelle\": \"SIE Full\",\n  \"promoteur\": {\n    \"codePromoteur\": \"PROM-SIE-PHY\",\n    \"libellePromoteur\": \"Promoteur SIE\",\n    \"typePromoteur\": \"PHYSIQUE\",\n    \"personnePhysique\": {\n      \"libellePersonnePhysique\": \"M. SIE\",\n      \"nom\": \"NDA\",\n      \"prenom\": \"Paul\",\n      \"contact\": \"0700000030\",\n      \"fonction\": \"Directeur\"\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"codeCentre\": \"CEN-SIE-FULL\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\",\n    \"nomMilieuImplentation\": \"Village test\"\n  }\n}"
                 }
               }
             },
@@ -5579,6 +5510,300 @@
                   "path": [
                     "api",
                     "categorie-centre-alpha",
+                    "{{id}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "AlphaController (/api/alpha)",
+          "item": [
+            {
+              "name": "GET all",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/alpha?page=0&size=20&sort=id,asc&q=",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "alpha"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0",
+                      "description": "Page 0-based (Spring Data)"
+                    },
+                    {
+                      "key": "size",
+                      "value": "20",
+                      "description": "Taille de page (plafonnée côté serveur)"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "id,asc",
+                      "description": "Tri (ex. id,asc)"
+                    },
+                    {
+                      "key": "q",
+                      "value": "",
+                      "description": "Recherche globale optionnelle (OR sur colonnes texte + égalité id si entier). Autres filtres nommés possibles (vides ignorés)."
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET by id",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/alpha/{{id}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "alpha",
+                    "{{id}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "POST create",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"idCompagne\": {\"id\": {{campagneId}}},\n  \"idCategorieCentreAlpha\": {\"id\": {{categorieCentreAlphaId}}},\n  \"idTypeAlpha\": {\"id\": {{typeAlphaId}}},\n  \"idRegimeAlpha\": {\"id\": {{regimeAlphaId}}},\n  \"idLocalite\": {{localiteId}},\n  \"idPeriodicite\": {{periodiciteId}},\n  \"idIep\": {{iepId}},\n  \"idAutoriteAutorisation\": {{autoriteAutorisationId}},\n  \"idNaturecentre\": {{natureCentreId}},\n  \"idPromoteur\": {{promoteurId}},\n  \"codeCentre\": \"CEN001\",\n  \"autorisation\": true,\n  \"encadreurNonMena\": \"Encadreur test\",\n  \"encadrerParMena\": true,\n  \"estElectrifie\": true,\n  \"aDeLeau\": true,\n  \"nombreVisite\": 0,\n  \"localisationCentre\": \"Zone test\",\n  \"nomMilieuImplentation\": \"Village test\",\n  \"codeAlpha\": \"ALPHA001\",\n  \"libelleAlpha\": \"Alpha test\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/alpha/old",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "alpha",
+                    "old"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "POST create full (personne physique)",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/alpha",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "alpha"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"campagneId\": {{campagneId}},\n  \"categorieCentreAlphaId\": {{categorieCentreAlphaId}},\n  \"typeAlphaId\": {{typeAlphaId}},\n  \"regimeAlphaId\": {{regimeAlphaId}},\n  \"libelleAlpha\": \"Alpha Full Physique\",\n  \"promoteur\": {\n    \"codePromoteur\": \"PROM-ALPHA-PHY\",\n    \"libellePromoteur\": \"Promoteur Alpha Physique\",\n    \"typePromoteur\": \"PHYSIQUE\",\n    \"personnePhysique\": {\n      \"libellePersonnePhysique\": \"M. Konan\",\n      \"nom\": \"KONAN\",\n      \"prenom\": \"Jean\",\n      \"contact\": \"0700000001\",\n      \"fonction\": \"Coordinateur\"\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"idMilieuImplentation\": {{milieuImplentationId}},\n    \"codeCentre\": \"CEN-ALPHA-FULL-PHY\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\"\n  }\n}"
+                }
+              }
+            },
+            {
+              "name": "POST create full (personne morale)",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/alpha",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "alpha"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"campagneId\": {{campagneId}},\n  \"categorieCentreAlphaId\": {{categorieCentreAlphaId}},\n  \"typeAlphaId\": {{typeAlphaId}},\n  \"regimeAlphaId\": {{regimeAlphaId}},\n  \"libelleAlpha\": \"Alpha Full Morale\",\n  \"promoteur\": {\n    \"codePromoteur\": \"PROM-ALPHA-MOR\",\n    \"libellePromoteur\": \"Promoteur Alpha Morale\",\n    \"typePromoteur\": \"MORALE\",\n    \"personneMorale\": {\n      \"denomination\": \"ONG Alpha\",\n      \"nomProgramme\": \"Programme Alpha\",\n      \"nomRepresentant\": \"Mme Coulibaly\",\n      \"contact\": \"0700000002\",\n      \"boitePostale\": \"01 BP 100\",\n      \"mail\": \"alpha@ong.test\",\n      \"idTypePersonneMorale\": {{typePersonneMoraleId}}\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"idMilieuImplentation\": {{milieuImplentationId}},\n    \"codeCentre\": \"CEN-ALPHA-FULL-MOR\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\"\n  }\n}"
+                }
+              }
+            },
+            {
+              "name": "POST search",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"criteria\": {\n    \"idCentre\": \"10\",\n    \"codeCentre\": \"CEN-ALPHA\",\n    \"codeType\": \"ALPHA\",\n    \"libelle\": \"Alpha\",\n    \"idLocalite\": \"1\",\n    \"idIep\": \"1\",\n    \"idNaturecentre\": \"1\",\n    \"idPeriodicite\": \"1\",\n    \"idAutoriteAutorisation\": \"1\",\n    \"autorisation\": \"true\",\n    \"estElectrifie\": \"true\",\n    \"aDeLeau\": \"true\",\n    \"nombreVisite\": \"0\",\n    \"localisationCentre\": \"Zone\",\n    \"nomMilieuImplentation\": \"Village\",\n    \"encadreurNonMena\": \"Encadreur\",\n    \"encadrerParMena\": \"true\",\n    \"codeLocalite\": \"LOC\",\n    \"nomLocalite\": \"Localite\",\n    \"codeIep\": \"IEP\",\n    \"nomIep\": \"Nom IEP\",\n    \"codeNatureCentre\": \"NAT\",\n    \"libelleNatureCentre\": \"Nature\",\n    \"codePeriodicite\": \"PER\",\n    \"libellePeriodicite\": \"Periodicite\",\n    \"codeAutorisation\": \"AUT\",\n    \"libelleAutoriteAutorisation\": \"Autorite\",\n    \"idPromoteur\": \"5\",\n    \"codePromoteur\": \"PROM\",\n    \"libellePromoteur\": \"Promoteur\",\n    \"typePromoteur\": \"MORALE\",\n    \"nom\": \"KONAN\",\n    \"prenom\": \"JEAN\",\n    \"contact\": \"0700000001\",\n    \"denomination\": \"ONG\",\n    \"nomProgramme\": \"Programme\",\n    \"nomRepresentant\": \"Coulibaly\",\n    \"mail\": \"test@ong.ci\",\n    \"libelleTypePersonneMorale\": \"PTF\"\n  }\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/alpha/search",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "alpha",
+                    "search"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "PUT update",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"idCompagne\": {\"id\": {{campagneId}}},\n  \"idCategorieCentreAlpha\": {\"id\": {{categorieCentreAlphaId}}},\n  \"idTypeAlpha\": {\"id\": {{typeAlphaId}}},\n  \"idRegimeAlpha\": {\"id\": {{regimeAlphaId}}},\n  \"idLocalite\": {{localiteId}},\n  \"idPeriodicite\": {{periodiciteId}},\n  \"idIep\": {{iepId}},\n  \"idAutoriteAutorisation\": {{autoriteAutorisationId}},\n  \"idNaturecentre\": {{natureCentreId}},\n  \"idPromoteur\": {{promoteurId}},\n  \"codeCentre\": \"CEN001\",\n  \"autorisation\": true,\n  \"encadreurNonMena\": \"Encadreur test\",\n  \"encadrerParMena\": true,\n  \"estElectrifie\": true,\n  \"aDeLeau\": true,\n  \"nombreVisite\": 0,\n  \"localisationCentre\": \"Zone test\",\n  \"nomMilieuImplentation\": \"Village test\",\n  \"codeAlpha\": \"ALPHA001\",\n  \"libelleAlpha\": \"Alpha test\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/alpha/{{id}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "alpha",
+                    "{{id}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "DELETE",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/api/alpha/{{id}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "alpha",
                     "{{id}}"
                   ]
                 }
@@ -5679,6 +5904,80 @@
                   ]
                 },
                 "url": {
+                  "raw": "{{baseUrl}}/api/cec/old",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "cec",
+                    "old"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                }
+              }
+            },
+            {
+              "name": "POST create full (personne physique)",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/cec/old",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "cec",
+                    "old"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"libelle\": \"CEC Full\",\n  \"promoteur\": {\n    \"codePromoteur\": \"CEN-CEC-FULL-PHY\",\n    \"libellePromoteur\": \"Promoteur CEC Full\",\n    \"typePromoteur\": \"PHYSIQUE\",\n    \"personnePhysique\": {\n      \"libellePersonnePhysique\": \"M. Konan\",\n      \"nom\": \"KONAN\",\n      \"prenom\": \"Jean\",\n      \"contact\": \"0700000001\",\n      \"fonction\": \"Coordinateur\"\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"idMilieuImplentation\": {{milieuImplentationId}},\n    \"codeCentre\": \"CEN-CEC-FULL-PHY\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\"\n  }\n}"
+                }
+              }
+            },
+            {
+              "name": "POST create full (personne morale)",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
                   "raw": "{{baseUrl}}/api/cec",
                   "host": [
                     "{{baseUrl}}"
@@ -5696,7 +5995,44 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"libelle\": \"CEC Full\",\n  \"promoteur\": {\n    \"codePromoteur\": \"CEN-CEC-FULL-MOR\",\n    \"libellePromoteur\": \"Promoteur CEC Full\",\n    \"typePromoteur\": \"MORALE\",\n    \"personneMorale\": {\n      \"denomination\": \"ONG CEC Full\",\n      \"nomProgramme\": \"Programme CEC Full\",\n      \"nomRepresentant\": \"Mme Coulibaly\",\n      \"contact\": \"0700000002\",\n      \"boitePostale\": \"01 BP 100\",\n      \"mail\": \"cec full@ong.test\",\n      \"idTypePersonneMorale\": {{typePersonneMoraleId}}\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"idMilieuImplentation\": {{milieuImplentationId}},\n    \"codeCentre\": \"CEN-CEC-FULL-MOR\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\"\n  }\n}"
+                }
+              }
+            },
+            {
+              "name": "POST search",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"criteria\": {\n    \"idCentre\": \"10\",\n    \"codeCentre\": \"CEN-CEC\",\n    \"libelle\": \"CEC\",\n    \"idLocalite\": \"1\",\n    \"idIep\": \"1\",\n    \"idNaturecentre\": \"1\",\n    \"idPeriodicite\": \"1\",\n    \"idAutoriteAutorisation\": \"1\",\n    \"autorisation\": \"true\",\n    \"estElectrifie\": \"true\",\n    \"aDeLeau\": \"true\",\n    \"nombreVisite\": \"0\",\n    \"localisationCentre\": \"Zone\",\n    \"nomMilieuImplentation\": \"Village\",\n    \"encadreurNonMena\": \"Encadreur\",\n    \"encadrerParMena\": \"true\",\n    \"codeLocalite\": \"LOC\",\n    \"nomLocalite\": \"Localite\",\n    \"codeIep\": \"IEP\",\n    \"nomIep\": \"Nom IEP\",\n    \"codeNatureCentre\": \"NAT\",\n    \"libelleNatureCentre\": \"Nature\",\n    \"codePeriodicite\": \"PER\",\n    \"libellePeriodicite\": \"Periodicite\",\n    \"codeAutorisation\": \"AUT\",\n    \"libelleAutoriteAutorisation\": \"Autorite\",\n    \"idPromoteur\": \"5\",\n    \"codePromoteur\": \"PROM\",\n    \"libellePromoteur\": \"Promoteur\",\n    \"typePromoteur\": \"MORALE\",\n    \"nom\": \"KONAN\",\n    \"prenom\": \"JEAN\",\n    \"contact\": \"0700000001\",\n    \"denomination\": \"ONG\",\n    \"nomProgramme\": \"Programme\",\n    \"nomRepresentant\": \"Coulibaly\",\n    \"mail\": \"test@ong.ci\",\n    \"libelleTypePersonneMorale\": \"PTF\"\n  }\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/cec/search",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "cec",
+                    "search"
+                  ]
                 }
               }
             },
@@ -5823,7 +6159,7 @@
               }
             },
             {
-              "name": "POST create",
+              "name": "POST old create",
               "request": {
                 "method": "POST",
                 "auth": {
@@ -6333,6 +6669,43 @@
                   ]
                 },
                 "url": {
+                  "raw": "{{baseUrl}}/api/cp/old",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "cp",
+                    "old"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                }
+              }
+            },
+            {
+              "name": "POST create full (personne physique)",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
                   "raw": "{{baseUrl}}/api/cp",
                   "host": [
                     "{{baseUrl}}"
@@ -6350,7 +6723,80 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"libelle\": \"CP Full\",\n  \"promoteur\": {\n    \"codePromoteur\": \"CEN-CP-FULL-PHY\",\n    \"libellePromoteur\": \"Promoteur CP Full\",\n    \"typePromoteur\": \"PHYSIQUE\",\n    \"personnePhysique\": {\n      \"libellePersonnePhysique\": \"M. Konan\",\n      \"nom\": \"KONAN\",\n      \"prenom\": \"Jean\",\n      \"contact\": \"0700000001\",\n      \"fonction\": \"Coordinateur\"\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"codeCentre\": \"CEN-CP-FULL-PHY\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\",\n    \"nomMilieuImplentation\": \"Village test\"\n  }\n}"
+                }
+              }
+            },
+            {
+              "name": "POST create full (personne morale)",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/cp",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "cp"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"libelle\": \"CP Full\",\n  \"promoteur\": {\n    \"codePromoteur\": \"CEN-CP-FULL-MOR\",\n    \"libellePromoteur\": \"Promoteur CP Full\",\n    \"typePromoteur\": \"MORALE\",\n    \"personneMorale\": {\n      \"denomination\": \"ONG CP Full\",\n      \"nomProgramme\": \"Programme CP Full\",\n      \"nomRepresentant\": \"Mme Coulibaly\",\n      \"contact\": \"0700000002\",\n      \"boitePostale\": \"01 BP 100\",\n      \"mail\": \"cp full@ong.test\",\n      \"idTypePersonneMorale\": {{typePersonneMoraleId}}\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"codeCentre\": \"CEN-CP-FULL-MOR\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\",\n    \"nomMilieuImplentation\": \"Village test\"\n  }\n}"
+                }
+              }
+            },
+            {
+              "name": "POST search",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"criteria\": {\n    \"idCentre\": \"10\",\n    \"codeCentre\": \"CEN-CP\",\n    \"libelle\": \"CP\",\n    \"idLocalite\": \"1\",\n    \"idIep\": \"1\",\n    \"idNaturecentre\": \"1\",\n    \"idPeriodicite\": \"1\",\n    \"idAutoriteAutorisation\": \"1\",\n    \"autorisation\": \"true\",\n    \"estElectrifie\": \"true\",\n    \"aDeLeau\": \"true\",\n    \"nombreVisite\": \"0\",\n    \"localisationCentre\": \"Zone\",\n    \"nomMilieuImplentation\": \"Village\",\n    \"encadreurNonMena\": \"Encadreur\",\n    \"encadrerParMena\": \"true\",\n    \"codeLocalite\": \"LOC\",\n    \"nomLocalite\": \"Localite\",\n    \"codeIep\": \"IEP\",\n    \"nomIep\": \"Nom IEP\",\n    \"codeNatureCentre\": \"NAT\",\n    \"libelleNatureCentre\": \"Nature\",\n    \"codePeriodicite\": \"PER\",\n    \"libellePeriodicite\": \"Periodicite\",\n    \"codeAutorisation\": \"AUT\",\n    \"libelleAutoriteAutorisation\": \"Autorite\",\n    \"idPromoteur\": \"5\",\n    \"codePromoteur\": \"PROM\",\n    \"libellePromoteur\": \"Promoteur\",\n    \"typePromoteur\": \"PHYSIQUE\",\n    \"nom\": \"KONAN\",\n    \"prenom\": \"JEAN\",\n    \"contact\": \"0700000001\",\n    \"denomination\": \"ONG\",\n    \"nomProgramme\": \"Programme\",\n    \"nomRepresentant\": \"Coulibaly\",\n    \"mail\": \"test@ong.ci\",\n    \"libelleTypePersonneMorale\": \"PTF\"\n  }\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/cp/search",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "cp",
+                    "search"
+                  ]
                 }
               }
             },
@@ -6477,7 +6923,7 @@
               }
             },
             {
-              "name": "POST create",
+              "name": "POST old create",
               "request": {
                 "method": "POST",
                 "auth": {
@@ -14163,6 +14609,164 @@
           ]
         },
         {
+          "name": "TypePersonneMoraleController (/api/type-personne-morale)",
+          "item": [
+            {
+              "name": "GET all",
+              "request": {
+                "method": "GET",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/type-personne-morale",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "type-personne-morale"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "GET by id",
+              "request": {
+                "method": "GET",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/type-personne-morale/{{id}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "type-personne-morale",
+                    "{{id}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "POST create",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/type-personne-morale",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "type-personne-morale"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"libelle\": \"ONG\"\n}"
+                }
+              }
+            },
+            {
+              "name": "PUT update",
+              "request": {
+                "method": "PUT",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/type-personne-morale/{{id}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "type-personne-morale",
+                    "{{id}}"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"libelle\": \"PTF\"\n}"
+                }
+              }
+            },
+            {
+              "name": "DELETE",
+              "request": {
+                "method": "DELETE",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/type-personne-morale/{{id}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "type-personne-morale",
+                    "{{id}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
           "name": "PtfController (/api/ptf)",
           "item": [
             {
@@ -14729,6 +15333,43 @@
                   ]
                 },
                 "url": {
+                  "raw": "{{baseUrl}}/api/sie/old",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sie",
+                    "old"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                }
+              }
+            },
+            {
+              "name": "POST create full (personne physique)",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
                   "raw": "{{baseUrl}}/api/sie",
                   "host": [
                     "{{baseUrl}}"
@@ -14746,7 +15387,80 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"libelle\": \"SIE Full\",\n  \"promoteur\": {\n    \"codePromoteur\": \"CEN-SIE-FULL-PHY\",\n    \"libellePromoteur\": \"Promoteur SIE Full\",\n    \"typePromoteur\": \"PHYSIQUE\",\n    \"personnePhysique\": {\n      \"libellePersonnePhysique\": \"M. Konan\",\n      \"nom\": \"KONAN\",\n      \"prenom\": \"Jean\",\n      \"contact\": \"0700000001\",\n      \"fonction\": \"Coordinateur\"\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"codeCentre\": \"CEN-SIE-FULL-PHY\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\",\n    \"nomMilieuImplentation\": \"Village test\"\n  }\n}"
+                }
+              }
+            },
+            {
+              "name": "POST create full (personne morale)",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/sie",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sie"
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"libelle\": \"SIE Full\",\n  \"promoteur\": {\n    \"codePromoteur\": \"CEN-SIE-FULL-MOR\",\n    \"libellePromoteur\": \"Promoteur SIE Full\",\n    \"typePromoteur\": \"MORALE\",\n    \"personneMorale\": {\n      \"denomination\": \"ONG SIE Full\",\n      \"nomProgramme\": \"Programme SIE Full\",\n      \"nomRepresentant\": \"Mme Coulibaly\",\n      \"contact\": \"0700000002\",\n      \"boitePostale\": \"01 BP 100\",\n      \"mail\": \"sie full@ong.test\",\n      \"idTypePersonneMorale\": {{typePersonneMoraleId}}\n    }\n  },\n  \"centre\": {\n    \"localiteId\": {{localiteId}},\n    \"periodiciteId\": {{periodiciteId}},\n    \"iepId\": {{iepId}},\n    \"autoriteAutorisationId\": {{autoriteAutorisationId}},\n    \"natureCentreId\": {{natureCentreId}},\n    \"codeCentre\": \"CEN-SIE-FULL-MOR\",\n    \"autorisation\": true,\n    \"encadrerParMena\": true,\n    \"estElectrifie\": true,\n    \"aDeLeau\": true,\n    \"nombreVisite\": 0,\n    \"localisationCentre\": \"Zone test\",\n    \"nomMilieuImplentation\": \"Village test\"\n  }\n}"
+                }
+              }
+            },
+            {
+              "name": "POST search",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"criteria\": {\n    \"idCentre\": \"10\",\n    \"codeCentre\": \"CEN-SIE\",\n    \"libelle\": \"SIE\",\n    \"idLocalite\": \"1\",\n    \"idIep\": \"1\",\n    \"idNaturecentre\": \"1\",\n    \"idPeriodicite\": \"1\",\n    \"idAutoriteAutorisation\": \"1\",\n    \"autorisation\": \"true\",\n    \"estElectrifie\": \"true\",\n    \"aDeLeau\": \"true\",\n    \"nombreVisite\": \"0\",\n    \"localisationCentre\": \"Zone\",\n    \"nomMilieuImplentation\": \"Village\",\n    \"encadreurNonMena\": \"Encadreur\",\n    \"encadrerParMena\": \"true\",\n    \"codeLocalite\": \"LOC\",\n    \"nomLocalite\": \"Localite\",\n    \"codeIep\": \"IEP\",\n    \"nomIep\": \"Nom IEP\",\n    \"codeNatureCentre\": \"NAT\",\n    \"libelleNatureCentre\": \"Nature\",\n    \"codePeriodicite\": \"PER\",\n    \"libellePeriodicite\": \"Periodicite\",\n    \"codeAutorisation\": \"AUT\",\n    \"libelleAutoriteAutorisation\": \"Autorite\",\n    \"idPromoteur\": \"5\",\n    \"codePromoteur\": \"PROM\",\n    \"libellePromoteur\": \"Promoteur\",\n    \"typePromoteur\": \"MORALE\",\n    \"nom\": \"KONAN\",\n    \"prenom\": \"JEAN\",\n    \"contact\": \"0700000001\",\n    \"denomination\": \"ONG\",\n    \"nomProgramme\": \"Programme\",\n    \"nomRepresentant\": \"Coulibaly\",\n    \"mail\": \"test@ong.ci\",\n    \"libelleTypePersonneMorale\": \"PTF\"\n  }\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/sie/search",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "sie",
+                    "search"
+                  ]
                 }
               }
             },
@@ -15603,6 +16317,59 @@
                   ]
                 }
               }
+            }
+          ]
+        },
+        {
+          "name": "Alpha Suivi Qualite",
+          "item": [
+            {
+              "name": "Referentiels (CRUD + Search)",
+              "item": [
+                { "name": "Discipline - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/disciplines", "host": ["{{baseUrl}}"], "path": ["api","disciplines"] } } },
+                { "name": "Discipline - GET by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/disciplines/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","disciplines","{{id}}"] } } },
+                { "name": "Discipline - POST", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/disciplines", "host": ["{{baseUrl}}"], "path": ["api","disciplines"] }, "body": { "mode": "raw", "raw": "{\n  \"codeDiscipline\": \"DIS-TEST\",\n  \"libelleDiscipline\": \"Lecture\"\n}" } } },
+                { "name": "Discipline - PUT", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/disciplines/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","disciplines","{{id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"codeDiscipline\": \"DIS-TEST-U\",\n  \"libelleDiscipline\": \"Lecture MAJ\"\n}" } } },
+                { "name": "Discipline - DELETE", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/disciplines/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","disciplines","{{id}}"] } } },
+                { "name": "Discipline - SEARCH", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/disciplines/search?code=DIS&libelle=Lecture", "host": ["{{baseUrl}}"], "path": ["api","disciplines","search"], "query": [{"key":"code","value":"DIS"},{"key":"libelle","value":"Lecture"}] } } },
+                { "name": "Manuel - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/manuels", "host": ["{{baseUrl}}"], "path": ["api","manuels"] } } },
+                { "name": "Niveau Controle - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/niveaux-controle", "host": ["{{baseUrl}}"], "path": ["api","niveaux-controle"] } } },
+                { "name": "Periode Evaluation - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/periodes-evaluation", "host": ["{{baseUrl}}"], "path": ["api","periodes-evaluation"] } } },
+                { "name": "Niveau Evaluation - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/niveaux-evaluation", "host": ["{{baseUrl}}"], "path": ["api","niveaux-evaluation"] } } },
+                { "name": "Theme Eval N1 - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/themes-evaluation-niveau1", "host": ["{{baseUrl}}"], "path": ["api","themes-evaluation-niveau1"] } } },
+                { "name": "Theme Eval N2 - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/themes-evaluation-niveau2-post-alpha", "host": ["{{baseUrl}}"], "path": ["api","themes-evaluation-niveau2-post-alpha"] } } },
+                { "name": "Taux Evaluation - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/taux-evaluation", "host": ["{{baseUrl}}"], "path": ["api","taux-evaluation"] } } },
+                { "name": "Aspect A Ameliorer - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/aspects-a-ameliorer", "host": ["{{baseUrl}}"], "path": ["api","aspects-a-ameliorer"] } } }
+              ]
+            },
+            {
+              "name": "Metier Alpha (CRUD + Search)",
+              "item": [
+                { "name": "Controle - POST", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/controle", "host": ["{{baseUrl}}"], "path": ["api","controle"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idDiscipline\": 1,\n  \"idManuel\": 1,\n  \"idNiveauControle\": 1,\n  \"jourHeureFormation\": \"Lundi 08h\",\n  \"nombreKitManuelsSyllabaire\": 20,\n  \"nombreKitManuelsCalculaire\": 20,\n  \"nombreKitManuelsCvc\": 20,\n  \"nombreKitAutre\": 2,\n  \"conformiteProgramme\": true\n}" } } },
+                { "name": "Controle - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/controle", "host": ["{{baseUrl}}"], "path": ["api","controle"] } } },
+                { "name": "Controle - GET by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/controle/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","controle","{{id}}"] } } },
+                { "name": "Controle - PUT", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/controle/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","controle","{{id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idDiscipline\": 1,\n  \"idManuel\": 1,\n  \"idNiveauControle\": 1,\n  \"jourHeureFormation\": \"Mardi 09h\",\n  \"nombreKitManuelsSyllabaire\": 22,\n  \"conformiteProgramme\": false\n}" } } },
+                { "name": "Controle - DELETE", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/controle/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","controle","{{id}}"] } } },
+                { "name": "Controle - SEARCH", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/controle/search?idAlpha={{alphaId}}&idDiscipline=1", "host": ["{{baseUrl}}"], "path": ["api","controle","search"], "query": [{"key":"idAlpha","value":"{{alphaId}}"},{"key":"idDiscipline","value":"1"}] } } },
+                { "name": "Evaluation - POST", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/evaluation", "host": ["{{baseUrl}}"], "path": ["api","evaluation"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idPeriodeEvaluation\": 1,\n  \"idNiveauEvaluation\": 1,\n  \"idThemeEvaluationNiveau1\": 1,\n  \"idTauxEvaluation\": 1,\n  \"idAspectAAmeliorer\": 1,\n  \"themeEvaluation\": \"Comprehension\"\n}" } } },
+                { "name": "Evaluation - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/evaluation", "host": ["{{baseUrl}}"], "path": ["api","evaluation"] } } },
+                { "name": "Evaluation - GET by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/evaluation/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","evaluation","{{id}}"] } } },
+                { "name": "Evaluation - PUT", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/evaluation/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","evaluation","{{id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idPeriodeEvaluation\": 1,\n  \"idNiveauEvaluation\": 1,\n  \"themeEvaluation\": \"Comprehension MAJ\"\n}" } } },
+                { "name": "Evaluation - DELETE", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/evaluation/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","evaluation","{{id}}"] } } },
+                { "name": "Evaluation - SEARCH", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/evaluation/search?idAlpha={{alphaId}}&idNiveauEvaluation=1", "host": ["{{baseUrl}}"], "path": ["api","evaluation","search"], "query": [{"key":"idAlpha","value":"{{alphaId}}"},{"key":"idNiveauEvaluation","value":"1"}] } } },
+                { "name": "Performance - POST", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/performance", "host": ["{{baseUrl}}"], "path": ["api","performance"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"tauxFrequentationParMois\": \"85\",\n  \"tauxProgressionApprentissageLecture\": \"70\",\n  \"tauxProgressionApprentissageEcriture\": \"65\",\n  \"tauxProgressionApprentissageCalcul\": \"60\",\n  \"tauxProgressionApprentissageCvc\": \"75\"\n}" } } },
+                { "name": "Performance - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/performance", "host": ["{{baseUrl}}"], "path": ["api","performance"] } } },
+                { "name": "Performance - GET by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/performance/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","performance","{{id}}"] } } },
+                { "name": "Performance - PUT", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/performance/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","performance","{{id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"tauxFrequentationParMois\": \"90\"\n}" } } },
+                { "name": "Performance - DELETE", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/performance/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","performance","{{id}}"] } } },
+                { "name": "Performance - SEARCH", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/performance/search?idAlpha={{alphaId}}&tauxFrequentationParMois=85", "host": ["{{baseUrl}}"], "path": ["api","performance","search"], "query": [{"key":"idAlpha","value":"{{alphaId}}"},{"key":"tauxFrequentationParMois","value":"85"}] } } },
+                { "name": "Visite - POST", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/visite", "host": ["{{baseUrl}}"], "path": ["api","visite"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"maitriseSeanceLecture\": \"Bonne\",\n  \"maitriseSeanceEcriture\": \"Moyenne\",\n  \"maitriseSeanceCalcul\": \"Bonne\",\n  \"maitriseSeanceCvc\": \"Bonne\",\n  \"nombreVisiteRealiseParConseiller\": 3\n}" } } },
+                { "name": "Visite - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/visite", "host": ["{{baseUrl}}"], "path": ["api","visite"] } } },
+                { "name": "Visite - GET by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/visite/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","visite","{{id}}"] } } },
+                { "name": "Visite - PUT", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/visite/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","visite","{{id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"maitriseSeanceLecture\": \"Excellente\",\n  \"nombreVisiteRealiseParConseiller\": 4\n}" } } },
+                { "name": "Visite - DELETE", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/visite/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","visite","{{id}}"] } } },
+                { "name": "Visite - SEARCH", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/visite/search?idAlpha={{alphaId}}&maitriseSeanceLecture=Bonne", "host": ["{{baseUrl}}"], "path": ["api","visite","search"], "query": [{"key":"idAlpha","value":"{{alphaId}}"},{"key":"maitriseSeanceLecture","value":"Bonne"}] } } }
+              ]
             }
           ]
         }

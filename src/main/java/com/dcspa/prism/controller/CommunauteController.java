@@ -63,7 +63,7 @@ public class CommunauteController {
 		if (r.getIdPromoteur() == null) {
 			throw new IllegalArgumentException("idPromoteur est obligatoire.");
 		}
-		Personnemorale pm = personnemoraleRepository.findById(r.getIdPromoteur().longValue())
+		Personnemorale pm = personnemoraleRepository.findById(r.getIdPromoteur())
 				.orElseThrow(() -> new IllegalArgumentException("Personne morale introuvable: " + r.getIdPromoteur()));
 		Communaute c = new Communaute();
 		if (id != null) {

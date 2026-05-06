@@ -11,6 +11,7 @@ public class CentreCreatePayload {
     private Integer iepId;
     private Integer autoriteAutorisationId;
     private Integer natureCentreId;
+    private Integer idMilieuImplentation;
 
     private String codeCentre;
     private Boolean autorisation;

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/Periodicites")
+@RequestMapping("/api/Periodicites")
 @RequiredArgsConstructor
 public class PeriodiciteController {
 
@@ -53,3 +53,4 @@ public class PeriodiciteController {
 		return ResponseEntity.noContent().build();
 	}
 }
+

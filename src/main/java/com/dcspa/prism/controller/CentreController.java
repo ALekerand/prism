@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/centres")
+@RequestMapping("/api/centres")
 @RequiredArgsConstructor
 public class CentreController {
 
@@ -102,3 +102,4 @@ public class CentreController {
 		return c;
 	}
 }
+

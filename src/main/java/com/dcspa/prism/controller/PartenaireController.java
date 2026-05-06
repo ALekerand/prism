@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/Partenaires")
+@RequestMapping("/api/Partenaires")
 @RequiredArgsConstructor
 public class PartenaireController {
 
@@ -53,3 +53,4 @@ public class PartenaireController {
 		return ResponseEntity.noContent().build();
 	}
 }
+

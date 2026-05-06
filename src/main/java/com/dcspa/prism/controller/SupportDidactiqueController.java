@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/SupportDidactiques")
+@RequestMapping("/api/SupportDidactiques")
 @RequiredArgsConstructor
 public class SupportDidactiqueController {
 
@@ -53,3 +53,4 @@ public class SupportDidactiqueController {
 		return ResponseEntity.noContent().build();
 	}
 }
+
