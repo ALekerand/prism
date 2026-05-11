@@ -56,6 +56,7 @@ public class VisiteController {
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody VisiteRequest body) {
 		try {
+			validatePointsCreation(body);
 			Visite e = new Visite();
 			apply(e, body);
 			return ResponseEntity.status(201).body(toRow(repository.save(e)));
@@ -71,6 +72,7 @@ public class VisiteController {
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
 		try {
 			Visite e = opt.get();
+			validateWorkflowLock(e, body);
 			apply(e, body);
 			return ResponseEntity.ok(toRow(repository.save(e)));
 		} catch (IllegalArgumentException ex) {
@@ -109,5 +111,69 @@ public class VisiteController {
 		m.put("nombreVisiteEffectueParIepp", e.getNombreVisiteEffectueParIepp());
 		m.put("nombreReunionPointActiviteAlpha", e.getNombreReunionPointActiviteAlpha());
 		return m;
+	}
+
+	private void validatePointsCreation(VisiteRequest body) {
+		if (body == null || body.getIdAlpha() == null) throw new IllegalArgumentException("idAlpha est obligatoire");
+		String mode = normalizeMode(body.getMode());
+		if (mode != null && !"points".equals(mode)) {
+			throw new IllegalArgumentException("Création impossible : utilisez la modification pour le suivi de visite.");
+		}
+		if (repository.existsByIdAlpha_Id(body.getIdAlpha())) {
+			throw new IllegalArgumentException("Création impossible : les points des visites ont déjà été créés pour ce centre.");
+		}
+	}
+
+	private void validateWorkflowLock(Visite existing, VisiteRequest body) {
+		String mode = normalizeMode(body == null ? null : body.getMode());
+		if (("points".equals(mode) || "conseiller".equals(mode)) && hasSupervisorFollowup(existing)) {
+			throw new IllegalArgumentException("Modification impossible : le superviseur a déjà effectué son suivi.");
+		}
+		if ("superviseur".equals(mode) && hasIeppFollowup(existing)) {
+			throw new IllegalArgumentException("Modification impossible : l’IEPP a déjà effectué son suivi.");
+		}
+		if (mode == null && hasSupervisorFollowup(existing) && changesConseillerScope(existing, body)) {
+			throw new IllegalArgumentException("Modification impossible : le superviseur a déjà effectué son suivi.");
+		}
+		if (mode == null && hasIeppFollowup(existing) && changesSuperviseurScope(existing, body)) {
+			throw new IllegalArgumentException("Modification impossible : l’IEPP a déjà effectué son suivi.");
+		}
+	}
+
+	private String normalizeMode(String mode) {
+		if (mode == null || mode.isBlank()) return null;
+		String normalized = mode.trim().toLowerCase();
+		return switch (normalized) {
+			case "points", "conseiller", "superviseur", "iepp" -> normalized;
+			default -> throw new IllegalArgumentException("Mode de modification visite invalide: " + mode);
+		};
+	}
+
+	private boolean hasSupervisorFollowup(Visite e) {
+		return e.getNombreVisiteConseillerSuperviseurEffectue() != null || e.getNombreReunionBilanConseillerSuperviseur() != null;
+	}
+
+	private boolean hasIeppFollowup(Visite e) {
+		return e.getNombreVisiteEffectueParIepp() != null || e.getNombreReunionPointActiviteAlpha() != null;
+	}
+
+	private boolean changesConseillerScope(Visite existing, VisiteRequest body) {
+		if (body == null) return false;
+		return changed(existing.getMaitriseSeanceLecture(), body.getMaitriseSeanceLecture())
+				|| changed(existing.getMaitriseSeanceEcriture(), body.getMaitriseSeanceEcriture())
+				|| changed(existing.getMaitriseSeanceCalcul(), body.getMaitriseSeanceCalcul())
+				|| changed(existing.getMaitriseSeanceCvc(), body.getMaitriseSeanceCvc())
+				|| changed(existing.getNombreVisiteRealiseParConseiller(), body.getNombreVisiteRealiseParConseiller())
+				|| changed(existing.getNombreBulletinEffectueParConseiller(), body.getNombreBulletinEffectueParConseiller());
+	}
+
+	private boolean changesSuperviseurScope(Visite existing, VisiteRequest body) {
+		if (body == null) return false;
+		return changed(existing.getNombreVisiteConseillerSuperviseurEffectue(), body.getNombreVisiteConseillerSuperviseurEffectue())
+				|| changed(existing.getNombreReunionBilanConseillerSuperviseur(), body.getNombreReunionBilanConseillerSuperviseur());
+	}
+
+	private boolean changed(Object current, Object incoming) {
+		return !java.util.Objects.equals(current, incoming);
 	}
 }

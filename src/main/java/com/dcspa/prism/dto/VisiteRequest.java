@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class VisiteRequest {
+	private String mode;
 	private Integer idAlpha;
 	private String maitriseSeanceLecture;
 	private String maitriseSeanceEcriture;
