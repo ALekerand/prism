@@ -3,10 +3,12 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.EffectifPassageAlpha;
 import com.dcspa.prism.service.EffectifPassageAlphaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,13 @@ public class EffectifPassageAlphaController {
 
 	private final EffectifPassageAlphaService effectifPassageAlphaService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(effectifPassageAlphaService.findAll().stream().map(this::toRow).collect(Collectors.toList()));
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifPassageAlphaService.findById(id)
@@ -42,12 +46,14 @@ public class EffectifPassageAlphaController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifPassageAlpha body) {
 		EffectifPassageAlpha saved = effectifPassageAlphaService.save(body);
 		return ResponseEntity.status(201).body(toRow(saved));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifPassageAlpha body) {
 		Optional<EffectifPassageAlpha> opt = effectifPassageAlphaService.findById(id);
@@ -68,8 +74,8 @@ public class EffectifPassageAlphaController {
 	private Map<String, Object> toRow(EffectifPassageAlpha e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idPeriodeActivite", JpaAssociationIds.intIdOrNull(e.getIdPeriodeActivite()));
-		m.put("idCentre", JpaAssociationIds.intIdOrNull(e.getIdCentre()));
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifPassageAlpha", e.getCodeEffectifPassageAlpha());
 		m.put("effectifPassageAlphaNiveauHomme", e.getEffectifPassageAlphaNiveauHomme());
 		m.put("effectifPassageAlphaNiveauFemme", e.getEffectifPassageAlphaNiveauFemme());

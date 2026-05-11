@@ -1,5 +1,7 @@
 package com.dcspa.prism.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +19,9 @@ public class UpdateCentreTypeInfosRequest {
 
     private Boolean autorisation;
     private Boolean estElectrifie;
+
+    @JsonProperty("aDeLeau")
+    @JsonAlias({"adeLeau"})
     private Boolean aDeLeau;
     private Integer nombreVisite;
 
@@ -24,5 +29,8 @@ public class UpdateCentreTypeInfosRequest {
     private String nomMilieuImplentation;
     private String encadreurNonMena;
     private Boolean encadrerParMena;
+
+    /** Si présent, met à jour le promoteur lié au centre sous-jacent. */
+    private Integer idPromoteur;
 }
 

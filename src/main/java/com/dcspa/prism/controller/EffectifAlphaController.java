@@ -1,6 +1,6 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.EffectifAlphaRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.EffectifAlpha;
@@ -12,6 +12,7 @@ import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.service.EffectifAlphaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,7 @@ public class EffectifAlphaController {
 	private final AlphaRepository alphaRepository;
 	private final NiveauAlphaRepository niveauAlphaRepository;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		List<Map<String, Object>> rows = effectifAlphaService.findAll()
@@ -46,6 +48,7 @@ public class EffectifAlphaController {
 		return ResponseEntity.ok(rows);
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifAlphaService.findById(id)
@@ -54,6 +57,7 @@ public class EffectifAlphaController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody EffectifAlphaRequest body) {
 		try {
@@ -66,6 +70,7 @@ public class EffectifAlphaController {
 		}
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody EffectifAlphaRequest body) {
 		Optional<EffectifAlpha> opt = effectifAlphaService.findById(id);
@@ -144,22 +149,9 @@ public class EffectifAlphaController {
 	private Map<String, Object> toRow(EffectifAlpha e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		Integer idPeriodeActivite = JpaAssociationIds.intIdOrNull(e.getIdPeriodeActivite());
-		m.put("idPeriodeActivite", idPeriodeActivite);
-		m.put("libellePeriodeActivite", idPeriodeActivite == null ? null
-				: periodeActiviteRepository.findById(idPeriodeActivite.longValue())
-						.map(PeriodeActivite::getLibellePeriodeActivite)
-						.orElse(null));
-		Integer idCentre = JpaAssociationIds.intIdOrNull(e.getIdCentre());
-		m.put("idCentre", idCentre);
-		m.put("libelleCentre", idCentre == null ? null
-				: alphaRepository.findById(idCentre).map(Alpha::getLibelleAlpha).orElse(null));
-		Integer idNiveauAlpha = JpaAssociationIds.intIdOrNull(e.getIdNiveauAlpha());
-		m.put("idNiveauAlpha", idNiveauAlpha);
-		m.put("libelleNiveauAlpha", idNiveauAlpha == null ? null
-				: niveauAlphaRepository.findById(idNiveauAlpha.longValue())
-						.map(NiveauAlpha::getLibelleNiveauAlpha)
-						.orElse(null));
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
+		ReferentielEnricher.putRef(m, "Alpha", e.getIdCentre());
+		ReferentielEnricher.putRef(m, "NiveauAlpha", e.getIdNiveauAlpha());
 		m.put("codeEffectifAlpha", e.getCodeEffectifAlpha());
 		m.put("effectifAlphaNiveauH", e.getEffectifAlphaNiveauH());
 		m.put("effectifAlphaNiveauF", e.getEffectifAlphaNiveauF());

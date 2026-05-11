@@ -20,6 +20,7 @@ import com.dcspa.prism.entity.Personnephysique;
 import com.dcspa.prism.entity.Personnemorale;
 import com.dcspa.prism.entity.Promoteur;
 import com.dcspa.prism.entity.Sie;
+import com.dcspa.prism.entity.TypePromoteur;
 import com.dcspa.prism.repository.AutoriteAutorisationRepository;
 import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.repository.IeppRepository;
@@ -203,6 +204,7 @@ public class SieService {
 			existing.setNomMilieuImplentation(resolveNomMilieuImplentationForUpdate(req, existing.getIdLocalite()));
 			existing.setEncadreurNonMena(req.getEncadreurNonMena());
 			existing.setEncadrerParMena(req.getEncadrerParMena());
+			CentrePromoteurSync.applyPromoteurChange(req, existing.getId(), centreRepository, promoteurRepository, existing::setIdPromoteur);
 		}
 		return Optional.of(CentreTypeListItemMapper.fromSie(save(existing)));
 	}
@@ -365,6 +367,13 @@ public class SieService {
 			m.setIdTypePersonneMorale(pm.getTypePersonneMorale() != null ? pm.getTypePersonneMorale().getId() : null);
 			m.setLibelleTypePersonneMorale(pm.getTypePersonneMorale() != null ? pm.getTypePersonneMorale().getLibelle() : null);
 			details.setPersonneMorale(m);
+		}
+		if (details.getTypePromoteur() == null) {
+			if (details.getPersonneMorale() != null) {
+				details.setTypePromoteur(TypePromoteur.MORALE);
+			} else if (details.getPersonnePhysique() != null) {
+				details.setTypePromoteur(TypePromoteur.PHYSIQUE);
+			}
 		}
 		item.setPromoteur(details);
 	}

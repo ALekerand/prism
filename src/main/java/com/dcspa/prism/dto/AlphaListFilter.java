@@ -31,4 +31,33 @@ public class AlphaListFilter {
 	private Boolean estElectrifie;
 	private Boolean aDeLeau;
 	private Integer nombreVisite;
+
+	/** Aucun critère utile : la liste peut utiliser un chemin SQL allégé (projection DTO). */
+	public boolean isEmpty() {
+		if (q != null && !q.isBlank()) {
+			return false;
+		}
+		return id == null
+				&& idCompagne == null
+				&& idCategorieCentreAlpha == null
+				&& idTypeAlpha == null
+				&& idRegimeAlpha == null
+				&& idLocalite == null
+				&& idPeriodicite == null
+				&& idIep == null
+				&& idAutoriteAutorisation == null
+				&& idNaturecentre == null
+				&& idPromoteur == null
+				&& codeCentre == null
+				&& codeAlpha == null
+				&& libelleAlpha == null
+				&& encadreurNonMena == null
+				&& localisationCentre == null
+				&& nomMilieuImplentation == null
+				&& autorisation == null
+				&& encadrerParMena == null
+				&& estElectrifie == null
+				&& aDeLeau == null
+				&& nombreVisite == null;
+	}
 }

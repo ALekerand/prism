@@ -7,7 +7,8 @@ import org.springframework.data.domain.Sort;
 // Limite la taille de page pour éviter les requêtes trop lourdes.
 public final class PageableUtils {
 
-	public static final int MAX_PAGE_SIZE = 5000;
+	/** Plafond appliqué aux requêtes paginées (évite charges excessives côté SQL / sérialisation). */
+	public static final int MAX_PAGE_SIZE = 2000;
 
 	private PageableUtils() {
 	}

@@ -3,10 +3,12 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.EffectifReverseFormelSie;
 import com.dcspa.prism.service.EffectifReverseFormelSieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,13 @@ public class EffectifReverseFormelSieController {
 
 	private final EffectifReverseFormelSieService effectifReverseFormelSieService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(effectifReverseFormelSieService.findAll().stream().map(this::toRow).collect(Collectors.toList()));
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifReverseFormelSieService.findById(id)
@@ -42,11 +46,13 @@ public class EffectifReverseFormelSieController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifReverseFormelSie body) {
 		return ResponseEntity.status(201).body(toRow(effectifReverseFormelSieService.save(body)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifReverseFormelSie body) {
 		Optional<EffectifReverseFormelSie> opt = effectifReverseFormelSieService.findById(id);
@@ -67,8 +73,8 @@ public class EffectifReverseFormelSieController {
 	private Map<String, Object> toRow(EffectifReverseFormelSie e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idNiveauSie", JpaAssociationIds.intIdOrNull(e.getIdNiveauSie()));
-		m.put("idAnneeScolaire", JpaAssociationIds.intIdOrNull(e.getIdAnneeScolaire()));
+		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
+		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
 		m.put("codeEffectifReverseFormelSie", e.getCodeEffectifReverseFormelSie());
 		m.put("effectifReverseFormelSie3IvoirienH", e.getEffectifReverseFormelSie3IvoirienH());
 		m.put("effectifReverseFormelSie3IvoirienF", e.getEffectifReverseFormelSie3IvoirienF());

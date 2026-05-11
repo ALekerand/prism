@@ -1,6 +1,8 @@
 package com.dcspa.prism.dto;
 
 import com.dcspa.prism.entity.TypePromoteur;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +20,11 @@ public class CentreWithPromoteurItem {
     private Integer idAutoriteAutorisation;
     private Boolean autorisation;
     private Boolean estElectrifie;
+
+    @JsonProperty("aDeLeau")
+    @JsonAlias({"adeLeau"})
     private Boolean aDeLeau;
+
     private Integer nombreVisite;
     private String localisationCentre;
     private String nomMilieuImplentation;
@@ -30,6 +36,17 @@ public class CentreWithPromoteurItem {
     private ReferenceDetails periodicite;
     private ReferenceDetails autoriteAutorisation;
     private PromoteurDetails promoteur;
+
+    /** Renseignés uniquement pour le détail Alpha. */
+    private Integer idCompagne;
+    private Integer idCategorieCentreAlpha;
+    private Integer idTypeAlpha;
+    private Integer idRegimeAlpha;
+
+    private ReferenceDetails campagne;
+    private ReferenceDetails categorieCentreAlpha;
+    private ReferenceDetails typeAlpha;
+    private ReferenceDetails regimeAlpha;
 
     @Getter
     @Setter

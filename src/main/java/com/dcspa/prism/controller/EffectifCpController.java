@@ -1,12 +1,14 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.controller.support.JpaAssociationIds;
-import com.dcspa.prism.controller.support.ReferentialPutHelper;
+import com.dcspa.prism.codegen.AutoCodePutMerge;
+
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 
 import com.dcspa.prism.entity.EffectifCp;
 import com.dcspa.prism.service.EffectifCpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/effectif-cp")
@@ -27,11 +30,13 @@ public class EffectifCpController {
 
 	private final EffectifCpService effectifCpService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(effectifCpService.findAll().stream().map(this::toRow).toList());
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifCpService.findById(id)
@@ -40,14 +45,22 @@ public class EffectifCpController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
-	public ResponseEntity<EffectifCp> create(@RequestBody EffectifCp body) {
-		return ResponseEntity.status(201).body(effectifCpService.save(body));
+	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifCp body) {
+		return ResponseEntity.status(201).body(toRow(effectifCpService.save(body)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<EffectifCp> update(@PathVariable Integer id, @RequestBody EffectifCp body) {
-		return ReferentialPutHelper.putPreservingAutoCode(id, body, effectifCpService::findById, effectifCpService::save);
+	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifCp body) {
+		Optional<EffectifCp> opt = effectifCpService.findById(id);
+		if (opt.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		AutoCodePutMerge.preserveAutoCodeFromExisting(opt.get(), body);
+		body.setId(id);
+		return ResponseEntity.ok(toRow(effectifCpService.save(body)));
 	}
 
 	@DeleteMapping("/{id}")
@@ -59,9 +72,9 @@ public class EffectifCpController {
 	private Map<String, Object> toRow(EffectifCp entity) {
 		Map<String, Object> row = new LinkedHashMap<>();
 		row.put("id", entity.getId());
-		row.put("idNiveauCp", JpaAssociationIds.intIdOrNull(entity.getIdNiveauCp()));
-		row.put("idAnneeScolaire", JpaAssociationIds.intIdOrNull(entity.getIdAnneeScolaire()));
-		row.put("idCentre", JpaAssociationIds.intIdOrNull(entity.getIdCentre()));
+		ReferentielEnricher.putRef(row, "NiveauCp", entity.getIdNiveauCp());
+		ReferentielEnricher.putRef(row, "AnneeScolaire", entity.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(row, "Centre", entity.getIdCentre());
 		row.put("codeEffectifCp", entity.getCodeEffectifCp());
 		row.put("effectifCp911IvoirienH", entity.getEffectifCp911IvoirienH());
 		row.put("effectifCp911IvoirienF", entity.getEffectifCp911IvoirienF());

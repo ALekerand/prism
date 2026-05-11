@@ -1,6 +1,7 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.codegen.AutoCodePutMerge;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.DocumentRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Document;
@@ -10,9 +11,9 @@ import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.repository.NatureDocumentRepository;
 import com.dcspa.prism.repository.TypeDocumentRepository;
 import com.dcspa.prism.service.DocumentService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/documents")
@@ -34,35 +37,55 @@ public class DocumentController {
 	private final TypeDocumentRepository typeDocumentRepository;
 	private final AlphaRepository alphaRepository;
 
+	@Transactional(readOnly = true)
 	@GetMapping
-	public ResponseEntity<List<Document>> findAll() {
-		List<Document> list = documentService.findAll();
-		return ResponseEntity.ok(list);
+	public ResponseEntity<List<Map<String, Object>>> findAll() {
+		return ResponseEntity.ok(documentService.findAll().stream().map(this::toRow).toList());
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<Document> findById(@PathVariable Integer id) {
+	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return documentService.findById(id)
+				.map(this::toRow)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
-	public ResponseEntity<Document> create(@RequestBody DocumentRequest request) {
-		Document saved = documentService.save(toEntity(null, request));
-		return ResponseEntity.status(200).body(saved);
+	public ResponseEntity<Map<String, Object>> create(@RequestBody DocumentRequest request) {
+		return ResponseEntity.status(201).body(toRow(documentService.save(toEntity(null, request))));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<Document> update(@PathVariable Integer id, @RequestBody DocumentRequest request) {
-		Document saved = documentService.save(toEntity(id, request));
-		return ResponseEntity.ok(saved);
+	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody DocumentRequest request) {
+		if (documentService.findById(id).isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(toRow(documentService.save(toEntity(id, request))));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		documentService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private Map<String, Object> toRow(Document d) {
+		Map<String, Object> m = new LinkedHashMap<>();
+		m.put("id", d.getId());
+		ReferentielEnricher.putRef(m, "NatureDocument", d.getIdNatureDocument());
+		ReferentielEnricher.putRef(m, "TypeDocument", d.getIdTypeDocument());
+		ReferentielEnricher.putRef(m, "Alpha", d.getIdCentre());
+		m.put("existe", d.getExiste());
+		m.put("ajour", d.getAjour());
+		m.put("bientenu", d.getBientenu());
+		m.put("respmethode", d.getRespmethode());
+		m.put("bienrensigne", d.getBienrensigne());
+		m.put("codeDocument", d.getCodeDocument());
+		return m;
 	}
 
 	private Document toEntity(Integer id, DocumentRequest r) {
@@ -96,7 +119,9 @@ public class DocumentController {
 	}
 
 	private static Long toLong(Integer v) {
-		if (v == null) return null;
+		if (v == null) {
+			return null;
+		}
 		return v.longValue();
 	}
 }

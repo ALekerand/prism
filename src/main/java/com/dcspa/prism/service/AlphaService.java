@@ -24,6 +24,7 @@ import com.dcspa.prism.entity.Personnemorale;
 import com.dcspa.prism.entity.Promoteur;
 import com.dcspa.prism.entity.Regimealphabetisation;
 import com.dcspa.prism.entity.TypeAlpha;
+import com.dcspa.prism.entity.TypePromoteur;
 import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.repository.AutoriteAutorisationRepository;
 import com.dcspa.prism.repository.CampagneRepository;
@@ -45,6 +46,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,6 +87,9 @@ public class AlphaService {
 	@Transactional(readOnly = true)
 	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, AlphaListFilter filter) {
 		Pageable p = PageableUtils.cap(pageable);
+		if (filter == null || filter.isEmpty()) {
+			return alphaRepository.findAllAsListItems(p);
+		}
 		Specification<Alpha> spec = AlphaSpecifications.fromFilter(filter);
 		return alphaRepository.findAll(spec, p).map(CentreTypeListItemMapper::fromAlpha);
 	}
@@ -97,7 +102,7 @@ public class AlphaService {
 
 	@Transactional(readOnly = true)
 	public Optional<CentreWithPromoteurItem> findDetailedById(Integer id) {
-		return findById(id).map(this::toDetailedItem);
+		return alphaRepository.findDetailWithRefsById(id).map(this::toDetailedItem);
 	}
 
 	@Transactional(readOnly = true)
@@ -129,9 +134,9 @@ public class AlphaService {
 				.orElseThrow(() -> new IllegalArgumentException("Campagne introuvable: " + req.getCampagneId()));
 		CategorieCentreAlpha categorie = categorieCentreAlphaRepository.findById(Objects.requireNonNull(req.getCategorieCentreAlphaId(), "categorieCentreAlphaId est obligatoire"))
 				.orElseThrow(() -> new IllegalArgumentException("Categorie centre alpha introuvable: " + req.getCategorieCentreAlphaId()));
-		TypeAlpha typeAlpha = typeAlphaRepository.findById(Objects.requireNonNull(req.getTypeAlphaId(), "typeAlphaId est obligatoire").longValue())
+		TypeAlpha typeAlpha = typeAlphaRepository.findById(Objects.requireNonNull(req.getTypeAlphaId(), "typeAlphaId est obligatoire"))
 				.orElseThrow(() -> new IllegalArgumentException("Type alpha introuvable: " + req.getTypeAlphaId()));
-		Regimealphabetisation regime = regimealphabetisationRepository.findById(Objects.requireNonNull(req.getRegimeAlphaId(), "regimeAlphaId est obligatoire").longValue())
+		Regimealphabetisation regime = regimealphabetisationRepository.findById(Objects.requireNonNull(req.getRegimeAlphaId(), "regimeAlphaId est obligatoire"))
 				.orElseThrow(() -> new IllegalArgumentException("Regime alpha introuvable: " + req.getRegimeAlphaId()));
 
 		Alpha alpha = new Alpha();
@@ -195,9 +200,9 @@ public class AlphaService {
 				.orElseThrow(() -> new IllegalArgumentException("Campagne introuvable: " + req.getCampagneId()));
 		CategorieCentreAlpha categorie = categorieCentreAlphaRepository.findById(Objects.requireNonNull(req.getCategorieCentreAlphaId(), "categorieCentreAlphaId est obligatoire"))
 				.orElseThrow(() -> new IllegalArgumentException("Categorie centre alpha introuvable: " + req.getCategorieCentreAlphaId()));
-		TypeAlpha typeAlpha = typeAlphaRepository.findById(Objects.requireNonNull(req.getTypeAlphaId(), "typeAlphaId est obligatoire").longValue())
+		TypeAlpha typeAlpha = typeAlphaRepository.findById(Objects.requireNonNull(req.getTypeAlphaId(), "typeAlphaId est obligatoire"))
 				.orElseThrow(() -> new IllegalArgumentException("Type alpha introuvable: " + req.getTypeAlphaId()));
-		Regimealphabetisation regime = regimealphabetisationRepository.findById(Objects.requireNonNull(req.getRegimeAlphaId(), "regimeAlphaId est obligatoire").longValue())
+		Regimealphabetisation regime = regimealphabetisationRepository.findById(Objects.requireNonNull(req.getRegimeAlphaId(), "regimeAlphaId est obligatoire"))
 				.orElseThrow(() -> new IllegalArgumentException("Regime alpha introuvable: " + req.getRegimeAlphaId()));
 
 		Alpha alpha = new Alpha();
@@ -242,6 +247,7 @@ public class AlphaService {
 			existing.setNomMilieuImplentation(resolveNomMilieuImplentationForUpdate(req, existing.getIdLocalite()));
 			existing.setEncadreurNonMena(req.getEncadreurNonMena());
 			existing.setEncadrerParMena(req.getEncadrerParMena());
+			CentrePromoteurSync.applyPromoteurChange(req, existing.getId(), centreRepository, promoteurRepository, existing::setIdPromoteur);
 		}
 		return Optional.of(CentreTypeListItemMapper.fromAlpha(save(existing)));
 	}
@@ -308,6 +314,7 @@ public class AlphaService {
 		item.setEncadrerParMena(alpha.getEncadrerParMena());
 		attachReferences(item, alpha);
 		attachPromoteur(item, alpha.getIdPromoteur());
+		attachAlphaSpecificRefs(item, alpha);
 		return item;
 	}
 
@@ -355,6 +362,69 @@ public class AlphaService {
 				ref.setCode(autorite.getCodeAutorisation());
 				ref.setLibelle(autorite.getLibelleAutoriteAutorisation());
 				item.setAutoriteAutorisation(ref);
+			});
+		}
+	}
+
+	private void attachAlphaSpecificRefs(CentreWithPromoteurItem item, Alpha alpha) {
+		Hibernate.initialize(alpha.getIdCompagne());
+		Hibernate.initialize(alpha.getIdCategorieCentreAlpha());
+		Hibernate.initialize(alpha.getIdTypeAlpha());
+		Hibernate.initialize(alpha.getIdRegimeAlpha());
+
+		Integer campagneId = alpha.getIdCompagne() == null ? null : alpha.getIdCompagne().getId();
+		item.setIdCompagne(campagneId);
+		if (campagneId != null) {
+			campagneRepository.findById(campagneId).ifPresent(c -> {
+				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+				ref.setId(c.getId());
+				ref.setCode(c.getCodeCampagne());
+				if (c.getDateDebutCampagne() != null && c.getDateFinCampagne() != null) {
+					ref.setLibelle(c.getDateDebutCampagne() + " → " + c.getDateFinCampagne());
+				} else if (c.getDateDebutCampagne() != null) {
+					ref.setLibelle(String.valueOf(c.getDateDebutCampagne()));
+				} else if (c.getDateFinCampagne() != null) {
+					ref.setLibelle(String.valueOf(c.getDateFinCampagne()));
+				} else {
+					ref.setLibelle(c.getCodeCampagne());
+				}
+				item.setCampagne(ref);
+			});
+		}
+
+		Integer categorieId = alpha.getIdCategorieCentreAlpha() == null ? null : alpha.getIdCategorieCentreAlpha().getId();
+		item.setIdCategorieCentreAlpha(categorieId);
+		if (categorieId != null) {
+			categorieCentreAlphaRepository.findById(categorieId).ifPresent(cat -> {
+				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+				ref.setId(cat.getId());
+				ref.setCode(cat.getCodeCategorieCentreAlpha());
+				ref.setLibelle(cat.getLibelleCategorieCentreAlpha());
+				item.setCategorieCentreAlpha(ref);
+			});
+		}
+
+		Integer typeAlphaId = alpha.getIdTypeAlpha() == null ? null : alpha.getIdTypeAlpha().getId();
+		item.setIdTypeAlpha(typeAlphaId);
+		if (typeAlphaId != null) {
+			typeAlphaRepository.findById(typeAlphaId).ifPresent(t -> {
+				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+				ref.setId(t.getId());
+				ref.setCode(null);
+				ref.setLibelle(t.getLibelleTypeAlpha());
+				item.setTypeAlpha(ref);
+			});
+		}
+
+		Integer regimeId = alpha.getIdRegimeAlpha() == null ? null : alpha.getIdRegimeAlpha().getId();
+		item.setIdRegimeAlpha(regimeId);
+		if (regimeId != null) {
+			regimealphabetisationRepository.findById(regimeId).ifPresent(r -> {
+				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+				ref.setId(r.getId());
+				ref.setCode(null);
+				ref.setLibelle(r.getLibelleRegimeAlpha());
+				item.setRegimeAlpha(ref);
 			});
 		}
 	}
@@ -414,6 +484,13 @@ public class AlphaService {
 			m.setIdTypePersonneMorale(pm.getTypePersonneMorale() != null ? pm.getTypePersonneMorale().getId() : null);
 			m.setLibelleTypePersonneMorale(pm.getTypePersonneMorale() != null ? pm.getTypePersonneMorale().getLibelle() : null);
 			details.setPersonneMorale(m);
+		}
+		if (details.getTypePromoteur() == null) {
+			if (details.getPersonneMorale() != null) {
+				details.setTypePromoteur(TypePromoteur.MORALE);
+			} else if (details.getPersonnePhysique() != null) {
+				details.setTypePromoteur(TypePromoteur.PHYSIQUE);
+			}
 		}
 		item.setPromoteur(details);
 	}

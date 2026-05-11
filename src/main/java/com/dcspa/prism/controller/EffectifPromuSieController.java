@@ -3,10 +3,12 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.EffectifPromuSie;
 import com.dcspa.prism.service.EffectifPromuSieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,13 @@ public class EffectifPromuSieController {
 
 	private final EffectifPromuSieService effectifPromuSieService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(effectifPromuSieService.findAll().stream().map(this::toRow).collect(Collectors.toList()));
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifPromuSieService.findById(id)
@@ -42,11 +46,13 @@ public class EffectifPromuSieController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifPromuSie body) {
 		return ResponseEntity.status(201).body(toRow(effectifPromuSieService.save(body)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifPromuSie body) {
 		Optional<EffectifPromuSie> opt = effectifPromuSieService.findById(id);
@@ -67,8 +73,8 @@ public class EffectifPromuSieController {
 	private Map<String, Object> toRow(EffectifPromuSie e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idAnneeScolaire", JpaAssociationIds.intIdOrNull(e.getIdAnneeScolaire()));
-		m.put("idNiveauSie", JpaAssociationIds.intIdOrNull(e.getIdNiveauSie()));
+		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
 		m.put("codeEffectifPromuSie", e.getCodeEffectifPromuSie());
 		m.put("effectifPromuSie3IvoirienH", e.getEffectifPromuSie3IvoirienH());
 		m.put("effectifPromuSie3IvoirienF", e.getEffectifPromuSie3IvoirienF());

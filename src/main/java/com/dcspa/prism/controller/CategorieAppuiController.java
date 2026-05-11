@@ -1,11 +1,13 @@
 package com.dcspa.prism.controller;
-import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
+import com.dcspa.prism.codegen.AutoCodePutMerge;
+
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.CategorieAppui;
 import com.dcspa.prism.service.CategorieAppuiService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/categorieappuis")
@@ -24,33 +29,46 @@ public class CategorieAppuiController {
 
 	private final CategorieAppuiService categorieappuiService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
-	public ResponseEntity<List<CategorieAppui>> findAll() {
-		List<CategorieAppui> list = categorieappuiService.findAll();
-		return ResponseEntity.ok(list);
+	public ResponseEntity<List<Map<String, Object>>> findAll() {
+		return ResponseEntity.ok(categorieappuiService.findAll().stream().map(this::toRow).toList());
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<CategorieAppui> findById(@PathVariable Integer id) {
+	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return categorieappuiService.findById(id)
+				.map(this::toRow)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
-	public ResponseEntity<CategorieAppui> create(@RequestBody CategorieAppui categorieappui) {
-		CategorieAppui saved = categorieappuiService.save(categorieappui);
-		return ResponseEntity.status(200).body(saved);
+	public ResponseEntity<Map<String, Object>> create(@RequestBody CategorieAppui body) {
+		return ResponseEntity.status(201).body(toRow(categorieappuiService.save(body)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<CategorieAppui> update(@PathVariable Integer id, @RequestBody CategorieAppui categorieappui) {
-		return ReferentialPutHelper.putPreservingAutoCode(id, categorieappui, categorieappuiService::findById, categorieappuiService::save);
+	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody CategorieAppui body) {
+		Optional<CategorieAppui> opt = categorieappuiService.findById(id);
+		if (opt.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		AutoCodePutMerge.preserveAutoCodeFromExisting(opt.get(), body);
+		body.setId(id);
+		return ResponseEntity.ok(toRow(categorieappuiService.save(body)));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		categorieappuiService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private Map<String, Object> toRow(CategorieAppui e) {
+		return new LinkedHashMap<>(ReferentielEnricher.toRef(e));
 	}
 }

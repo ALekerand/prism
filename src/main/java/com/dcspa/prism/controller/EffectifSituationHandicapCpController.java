@@ -3,10 +3,12 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.EffectifSituationHandicapCp;
 import com.dcspa.prism.service.EffectifSituationHandicapCpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,13 @@ public class EffectifSituationHandicapCpController {
 
 	private final EffectifSituationHandicapCpService effectifSituationHandicapCpService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(effectifSituationHandicapCpService.findAll().stream().map(this::toRow).collect(Collectors.toList()));
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifSituationHandicapCpService.findById(id)
@@ -42,12 +46,14 @@ public class EffectifSituationHandicapCpController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifSituationHandicapCp body) {
 		EffectifSituationHandicapCp saved = effectifSituationHandicapCpService.save(body);
 		return ResponseEntity.status(201).body(toRow(saved));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifSituationHandicapCp body) {
 		Optional<EffectifSituationHandicapCp> opt = effectifSituationHandicapCpService.findById(id);
@@ -68,9 +74,9 @@ public class EffectifSituationHandicapCpController {
 	private Map<String, Object> toRow(EffectifSituationHandicapCp e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idAnneeScolaire", JpaAssociationIds.intIdOrNull(e.getIdAnneeScolaire()));
-		m.put("idNiveauCp", JpaAssociationIds.intIdOrNull(e.getIdNiveauCp()));
-		m.put("idCentre", JpaAssociationIds.intIdOrNull(e.getIdCentre()));
+		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "NiveauCp", e.getIdNiveauCp());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifSituationHandicapCp", e.getCodeEffectifSituationHandicapCp());
 		m.put("effectifSituationHandicapCp911IvoirienH", e.getEffectifSituationHandicapCp911IvoirienH());
 		m.put("effectifSituationHandicapCp911IvoirienF", e.getEffectifSituationHandicapCp911IvoirienF());

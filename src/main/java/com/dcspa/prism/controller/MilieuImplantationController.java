@@ -1,11 +1,12 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.controller.support.ReferentialPutHelper;
+import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.entity.MilieuImplantation;
 import com.dcspa.prism.service.MilieuImplantationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/milieu-implantation")
@@ -24,31 +28,51 @@ public class MilieuImplantationController {
 
 	private final MilieuImplantationService milieuImplantationService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
-	public ResponseEntity<List<MilieuImplantation>> findAll() {
-		return ResponseEntity.ok(milieuImplantationService.findAll());
+	public ResponseEntity<List<Map<String, Object>>> findAll() {
+		return ResponseEntity.ok(milieuImplantationService.findAll().stream().map(this::toRow).toList());
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<MilieuImplantation> findById(@PathVariable Integer id) {
+	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return milieuImplantationService.findById(id)
+				.map(this::toRow)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
-	public ResponseEntity<MilieuImplantation> create(@RequestBody MilieuImplantation body) {
-		return ResponseEntity.status(201).body(milieuImplantationService.save(body));
+	public ResponseEntity<Map<String, Object>> create(@RequestBody MilieuImplantation body) {
+		return ResponseEntity.status(201).body(toRow(milieuImplantationService.save(body)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<MilieuImplantation> update(@PathVariable Integer id, @RequestBody MilieuImplantation body) {
-		return ReferentialPutHelper.putPreservingAutoCode(id, body, milieuImplantationService::findById, milieuImplantationService::save);
+	public ResponseEntity<Map<String, Object>> update(
+			@PathVariable Integer id, @RequestBody MilieuImplantation body) {
+		Optional<MilieuImplantation> opt = milieuImplantationService.findById(id);
+		if (opt.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		AutoCodePutMerge.preserveAutoCodeFromExisting(opt.get(), body);
+		body.setId(id);
+		return ResponseEntity.ok(toRow(milieuImplantationService.save(body)));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		milieuImplantationService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private Map<String, Object> toRow(MilieuImplantation e) {
+		Map<String, Object> m = new LinkedHashMap<>();
+		m.put("id", e.getId());
+		m.put("codeMilieuImplentation", e.getCodeMilieuImplentation());
+		m.put("libelleTypeImplentation", e.getLibelleTypeImplentation());
+		return m;
 	}
 }

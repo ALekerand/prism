@@ -17,12 +17,12 @@ public class AppuiPartenaireService {
 
 	@Transactional(readOnly = true)
 	public List<AppuiPartenaire> findAll() {
-		return appuiPartenaireRepository.findAll();
+		return appuiPartenaireRepository.findAllWithAssociations();
 	}
 
 	@Transactional(readOnly = true)
 	public Optional<AppuiPartenaire> findById(Integer id) {
-		return appuiPartenaireRepository.findById(id);
+		return appuiPartenaireRepository.findByIdWithAssociations(id);
 	}
 
 	@Transactional

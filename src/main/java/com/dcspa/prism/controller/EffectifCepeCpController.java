@@ -3,10 +3,12 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.EffectifCepeCp;
 import com.dcspa.prism.service.EffectifCepeCpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,13 @@ public class EffectifCepeCpController {
 
 	private final EffectifCepeCpService effectifCepeCpService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(effectifCepeCpService.findAll().stream().map(this::toRow).collect(Collectors.toList()));
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifCepeCpService.findById(id)
@@ -42,11 +46,13 @@ public class EffectifCepeCpController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifCepeCp body) {
 		return ResponseEntity.status(201).body(toRow(effectifCepeCpService.save(body)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifCepeCp body) {
 		Optional<EffectifCepeCp> opt = effectifCepeCpService.findById(id);
@@ -67,8 +73,8 @@ public class EffectifCepeCpController {
 	private Map<String, Object> toRow(EffectifCepeCp e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idAnneeScolaire", JpaAssociationIds.intIdOrNull(e.getIdAnneeScolaire()));
-		m.put("idCentre", JpaAssociationIds.intIdOrNull(e.getIdCentre()));
+		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifCepeCp", e.getCodeEffectifCepeCp());
 		m.put("effectifCepeCandidatFCp", e.getEffectifCepeCandidatFCp());
 		m.put("effectifCepeCandidatHCp", e.getEffectifCepeCandidatHCp());

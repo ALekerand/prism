@@ -3,10 +3,12 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.EffectifAdmisIntegrationCp;
 import com.dcspa.prism.service.EffectifAdmisIntegrationCpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,13 @@ public class EffectifAdmisIntegrationCpController {
 
 	private final EffectifAdmisIntegrationCpService effectifAdmisIntegrationCpService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(effectifAdmisIntegrationCpService.findAll().stream().map(this::toRow).collect(Collectors.toList()));
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifAdmisIntegrationCpService.findById(id)
@@ -42,11 +46,13 @@ public class EffectifAdmisIntegrationCpController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifAdmisIntegrationCp body) {
 		return ResponseEntity.status(201).body(toRow(effectifAdmisIntegrationCpService.save(body)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifAdmisIntegrationCp body) {
 		Optional<EffectifAdmisIntegrationCp> opt = effectifAdmisIntegrationCpService.findById(id);
@@ -67,9 +73,9 @@ public class EffectifAdmisIntegrationCpController {
 	private Map<String, Object> toRow(EffectifAdmisIntegrationCp e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idNiveauCp", JpaAssociationIds.intIdOrNull(e.getIdNiveauCp()));
-		m.put("idAnneeScolaire", JpaAssociationIds.intIdOrNull(e.getIdAnneeScolaire()));
-		m.put("idCentre", JpaAssociationIds.intIdOrNull(e.getIdCentre()));
+		ReferentielEnricher.putRef(m, "NiveauCp", e.getIdNiveauCp());
+		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifAdmisIntegrationCp", e.getCodeEffectifAdmisIntegrationCp());
 		m.put("effectifAdmisIntegrationCp911IvoirienH", e.getEffectifAdmisIntegrationCp911IvoirienH());
 		m.put("effectifAdmisIntegrationCp911IvoirienF", e.getEffectifAdmisIntegrationCp911IvoirienF());

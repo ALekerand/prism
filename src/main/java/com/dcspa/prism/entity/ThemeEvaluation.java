@@ -16,20 +16,27 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "theme_evaluation_niveau2_post_alpha")
-@AutoCode(field = "codeThemeEvaluationNiveau2PostAlpha")
+@Table(name = "theme_evaluation")
+@AutoCode(field = "codeThemeEvaluation")
 @EntityListeners(AutoCodeEntityListener.class)
-public class ThemeEvaluationNiveau2PostAlpha {
+public class ThemeEvaluation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_THEME_EVALUATION_N2_POST_ALPHA", nullable = false)
+	@Column(name = "ID_THEME_EVALUATION", nullable = false)
 	private Integer id;
 
 	@Size(max = 50)
-	@Column(name = "CODE_THEME_EVALUATION_N2_POST_ALPHA", length = 50)
-	private String codeThemeEvaluationNiveau2PostAlpha;
+	@Column(name = "CODE_THEME_EVALUATION", length = 50)
+	private String codeThemeEvaluation;
 
-	@Size(max = 120)
-	@Column(name = "LIBELLE_THEME_EVALUATION_N2_POST_ALPHA", length = 120)
-	private String libelleThemeEvaluationNiveau2PostAlpha;
+	@Size(max = 200)
+	@Column(name = "LIBELLE_THEME_EVALUATION", length = 200)
+	private String libelleThemeEvaluation;
+
+	/**
+	 * Valeurs attendues : "NIVEAU_1", "NIVEAU_2", "POST_ALPHA".
+	 */
+	@Size(max = 20)
+	@Column(name = "NIVEAU", length = 20)
+	private String niveau;
 }

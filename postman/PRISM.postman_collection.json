@@ -5217,7 +5217,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idCategorieAppui\": 1,\n  \"idCentre\": 1,\n  \"idPartenaire\": 1,\n  \"libelleAppuiPartenaire\": \"Appui test\"\n}"
                 }
               }
             },
@@ -5290,7 +5290,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idCategorieAppui\": 1,\n  \"idCentre\": 1,\n  \"idPartenaire\": 1,\n  \"libelleAppuiPartenaire\": \"Appui test\"\n}"
                 }
               }
             },
@@ -5411,7 +5411,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeCategorieCentreAlpha\": \"CODECATEGORIECENTREALPHA-1\",\n  \"libelleCategorieCentreAlpha\": \"Libelle libelleCategorieCentreAlpha\"\n}"
                 }
               }
             },
@@ -5484,7 +5484,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeCategorieCentreAlpha\": \"CODECATEGORIECENTREALPHA-1\",\n  \"libelleCategorieCentreAlpha\": \"Libelle libelleCategorieCentreAlpha\"\n}"
                 }
               }
             },
@@ -5922,7 +5922,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"centreId\": {{centreId}},\n  \"libelle\": \"Libelle test\"\n}"
                 }
               }
             },
@@ -6069,7 +6069,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"centre\": {\n    \"id\": 1\n  },\n  \"idLocalite\": 1,\n  \"idPeriodicite\": 1,\n  \"idIep\": 1,\n  \"idAutoriteAutorisation\": 1,\n  \"idNaturecentre\": 1,\n  \"idPromoteur\": 1,\n  \"codeCentre\": \"CODECENTRE-1\",\n  \"autorisation\": true,\n  \"encadreurNonMena\": \"encadreurNonMena test\",\n  \"encadrerParMena\": true,\n  \"estElectrifie\": true,\n  \"aDeLeau\": true,\n  \"nombreVisite\": 0,\n  \"localisationCentre\": \"localisationCentre test\",\n  \"nomMilieuImplentation\": \"Nom test\",\n  \"libelleCec\": \"Libelle libelleCec\"\n}"
                 }
               }
             },
@@ -6190,7 +6190,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeNiveauCec\": \"CODENIVEAUCEC-1\",\n  \"nombreSalleCec\": 0\n}"
                 }
               }
             },
@@ -6227,7 +6227,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeNiveauCec\": \"CODENIVEAUCEC-1\",\n  \"nombreSalleCec\": 0\n}"
                 }
               }
             },
@@ -6348,7 +6348,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeCommune\": \"CODECOMMUNE-1\",\n  \"nomCommune\": \"Nom test\"\n}"
                 }
               }
             },
@@ -6385,7 +6385,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeCommune\": \"CODECOMMUNE-1\",\n  \"nomCommune\": \"Nom test\"\n}"
                 }
               }
             },
@@ -6506,7 +6506,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idCompetence\": 1,\n  \"idCentre\": 1,\n  \"codeCompetenceCentre\": \"CODECOMPETENCECENTRE-1\"\n}"
                 }
               }
             },
@@ -6543,7 +6543,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idCompetence\": 1,\n  \"idCentre\": 1,\n  \"codeCompetenceCentre\": \"CODECOMPETENCECENTRE-1\"\n}"
                 }
               }
             },
@@ -6687,7 +6687,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"centreId\": {{centreId}},\n  \"libelle\": \"Libelle test\"\n}"
                 }
               }
             },
@@ -6833,7 +6833,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"centre\": {\n    \"id\": 1\n  },\n  \"idLocalite\": 1,\n  \"idPeriodicite\": 1,\n  \"idIep\": 1,\n  \"idAutoriteAutorisation\": 1,\n  \"idNaturecentre\": 1,\n  \"idPromoteur\": 1,\n  \"codeCentre\": \"CODECENTRE-1\",\n  \"autorisation\": true,\n  \"encadreurNonMena\": \"encadreurNonMena test\",\n  \"encadrerParMena\": true,\n  \"estElectrifie\": true,\n  \"aDeLeau\": true,\n  \"nombreVisite\": 0,\n  \"localisationCentre\": \"localisationCentre test\",\n  \"nomMilieuImplentation\": \"Nom test\",\n  \"libellleCp\": \"libellleCp test\"\n}"
                 }
               }
             },
@@ -6954,7 +6954,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauCp\": 1,\n  \"idCentre\": 1,\n  \"nombreSalleCp\": 0\n}"
                 }
               }
             },
@@ -6991,7 +6991,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauCp\": 1,\n  \"idCentre\": 1,\n  \"nombreSalleCp\": 0\n}"
                 }
               }
             },
@@ -7112,7 +7112,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDepartement\": \"CODEDEPARTEMENT-1\",\n  \"nomDepartement\": \"Nom test\"\n}"
                 }
               }
             },
@@ -7149,7 +7149,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDepartement\": \"CODEDEPARTEMENT-1\",\n  \"nomDepartement\": \"Nom test\"\n}"
                 }
               }
             },
@@ -7270,7 +7270,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDesignation\": \"CODEDESIGNATION-1\",\n  \"libelleDesignation\": \"Libelle libelleDesignation\"\n}"
                 }
               }
             },
@@ -7307,7 +7307,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDesignation\": \"CODEDESIGNATION-1\",\n  \"libelleDesignation\": \"Libelle libelleDesignation\"\n}"
                 }
               }
             },
@@ -7428,7 +7428,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDifficulte\": \"CODEDIFFICULTE-1\",\n  \"libelleDifficulte\": \"Libelle libelleDifficulte\"\n}"
                 }
               }
             },
@@ -7465,7 +7465,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDifficulte\": \"CODEDIFFICULTE-1\",\n  \"libelleDifficulte\": \"Libelle libelleDifficulte\"\n}"
                 }
               }
             },
@@ -7586,7 +7586,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDifficulte\": 1,\n  \"idCentre\": 1,\n  \"codeDifficulteAlpha\": \"CODEDIFFICULTEALPHA-1\"\n}"
                 }
               }
             },
@@ -7623,7 +7623,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDifficulte\": 1,\n  \"idCentre\": 1,\n  \"codeDifficulteAlpha\": \"CODEDIFFICULTEALPHA-1\"\n}"
                 }
               }
             },
@@ -7744,7 +7744,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDiplome\": \"CODEDIPLOME-1\",\n  \"libelleDiplome\": \"Libelle libelleDiplome\"\n}"
                 }
               }
             },
@@ -7781,7 +7781,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDiplome\": \"CODEDIPLOME-1\",\n  \"libelleDiplome\": \"Libelle libelleDiplome\"\n}"
                 }
               }
             },
@@ -7902,7 +7902,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDiplome\": 1,\n  \"idPersonnel\": 1,\n  \"libelleAutreDiplome\": \"Libelle libelleAutreDiplome\"\n}"
                 }
               }
             },
@@ -7939,7 +7939,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDiplome\": 1,\n  \"idPersonnel\": 1,\n  \"libelleAutreDiplome\": \"Libelle libelleAutreDiplome\"\n}"
                 }
               }
             },
@@ -8060,7 +8060,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDomaineActivite\": \"CODEDOMAINEACTIVITE-1\",\n  \"libelleDomaineActivite\": \"Libelle libelleDomaineActivite\"\n}"
                 }
               }
             },
@@ -8097,7 +8097,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDomaineActivite\": \"CODEDOMAINEACTIVITE-1\",\n  \"libelleDomaineActivite\": \"Libelle libelleDomaineActivite\"\n}"
                 }
               }
             },
@@ -8218,7 +8218,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDomaineActivite\": 1,\n  \"idCentre\": 1,\n  \"libelleDomaineActiviteAlpha\": \"Libelle libelleDomaineActiviteAlpha\"\n}"
                 }
               }
             },
@@ -8255,7 +8255,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDomaineActivite\": 1,\n  \"idCentre\": 1,\n  \"libelleDomaineActiviteAlpha\": \"Libelle libelleDomaineActiviteAlpha\"\n}"
                 }
               }
             },
@@ -8376,7 +8376,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDrena\": \"CODEDRENA-1\",\n  \"nomDrena\": \"Nom test\",\n  \"mailDrena\": \"mailDrena test\",\n  \"telephoneDrena\": \"telephoneDrena test\"\n}"
                 }
               }
             },
@@ -8413,7 +8413,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeDrena\": \"CODEDRENA-1\",\n  \"nomDrena\": \"Nom test\",\n  \"mailDrena\": \"mailDrena test\",\n  \"telephoneDrena\": \"telephoneDrena test\"\n}"
                 }
               }
             },
@@ -8534,7 +8534,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDrena\": 1,\n  \"idDepartement\": 1\n}"
                 }
               }
             },
@@ -8571,7 +8571,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDrena\": 1,\n  \"idDepartement\": 1\n}"
                 }
               }
             },
@@ -8692,7 +8692,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idPeriodeActivite\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifAbandonAlpha\": \"CODEEFFECTIFABANDONALPHA-1\",\n  \"effectifAbandonAlphaNiveauHomme\": 0,\n  \"effectifAbandonAlphaNiveauFemme\": 0,\n  \"effectifAbandonAlphaMoins15F\": 0,\n  \"effectifAbandonAlphaMoins15H\": 0,\n  \"effectifAbandonAlphaMoins15IvoirienH\": 0,\n  \"effectifAbandonAlphaMoins15IvoirienF\": 0,\n  \"effectifAbandonAlphaMoins15HandicapH\": 0,\n  \"effectifAbandonAlphaMoins15HandicapF\": 0,\n  \"effectifAbandonAlpha1524F\": 0,\n  \"effectifAbandonAlpha1524H\": 0,\n  \"effectifAbandonAlpha1524IvoirienH\": 0,\n  \"effectifAbandonAlpha1524IvoirienF\": 0,\n  \"effectifAbandonAlpha1524HandicapH\": 0,\n  \"effectifAbandonAlpha1524HandicapF\": 0,\n  \"effectifAbandonAlpha2549F\": 0,\n  \"effectifAbandonAlpha2549H\": 0,\n  \"effectifAbandonAlpha2549IvoirienF\": 0,\n  \"effectifAbandonAlpha2549IvoirienH\": 0,\n  \"effectifAbandonAlpha2549HandicapH\": 0,\n  \"effectifAbandonAlpha2549HandicapF\": 0,\n  \"effectifAbandonAlpha50PlusF\": 0,\n  \"effectifAbandonAlpha50PlusH\": 0,\n  \"effectifAbandonAlpha50PlusIvoirienH\": 0,\n  \"effectifAbandonAlpha50PlusIvoirienF\": 0,\n  \"effectifAbandonAlpha50PlusHandicapH\": 0,\n  \"effectifAbandonAlpha50PlusHandicapF\": 0,\n  \"causeAbandonAlpha\": \"causeAbandonAlpha test\"\n}"
                 }
               }
             },
@@ -8729,7 +8729,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idPeriodeActivite\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifAbandonAlpha\": \"CODEEFFECTIFABANDONALPHA-1\",\n  \"effectifAbandonAlphaNiveauHomme\": 0,\n  \"effectifAbandonAlphaNiveauFemme\": 0,\n  \"effectifAbandonAlphaMoins15F\": 0,\n  \"effectifAbandonAlphaMoins15H\": 0,\n  \"effectifAbandonAlphaMoins15IvoirienH\": 0,\n  \"effectifAbandonAlphaMoins15IvoirienF\": 0,\n  \"effectifAbandonAlphaMoins15HandicapH\": 0,\n  \"effectifAbandonAlphaMoins15HandicapF\": 0,\n  \"effectifAbandonAlpha1524F\": 0,\n  \"effectifAbandonAlpha1524H\": 0,\n  \"effectifAbandonAlpha1524IvoirienH\": 0,\n  \"effectifAbandonAlpha1524IvoirienF\": 0,\n  \"effectifAbandonAlpha1524HandicapH\": 0,\n  \"effectifAbandonAlpha1524HandicapF\": 0,\n  \"effectifAbandonAlpha2549F\": 0,\n  \"effectifAbandonAlpha2549H\": 0,\n  \"effectifAbandonAlpha2549IvoirienF\": 0,\n  \"effectifAbandonAlpha2549IvoirienH\": 0,\n  \"effectifAbandonAlpha2549HandicapH\": 0,\n  \"effectifAbandonAlpha2549HandicapF\": 0,\n  \"effectifAbandonAlpha50PlusF\": 0,\n  \"effectifAbandonAlpha50PlusH\": 0,\n  \"effectifAbandonAlpha50PlusIvoirienH\": 0,\n  \"effectifAbandonAlpha50PlusIvoirienF\": 0,\n  \"effectifAbandonAlpha50PlusHandicapH\": 0,\n  \"effectifAbandonAlpha50PlusHandicapF\": 0,\n  \"causeAbandonAlpha\": \"causeAbandonAlpha test\"\n}"
                 }
               }
             },
@@ -8850,7 +8850,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauSie\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifAbandonCec\": \"CODEEFFECTIFABANDONCEC-1\",\n  \"effectifAbandonCecMoins3F\": 0,\n  \"effectifAbandonCecMoins3H\": 0,\n  \"effectifAbandonCecMoins3IvoirienH\": 0,\n  \"effectifAbandonCecMoins3IvoirienF\": 0,\n  \"effectifAbandonCecMoins3HandicapH\": 0,\n  \"effectifAbandonCecMoins3HandicapF\": 0,\n  \"effectifAbandonCec35F\": 0,\n  \"effectifAbandonCec35H\": 0,\n  \"effectifAbandonCec35IvoirienH\": 0,\n  \"effectifAbandonCec35IvoirienF\": 0,\n  \"effectifAbandonCec35HandicapH\": 0,\n  \"effectifAbandonCec35HandicapF\": 0,\n  \"effectifAbandonCec68F\": 0,\n  \"effectifAbandonCec68H\": 0,\n  \"effectifAbandonCec68IvoirienF\": 0,\n  \"effectifAbandonCec68IvoirienH\": 0,\n  \"effectifAbandonCec68HandicapH\": 0,\n  \"effectifAbandonCec68HandicapF\": 0,\n  \"effectifAbandonCec911H\": 0,\n  \"effectifAbandonCec911F\": 0,\n  \"effectifAbandonCec911IvoirienH\": 0,\n  \"effectifAbandonCec911IvoirienF\": 0,\n  \"effectifAbandonCec911HandicapH\": 0,\n  \"effectifAbandonCec911HandicapF\": 0,\n  \"effectifAbandonCec1216F\": 0,\n  \"effectifAbandonCec1216H\": 0,\n  \"effectifAbandonCec1216IvoirienH\": 0,\n  \"effectifAbandonCec1216IvoirienF\": 0,\n  \"effectifAbandonCec1216HandicapH\": 0,\n  \"effectifAbandonCec1216HandicapF\": 0,\n  \"effectifAbandonCecNiveauCec\": 0,\n  \"causeAbandonCec\": \"causeAbandonCec test\"\n}"
                 }
               }
             },
@@ -8887,7 +8887,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauSie\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifAbandonCec\": \"CODEEFFECTIFABANDONCEC-1\",\n  \"effectifAbandonCecMoins3F\": 0,\n  \"effectifAbandonCecMoins3H\": 0,\n  \"effectifAbandonCecMoins3IvoirienH\": 0,\n  \"effectifAbandonCecMoins3IvoirienF\": 0,\n  \"effectifAbandonCecMoins3HandicapH\": 0,\n  \"effectifAbandonCecMoins3HandicapF\": 0,\n  \"effectifAbandonCec35F\": 0,\n  \"effectifAbandonCec35H\": 0,\n  \"effectifAbandonCec35IvoirienH\": 0,\n  \"effectifAbandonCec35IvoirienF\": 0,\n  \"effectifAbandonCec35HandicapH\": 0,\n  \"effectifAbandonCec35HandicapF\": 0,\n  \"effectifAbandonCec68F\": 0,\n  \"effectifAbandonCec68H\": 0,\n  \"effectifAbandonCec68IvoirienF\": 0,\n  \"effectifAbandonCec68IvoirienH\": 0,\n  \"effectifAbandonCec68HandicapH\": 0,\n  \"effectifAbandonCec68HandicapF\": 0,\n  \"effectifAbandonCec911H\": 0,\n  \"effectifAbandonCec911F\": 0,\n  \"effectifAbandonCec911IvoirienH\": 0,\n  \"effectifAbandonCec911IvoirienF\": 0,\n  \"effectifAbandonCec911HandicapH\": 0,\n  \"effectifAbandonCec911HandicapF\": 0,\n  \"effectifAbandonCec1216F\": 0,\n  \"effectifAbandonCec1216H\": 0,\n  \"effectifAbandonCec1216IvoirienH\": 0,\n  \"effectifAbandonCec1216IvoirienF\": 0,\n  \"effectifAbandonCec1216HandicapH\": 0,\n  \"effectifAbandonCec1216HandicapF\": 0,\n  \"effectifAbandonCecNiveauCec\": 0,\n  \"causeAbandonCec\": \"causeAbandonCec test\"\n}"
                 }
               }
             },
@@ -9008,7 +9008,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauCp\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifAbandonCp\": \"CODEEFFECTIFABANDONCP-1\",\n  \"effectifAbandonCp911IvoirienH\": 0,\n  \"effectifAbandonCp911IvoirienF\": 0,\n  \"effectifAbandonCp911HandicapH\": 0,\n  \"effectifAbandonCp911HandicapF\": 0,\n  \"effectifAbandonCp911NonIvoirienF\": 0,\n  \"effectifAbandonCp911NonIvoirienH\": 0,\n  \"effectifAbandonCp1213IvoirienF\": 0,\n  \"effectifAbandonCp1213IvoirienH\": 0,\n  \"effectifAbandonCp1213HandicapH\": 0,\n  \"effectifAbandonCp1213HandicapF\": 0,\n  \"effectifAbandonCp1213NonIvoiriienH\": 0,\n  \"effectifAbandonCp14IvoirienH\": 0,\n  \"effectifAbandonCp14IvoirienF\": 0,\n  \"effectifAbandonCp14HandicapH\": 0,\n  \"effectifAbandonCp14HandicapF\": 0,\n  \"effectifAbandonCp14NonIvoirienF\": 0,\n  \"effectifAbandonCp14NonIvoirienH\": 0,\n  \"effectifAbandonCpNiveauCp\": 0,\n  \"causeAbandonCp\": \"causeAbandonCp test\"\n}"
                 }
               }
             },
@@ -9045,7 +9045,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauCp\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifAbandonCp\": \"CODEEFFECTIFABANDONCP-1\",\n  \"effectifAbandonCp911IvoirienH\": 0,\n  \"effectifAbandonCp911IvoirienF\": 0,\n  \"effectifAbandonCp911HandicapH\": 0,\n  \"effectifAbandonCp911HandicapF\": 0,\n  \"effectifAbandonCp911NonIvoirienF\": 0,\n  \"effectifAbandonCp911NonIvoirienH\": 0,\n  \"effectifAbandonCp1213IvoirienF\": 0,\n  \"effectifAbandonCp1213IvoirienH\": 0,\n  \"effectifAbandonCp1213HandicapH\": 0,\n  \"effectifAbandonCp1213HandicapF\": 0,\n  \"effectifAbandonCp1213NonIvoiriienH\": 0,\n  \"effectifAbandonCp14IvoirienH\": 0,\n  \"effectifAbandonCp14IvoirienF\": 0,\n  \"effectifAbandonCp14HandicapH\": 0,\n  \"effectifAbandonCp14HandicapF\": 0,\n  \"effectifAbandonCp14NonIvoirienF\": 0,\n  \"effectifAbandonCp14NonIvoirienH\": 0,\n  \"effectifAbandonCpNiveauCp\": 0,\n  \"causeAbandonCp\": \"causeAbandonCp test\"\n}"
                 }
               }
             },
@@ -9166,7 +9166,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauSie\": 1,\n  \"codeAbandonEffectifSie\": \"CODEABANDONEFFECTIFSIE-1\",\n  \"effectifAbandonSie3IvoirienH\": 0,\n  \"effectifAbandonSie3IvoirienF\": 0,\n  \"effectifAbandonSie3HandicapH\": 0,\n  \"effectifAbandonSie3HandicapF\": 0,\n  \"effectifAbandonSie3NonIvoirienF\": 0,\n  \"effectifAbandonSie3NonIvoirienH\": 0,\n  \"effectifAbandonSie46IvoirienF\": 0,\n  \"effectifAbandonSie46IvoirienH\": 0,\n  \"effectifAbandonSie46HandicapH\": 0,\n  \"effectifAbandonSie46HandicapF\": 0,\n  \"effectifAbandonSie46NonIvoiriienH\": 0,\n  \"effectifAbandonSie46NonIvoiriienF\": 0,\n  \"effectifAbandonSie79IvoirienH\": 0,\n  \"effectifAbandonSie79IvoirienF\": 0,\n  \"effectifAbandonSie79HandicapH\": 0,\n  \"effectifAbandonSie79HandicapF\": 0,\n  \"effectifAbandonSie79NonIvoirienF\": 0,\n  \"effectifAbandonSie79NonIvoirienH\": 0,\n  \"effectifAbandonSie1012IvoirienF\": 0,\n  \"effectifAbandonSie1012IvoirienH\": 0,\n  \"effectifAbandonSie1012HandicapH\": 0,\n  \"effectifAbandonSie1012HandicapF\": 0,\n  \"effectifAbandonSie1012NonIvoirienH\": 0,\n  \"effectifAbandonSie1012NonIvoirienF\": 0,\n  \"effectifAbandonSie1314EtPlusIvoirienF\": 0,\n  \"effectifAbandonSie1314EtPlusIvoirienH\": 0,\n  \"effectifAbandonSie1314EtPlusHandicapF\": 0,\n  \"effectifAbandonSie1314EtPlusHandicapH\": 0,\n  \"effectifAbandonSie1314EtPlusNonIvoirienF\": 0,\n  \"effectifAbandonSie1314EtPlusNonIvoirienH\": 0,\n  \"effectifAbandonSieNiveauSie\": 0,\n  \"causeAbandonSie\": \"causeAbandonSie test\"\n}"
                 }
               }
             },
@@ -9203,7 +9203,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauSie\": 1,\n  \"codeAbandonEffectifSie\": \"CODEABANDONEFFECTIFSIE-1\",\n  \"effectifAbandonSie3IvoirienH\": 0,\n  \"effectifAbandonSie3IvoirienF\": 0,\n  \"effectifAbandonSie3HandicapH\": 0,\n  \"effectifAbandonSie3HandicapF\": 0,\n  \"effectifAbandonSie3NonIvoirienF\": 0,\n  \"effectifAbandonSie3NonIvoirienH\": 0,\n  \"effectifAbandonSie46IvoirienF\": 0,\n  \"effectifAbandonSie46IvoirienH\": 0,\n  \"effectifAbandonSie46HandicapH\": 0,\n  \"effectifAbandonSie46HandicapF\": 0,\n  \"effectifAbandonSie46NonIvoiriienH\": 0,\n  \"effectifAbandonSie46NonIvoiriienF\": 0,\n  \"effectifAbandonSie79IvoirienH\": 0,\n  \"effectifAbandonSie79IvoirienF\": 0,\n  \"effectifAbandonSie79HandicapH\": 0,\n  \"effectifAbandonSie79HandicapF\": 0,\n  \"effectifAbandonSie79NonIvoirienF\": 0,\n  \"effectifAbandonSie79NonIvoirienH\": 0,\n  \"effectifAbandonSie1012IvoirienF\": 0,\n  \"effectifAbandonSie1012IvoirienH\": 0,\n  \"effectifAbandonSie1012HandicapH\": 0,\n  \"effectifAbandonSie1012HandicapF\": 0,\n  \"effectifAbandonSie1012NonIvoirienH\": 0,\n  \"effectifAbandonSie1012NonIvoirienF\": 0,\n  \"effectifAbandonSie1314EtPlusIvoirienF\": 0,\n  \"effectifAbandonSie1314EtPlusIvoirienH\": 0,\n  \"effectifAbandonSie1314EtPlusHandicapF\": 0,\n  \"effectifAbandonSie1314EtPlusHandicapH\": 0,\n  \"effectifAbandonSie1314EtPlusNonIvoirienF\": 0,\n  \"effectifAbandonSie1314EtPlusNonIvoirienH\": 0,\n  \"effectifAbandonSieNiveauSie\": 0,\n  \"causeAbandonSie\": \"causeAbandonSie test\"\n}"
                 }
               }
             },
@@ -9324,7 +9324,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauCp\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifAdmisIntegrationCp\": \"CODEEFFECTIFADMISINTEGRATIONCP-1\",\n  \"effectifAdmisIntegrationCp911IvoirienH\": 0,\n  \"effectifAdmisIntegrationCp911IvoirienF\": 0,\n  \"effectifAdmisIntegrationCp911HandicapH\": 0,\n  \"effectifAdmisIntegrationCp911HandicapF\": 0,\n  \"effectifAdmisIntegrationCp911NonIvoirienF\": 0,\n  \"effectifAdmisIntegrationCp911NonIvoirienH\": 0,\n  \"effectifAdmisIntegrationCp1213IvoirienF\": 0,\n  \"effectifAdmisIntegrationCp1213IvoirienH\": 0,\n  \"effectifAdmisIntegrationCp1213HandicapH\": 0,\n  \"effectifAdmisIntegrationCp1213HandicapF\": 0,\n  \"effectifAdmisIntegrationCp1213NonIvoiriienH\": 0,\n  \"effectifAdmisIntegrationCp1213NonIvoiriienF\": 0,\n  \"effectifAdmisIntegrationCp14IvoirienH\": 0,\n  \"effectifAdmisIntegrationCp14IvoirienF\": 0,\n  \"effectifAdmisIntegrationCp14HandicapH\": 0,\n  \"effectifAdmisIntegrationCp14HandicapF\": 0,\n  \"effectifAdmisIntegrationCp14NonIvoirienF\": 0,\n  \"effectifAdmisIntegrationCp14NonIvoirienH\": 0,\n  \"effectifAdmisIntegrationCpNiveauCp\": 0\n}"
                 }
               }
             },
@@ -9361,7 +9361,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauCp\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifAdmisIntegrationCp\": \"CODEEFFECTIFADMISINTEGRATIONCP-1\",\n  \"effectifAdmisIntegrationCp911IvoirienH\": 0,\n  \"effectifAdmisIntegrationCp911IvoirienF\": 0,\n  \"effectifAdmisIntegrationCp911HandicapH\": 0,\n  \"effectifAdmisIntegrationCp911HandicapF\": 0,\n  \"effectifAdmisIntegrationCp911NonIvoirienF\": 0,\n  \"effectifAdmisIntegrationCp911NonIvoirienH\": 0,\n  \"effectifAdmisIntegrationCp1213IvoirienF\": 0,\n  \"effectifAdmisIntegrationCp1213IvoirienH\": 0,\n  \"effectifAdmisIntegrationCp1213HandicapH\": 0,\n  \"effectifAdmisIntegrationCp1213HandicapF\": 0,\n  \"effectifAdmisIntegrationCp1213NonIvoiriienH\": 0,\n  \"effectifAdmisIntegrationCp1213NonIvoiriienF\": 0,\n  \"effectifAdmisIntegrationCp14IvoirienH\": 0,\n  \"effectifAdmisIntegrationCp14IvoirienF\": 0,\n  \"effectifAdmisIntegrationCp14HandicapH\": 0,\n  \"effectifAdmisIntegrationCp14HandicapF\": 0,\n  \"effectifAdmisIntegrationCp14NonIvoirienF\": 0,\n  \"effectifAdmisIntegrationCp14NonIvoirienH\": 0,\n  \"effectifAdmisIntegrationCpNiveauCp\": 0\n}"
                 }
               }
             },
@@ -9482,7 +9482,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idPeriodeActivite\": 1,\n  \"idCentre\": 1,\n  \"idNiveauAlpha\": 1,\n  \"codeEffectifAlpha\": \"CODEEFFECTIFALPHA-1\",\n  \"effectifAlphaNiveauH\": 0,\n  \"effectifAlphaNiveauF\": 0,\n  \"effectifAlphaMoins15F\": 0,\n  \"effectifAlphaMoins15H\": 0,\n  \"effectifAlphaMoins15IvoirienH\": 0,\n  \"effectifAlphaMoins15IvoirienF\": 0,\n  \"effectifAlphaMoins15HandicapH\": 0,\n  \"effectifAlphaMoins15HandicapF\": 0,\n  \"effectifAlpha1524F\": 0,\n  \"effectifAlpha1524H\": 0,\n  \"effectifAlpha1524IvoirienH\": 0,\n  \"effectifAlpha1524IvoirienF\": 0,\n  \"effectifAlpha1524HandicapH\": 0,\n  \"effectifAlpha1524HandicapF\": 0,\n  \"effectifAlpha2549F\": 0,\n  \"effectifAlpha2549H\": 0,\n  \"effectifAlpha2549IvoirienF\": 0,\n  \"effectifAlpha2549IvoirienH\": 0,\n  \"effectifAlpha2549HandicapH\": 0,\n  \"effectifAlpha2549HandicapF\": 0,\n  \"effectifAlpha50PlusF\": 0,\n  \"effectifAlpha50PlusH\": 0,\n  \"effectifAlpha50PlusIvoirienH\": 0,\n  \"effectifAlpha50PlusIvoirienF\": 0,\n  \"effectifAlpha50PlusHandicapH\": 0,\n  \"effectifAlpha50PlusHandicapF\": 0\n}"
                 }
               }
             },
@@ -9519,7 +9519,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idPeriodeActivite\": 1,\n  \"idCentre\": 1,\n  \"idNiveauAlpha\": 1,\n  \"codeEffectifAlpha\": \"CODEEFFECTIFALPHA-1\",\n  \"effectifAlphaNiveauH\": 0,\n  \"effectifAlphaNiveauF\": 0,\n  \"effectifAlphaMoins15F\": 0,\n  \"effectifAlphaMoins15H\": 0,\n  \"effectifAlphaMoins15IvoirienH\": 0,\n  \"effectifAlphaMoins15IvoirienF\": 0,\n  \"effectifAlphaMoins15HandicapH\": 0,\n  \"effectifAlphaMoins15HandicapF\": 0,\n  \"effectifAlpha1524F\": 0,\n  \"effectifAlpha1524H\": 0,\n  \"effectifAlpha1524IvoirienH\": 0,\n  \"effectifAlpha1524IvoirienF\": 0,\n  \"effectifAlpha1524HandicapH\": 0,\n  \"effectifAlpha1524HandicapF\": 0,\n  \"effectifAlpha2549F\": 0,\n  \"effectifAlpha2549H\": 0,\n  \"effectifAlpha2549IvoirienF\": 0,\n  \"effectifAlpha2549IvoirienH\": 0,\n  \"effectifAlpha2549HandicapH\": 0,\n  \"effectifAlpha2549HandicapF\": 0,\n  \"effectifAlpha50PlusF\": 0,\n  \"effectifAlpha50PlusH\": 0,\n  \"effectifAlpha50PlusIvoirienH\": 0,\n  \"effectifAlpha50PlusIvoirienF\": 0,\n  \"effectifAlpha50PlusHandicapH\": 0,\n  \"effectifAlpha50PlusHandicapF\": 0\n}"
                 }
               }
             },
@@ -9640,7 +9640,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idPeriodeActivite\": 1,\n  \"idNiveauSie\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifCec\": \"CODEEFFECTIFCEC-1\",\n  \"effectifCecMoins3F\": 0,\n  \"effectifCecMoins3H\": 0,\n  \"effectifCecMoins3IvoirienH\": 0,\n  \"effectifCecMoins3IvoirienF\": 0,\n  \"effectifCecMoins3HandicapH\": 0,\n  \"effectifCecMoins3HandicapF\": 0,\n  \"effectifCec35F\": 0,\n  \"effectifCec35H\": 0,\n  \"effectifCec35IvoirienH\": 0,\n  \"effectifCec35IvoirienF\": 0,\n  \"effectifCec35HandicapH\": 0,\n  \"effectifCec35HandicapF\": 0,\n  \"effectifCec68F\": 0,\n  \"effectifCec68H\": 0,\n  \"effectifCec68IvoirienF\": 0,\n  \"effectifCec68IvoirienH\": 0,\n  \"effectifCec68HandicapH\": 0,\n  \"effectifCec68HandicapF\": 0,\n  \"effectifCec911F\": 0,\n  \"effectifCec911H\": 0,\n  \"effectifCec911IvoirienH\": 0,\n  \"effectifCec911IvoirienF\": 0,\n  \"effectifCec911HandicapH\": 0,\n  \"effectifCec911HandicapF\": 0,\n  \"effectifCec1216F\": 0,\n  \"effectifCec1216H\": 0,\n  \"effectifCec1216IvoirienH\": 0,\n  \"effectifCec1216IvoirienF\": 0,\n  \"effectifCec1216HandicapH\": 0,\n  \"effectifCec1216HandicapF\": 0,\n  \"effectifCecNiveauCec\": 0\n}"
                 }
               }
             },
@@ -9677,7 +9677,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idPeriodeActivite\": 1,\n  \"idNiveauSie\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifCec\": \"CODEEFFECTIFCEC-1\",\n  \"effectifCecMoins3F\": 0,\n  \"effectifCecMoins3H\": 0,\n  \"effectifCecMoins3IvoirienH\": 0,\n  \"effectifCecMoins3IvoirienF\": 0,\n  \"effectifCecMoins3HandicapH\": 0,\n  \"effectifCecMoins3HandicapF\": 0,\n  \"effectifCec35F\": 0,\n  \"effectifCec35H\": 0,\n  \"effectifCec35IvoirienH\": 0,\n  \"effectifCec35IvoirienF\": 0,\n  \"effectifCec35HandicapH\": 0,\n  \"effectifCec35HandicapF\": 0,\n  \"effectifCec68F\": 0,\n  \"effectifCec68H\": 0,\n  \"effectifCec68IvoirienF\": 0,\n  \"effectifCec68IvoirienH\": 0,\n  \"effectifCec68HandicapH\": 0,\n  \"effectifCec68HandicapF\": 0,\n  \"effectifCec911F\": 0,\n  \"effectifCec911H\": 0,\n  \"effectifCec911IvoirienH\": 0,\n  \"effectifCec911IvoirienF\": 0,\n  \"effectifCec911HandicapH\": 0,\n  \"effectifCec911HandicapF\": 0,\n  \"effectifCec1216F\": 0,\n  \"effectifCec1216H\": 0,\n  \"effectifCec1216IvoirienH\": 0,\n  \"effectifCec1216IvoirienF\": 0,\n  \"effectifCec1216HandicapH\": 0,\n  \"effectifCec1216HandicapF\": 0,\n  \"effectifCecNiveauCec\": 0\n}"
                 }
               }
             },
@@ -9798,7 +9798,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"cecIdCentre\": {\n    \"id\": 1\n  },\n  \"codeEffectifCepeCec\": \"CODEEFFECTIFCEPECEC-1\",\n  \"effectifCepeCandidatFilleCec\": 0,\n  \"effectifCepeCandidatGarconCec\": 0,\n  \"effectifCepeCandidatIvoirienCec\": 0,\n  \"effectifCepeCandidatHandicapFilleCec\": 0,\n  \"effectifCepeCandidatHandicapGarconCec\": 0,\n  \"effectifCepeAdmisFilleCec\": 0,\n  \"effectifCepeAdmisGarconCec\": 0,\n  \"effectifCepeAdmisIvoirienCec\": 0,\n  \"effectifCepeAdmisHandicapFilleCec\": 0,\n  \"effectifCepeAdmisHandicapGarconCec\": 0\n}"
                 }
               }
             },
@@ -9835,7 +9835,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"cecIdCentre\": {\n    \"id\": 1\n  },\n  \"codeEffectifCepeCec\": \"CODEEFFECTIFCEPECEC-1\",\n  \"effectifCepeCandidatFilleCec\": 0,\n  \"effectifCepeCandidatGarconCec\": 0,\n  \"effectifCepeCandidatIvoirienCec\": 0,\n  \"effectifCepeCandidatHandicapFilleCec\": 0,\n  \"effectifCepeCandidatHandicapGarconCec\": 0,\n  \"effectifCepeAdmisFilleCec\": 0,\n  \"effectifCepeAdmisGarconCec\": 0,\n  \"effectifCepeAdmisIvoirienCec\": 0,\n  \"effectifCepeAdmisHandicapFilleCec\": 0,\n  \"effectifCepeAdmisHandicapGarconCec\": 0\n}"
                 }
               }
             },
@@ -9956,7 +9956,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifCepeCp\": \"CODEEFFECTIFCEPECP-1\",\n  \"effectifCepeCandidatFCp\": 0,\n  \"effectifCepeCandidatHCp\": 0,\n  \"effectifCepeCandidatIvoirienCp\": 0,\n  \"effectifCepeCandidatHandicapFCp\": 0,\n  \"effectifCepeCandidatHandicapHCp\": 0,\n  \"effectifCepeAdmisFCp\": 0,\n  \"effectifCepeAdmisHCp\": 0,\n  \"effectifCepeAdmisIvoirienCp\": 0,\n  \"effectifCepeAdmisHandicapFCp\": 0,\n  \"effectifCepeAdmisHandicapHCp\": 0\n}"
                 }
               }
             },
@@ -9993,7 +9993,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifCepeCp\": \"CODEEFFECTIFCEPECP-1\",\n  \"effectifCepeCandidatFCp\": 0,\n  \"effectifCepeCandidatHCp\": 0,\n  \"effectifCepeCandidatIvoirienCp\": 0,\n  \"effectifCepeCandidatHandicapFCp\": 0,\n  \"effectifCepeCandidatHandicapHCp\": 0,\n  \"effectifCepeAdmisFCp\": 0,\n  \"effectifCepeAdmisHCp\": 0,\n  \"effectifCepeAdmisIvoirienCp\": 0,\n  \"effectifCepeAdmisHandicapFCp\": 0,\n  \"effectifCepeAdmisHandicapHCp\": 0\n}"
                 }
               }
             },
@@ -10114,7 +10114,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauCp\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifCp\": \"CODEEFFECTIFCP-1\",\n  \"effectifCp911IvoirienH\": 0,\n  \"effectifCp911IvoirienF\": 0,\n  \"effectifCp911HandicapH\": 0,\n  \"effectifCp911HandicapF\": 0,\n  \"effectifCp911NonIvoirienF\": 0,\n  \"effectifCp911NonIvoirienH\": 0,\n  \"effectifCp1213IvoirienF\": 0,\n  \"effectifCp1213IvoirienH\": 0,\n  \"effectifCp1213HandicapH\": 0,\n  \"effectifCp1213HandicapF\": 0,\n  \"effectifCp1213NonIvoiriienH\": 0,\n  \"effectifCp1213NonIvoiriienF\": 0,\n  \"effectifCp14IvoirienH\": 0,\n  \"effectifCp14IvoirienF\": 0,\n  \"effectifCp14HandicapH\": 0,\n  \"effectifCp14HandicapF\": 0,\n  \"effectifCp14NonIvoirienF\": 0,\n  \"effectifCp14NonIvoirienH\": 0,\n  \"effectifCpNiveauCp\": 0\n}"
                 }
               }
             },
@@ -10151,7 +10151,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauCp\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifCp\": \"CODEEFFECTIFCP-1\",\n  \"effectifCp911IvoirienH\": 0,\n  \"effectifCp911IvoirienF\": 0,\n  \"effectifCp911HandicapH\": 0,\n  \"effectifCp911HandicapF\": 0,\n  \"effectifCp911NonIvoirienF\": 0,\n  \"effectifCp911NonIvoirienH\": 0,\n  \"effectifCp1213IvoirienF\": 0,\n  \"effectifCp1213IvoirienH\": 0,\n  \"effectifCp1213HandicapH\": 0,\n  \"effectifCp1213HandicapF\": 0,\n  \"effectifCp1213NonIvoiriienH\": 0,\n  \"effectifCp1213NonIvoiriienF\": 0,\n  \"effectifCp14IvoirienH\": 0,\n  \"effectifCp14IvoirienF\": 0,\n  \"effectifCp14HandicapH\": 0,\n  \"effectifCp14HandicapF\": 0,\n  \"effectifCp14NonIvoirienF\": 0,\n  \"effectifCp14NonIvoirienH\": 0,\n  \"effectifCpNiveauCp\": 0\n}"
                 }
               }
             },
@@ -10272,7 +10272,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauCp\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifIntegrationFormelCp\": \"CODEEFFECTIFINTEGRATIONFORMELCP-1\",\n  \"effectifIntegrationFormelCp911IvoirienH\": 0,\n  \"effectifIntegrationFormelCp911IvoirienF\": 0,\n  \"effectifIntegrationFormelCp911HandicapH\": 0,\n  \"effectifIntegrationFormelCp911HandicapF\": 0,\n  \"effectifIntegrationFormelCp911NonIvoirienF\": 0,\n  \"effectifIntegrationFormelCp911NonIvoirienH\": 0,\n  \"effectifIntegrationFormelCp1213IvoirienF\": 0,\n  \"effectifIntegrationFormelCp1213IvoirienH\": 0,\n  \"effectifIntegrationFormelCp1213HandicapH\": 0,\n  \"effectifIntegrationFormelCp1213HandicapF\": 0,\n  \"effectifIntegrationFormelCp1213NonIvoiriienH\": 0,\n  \"effectifIntegrationFormelCp1213NonIvoiriienF\": 0,\n  \"effectifIntegrationFormelCp14IvoirienH\": 0,\n  \"effectifIntegrationFormelCp14IvoirienF\": 0,\n  \"effectifIntegrationFormelCp14HandicapH\": 0,\n  \"effectifIntegrationFormelCp14HandicapF\": 0,\n  \"effectifIntegrationFormelCp14NonIvoirienF\": 0,\n  \"effectifIntegrationFormelCp14NonIvoirienH\": 0,\n  \"effectifIntegrationFormelCpNiveauCp\": 0\n}"
                 }
               }
             },
@@ -10309,7 +10309,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauCp\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifIntegrationFormelCp\": \"CODEEFFECTIFINTEGRATIONFORMELCP-1\",\n  \"effectifIntegrationFormelCp911IvoirienH\": 0,\n  \"effectifIntegrationFormelCp911IvoirienF\": 0,\n  \"effectifIntegrationFormelCp911HandicapH\": 0,\n  \"effectifIntegrationFormelCp911HandicapF\": 0,\n  \"effectifIntegrationFormelCp911NonIvoirienF\": 0,\n  \"effectifIntegrationFormelCp911NonIvoirienH\": 0,\n  \"effectifIntegrationFormelCp1213IvoirienF\": 0,\n  \"effectifIntegrationFormelCp1213IvoirienH\": 0,\n  \"effectifIntegrationFormelCp1213HandicapH\": 0,\n  \"effectifIntegrationFormelCp1213HandicapF\": 0,\n  \"effectifIntegrationFormelCp1213NonIvoiriienH\": 0,\n  \"effectifIntegrationFormelCp1213NonIvoiriienF\": 0,\n  \"effectifIntegrationFormelCp14IvoirienH\": 0,\n  \"effectifIntegrationFormelCp14IvoirienF\": 0,\n  \"effectifIntegrationFormelCp14HandicapH\": 0,\n  \"effectifIntegrationFormelCp14HandicapF\": 0,\n  \"effectifIntegrationFormelCp14NonIvoirienF\": 0,\n  \"effectifIntegrationFormelCp14NonIvoirienH\": 0,\n  \"effectifIntegrationFormelCpNiveauCp\": 0\n}"
                 }
               }
             },
@@ -10430,7 +10430,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idPeriodeActivite\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifPassageAlpha\": \"CODEEFFECTIFPASSAGEALPHA-1\",\n  \"effectifPassageAlphaNiveauHomme\": 0,\n  \"effectifPassageAlphaNiveauFemme\": 0,\n  \"effectifPassageAlphaMoins15F\": 0,\n  \"effectifPassageAlphaMoins15H\": 0,\n  \"effectifPassageAlphaMoins15IvoirienH\": 0,\n  \"effectifPassageAlphaMoins15IvoirienF\": 0,\n  \"effectifPassageAlphaMoins15HandicapH\": 0,\n  \"effectifPassageAlphaMoins15HandicapF\": 0,\n  \"effectifPassageAlpha1524F\": 0,\n  \"effectifPassageAlpha1524H\": 0,\n  \"effectifPassageAlpha1524IvoirienH\": 0,\n  \"effectifPassageAlpha1524IvoirienF\": 0,\n  \"effectifPassageAlpha1524HandicapH\": 0,\n  \"effectifPassageAlpha1524HandicapF\": 0,\n  \"effectifPassageAlpha2549F\": 0,\n  \"effectifPassageAlpha2549H\": 0,\n  \"effectifPassageAlpha2549IvoirienF\": 0,\n  \"effectifPassageAlpha2549IvoirienH\": 0,\n  \"effectifPassageAlpha2549HandicapH\": 0,\n  \"effectifPassageAlpha2549HandicapF\": 0,\n  \"effectifPassageAlpha50PlusF\": 0,\n  \"effectifPassageAlpha50PlusH\": 0,\n  \"effectifPassageAlpha50PlusIvoirienH\": 0,\n  \"effectifApassageAlpha50PlusIvoirienF\": 0,\n  \"effectifPassageAlpha50PlusHandicapH\": 0,\n  \"effectifPassageAlpha50PlusHandicapF\": 0\n}"
                 }
               }
             },
@@ -10467,7 +10467,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idPeriodeActivite\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifPassageAlpha\": \"CODEEFFECTIFPASSAGEALPHA-1\",\n  \"effectifPassageAlphaNiveauHomme\": 0,\n  \"effectifPassageAlphaNiveauFemme\": 0,\n  \"effectifPassageAlphaMoins15F\": 0,\n  \"effectifPassageAlphaMoins15H\": 0,\n  \"effectifPassageAlphaMoins15IvoirienH\": 0,\n  \"effectifPassageAlphaMoins15IvoirienF\": 0,\n  \"effectifPassageAlphaMoins15HandicapH\": 0,\n  \"effectifPassageAlphaMoins15HandicapF\": 0,\n  \"effectifPassageAlpha1524F\": 0,\n  \"effectifPassageAlpha1524H\": 0,\n  \"effectifPassageAlpha1524IvoirienH\": 0,\n  \"effectifPassageAlpha1524IvoirienF\": 0,\n  \"effectifPassageAlpha1524HandicapH\": 0,\n  \"effectifPassageAlpha1524HandicapF\": 0,\n  \"effectifPassageAlpha2549F\": 0,\n  \"effectifPassageAlpha2549H\": 0,\n  \"effectifPassageAlpha2549IvoirienF\": 0,\n  \"effectifPassageAlpha2549IvoirienH\": 0,\n  \"effectifPassageAlpha2549HandicapH\": 0,\n  \"effectifPassageAlpha2549HandicapF\": 0,\n  \"effectifPassageAlpha50PlusF\": 0,\n  \"effectifPassageAlpha50PlusH\": 0,\n  \"effectifPassageAlpha50PlusIvoirienH\": 0,\n  \"effectifApassageAlpha50PlusIvoirienF\": 0,\n  \"effectifPassageAlpha50PlusHandicapH\": 0,\n  \"effectifPassageAlpha50PlusHandicapF\": 0\n}"
                 }
               }
             },
@@ -10588,7 +10588,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifPromuCec\": \"CODEEFFECTIFPROMUCEC-1\",\n  \"effectifPromuCecMoins3F\": 0,\n  \"effectifPromuCecMoins3H\": 0,\n  \"effectifPromuCecMoins3IvoirienH\": 0,\n  \"effectifPromuCecMoins3IvoirienF\": 0,\n  \"effectifPromuCecMoins3HandicapH\": 0,\n  \"effectifPromuCecMoins3HandicapF\": 0,\n  \"effectifPromuCec35F\": 0,\n  \"effectifPromuCec35H\": 0,\n  \"effectifPromuCec35IvoirienH\": 0,\n  \"effectifPromuCec35IvoirienF\": 0,\n  \"effectifPromuCec35HandicapH\": 0,\n  \"effectifPromuCec35HandicapF\": 0,\n  \"effectifPromuCec68F\": 0,\n  \"effectifPromuCec68H\": 0,\n  \"effectifPromuCec68IvoirienF\": 0,\n  \"effectifPromuCec68IvoirienH\": 0,\n  \"effectifPromuCec68HandicapH\": 0,\n  \"effectifPromuCec68HandicapF\": 0,\n  \"effectifPromuCec911H\": 0,\n  \"effectifPromuCec911F\": 0,\n  \"effectifPromuCec911IvoirienH\": 0,\n  \"effectifPromuCec911IvoirienF\": 0,\n  \"effectifPromuCec911HandicapH\": 0,\n  \"effectifPromuCec911HandicapF\": 0,\n  \"effectifPromuCec1216F\": 0,\n  \"effectifPromuCec1216H\": 0,\n  \"effectifPromuCec1216IvoirienH\": 0,\n  \"effectifPromuCec1216IvoirienF\": 0,\n  \"effectifPromuCec1216HandicapH\": 0,\n  \"effectifPromuCec1216HandicapF\": 0,\n  \"effectifPromuCecNiveauCec\": 0\n}"
                 }
               }
             },
@@ -10625,7 +10625,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifPromuCec\": \"CODEEFFECTIFPROMUCEC-1\",\n  \"effectifPromuCecMoins3F\": 0,\n  \"effectifPromuCecMoins3H\": 0,\n  \"effectifPromuCecMoins3IvoirienH\": 0,\n  \"effectifPromuCecMoins3IvoirienF\": 0,\n  \"effectifPromuCecMoins3HandicapH\": 0,\n  \"effectifPromuCecMoins3HandicapF\": 0,\n  \"effectifPromuCec35F\": 0,\n  \"effectifPromuCec35H\": 0,\n  \"effectifPromuCec35IvoirienH\": 0,\n  \"effectifPromuCec35IvoirienF\": 0,\n  \"effectifPromuCec35HandicapH\": 0,\n  \"effectifPromuCec35HandicapF\": 0,\n  \"effectifPromuCec68F\": 0,\n  \"effectifPromuCec68H\": 0,\n  \"effectifPromuCec68IvoirienF\": 0,\n  \"effectifPromuCec68IvoirienH\": 0,\n  \"effectifPromuCec68HandicapH\": 0,\n  \"effectifPromuCec68HandicapF\": 0,\n  \"effectifPromuCec911H\": 0,\n  \"effectifPromuCec911F\": 0,\n  \"effectifPromuCec911IvoirienH\": 0,\n  \"effectifPromuCec911IvoirienF\": 0,\n  \"effectifPromuCec911HandicapH\": 0,\n  \"effectifPromuCec911HandicapF\": 0,\n  \"effectifPromuCec1216F\": 0,\n  \"effectifPromuCec1216H\": 0,\n  \"effectifPromuCec1216IvoirienH\": 0,\n  \"effectifPromuCec1216IvoirienF\": 0,\n  \"effectifPromuCec1216HandicapH\": 0,\n  \"effectifPromuCec1216HandicapF\": 0,\n  \"effectifPromuCecNiveauCec\": 0\n}"
                 }
               }
             },
@@ -10746,7 +10746,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauSie\": 1,\n  \"codeEffectifPromuSie\": \"CODEEFFECTIFPROMUSIE-1\",\n  \"effectifPromuSie3IvoirienH\": 0,\n  \"effectifPromuSie3IvoirienF\": 0,\n  \"effectifPromuSie3HandicapH\": 0,\n  \"effectifPromuSie3HandicapF\": 0,\n  \"effectifPromuSie3NonIvoirienF\": 0,\n  \"effectifPromuSie3NonIvoirienH\": 0,\n  \"effectifPromuSie46IvoirienF\": 0,\n  \"effectifPromuSie46IvoirienH\": 0,\n  \"effectifPromuSie46HandicapH\": 0,\n  \"effectifPromuSie46HandicapF\": 0,\n  \"effectifPromuSie46NonIvoiriienH\": 0,\n  \"effectifPromuSie46NonIvoiriienF\": 0,\n  \"effectifPromuSie79IvoirienH\": 0,\n  \"effectifPromuSie79IvoirienF\": 0,\n  \"effectifPromuSie79HandicapH\": 0,\n  \"effectifPromuSie79HandicapF\": 0,\n  \"effectifPromuSie79NonIvoirienF\": 0,\n  \"effectifPromuSie79NonIvoirienH\": 0,\n  \"effectifPromuSie1012IvoirienF\": 0,\n  \"effectifPromuSie1012IvoirienH\": 0,\n  \"effectifPromuSie1012HandicapH\": 0,\n  \"effectifPromuSie1012HandicapF\": 0,\n  \"effectifPromuSie1012NonIvoirienH\": 0,\n  \"effectifPromuSie1012NonIvoirienF\": 0,\n  \"effectifPromuSie1314EtPlusIvoirienF\": 0,\n  \"effectifPromuSie1314EtPlusIvoirienH\": 0,\n  \"effectifPromuSie1314EtPlusHandicapF\": 0,\n  \"effectifPromuSie1314EtPlusHandicapH\": 0,\n  \"effectifPromuSieNiveauSie\": 0\n}"
                 }
               }
             },
@@ -10783,7 +10783,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauSie\": 1,\n  \"codeEffectifPromuSie\": \"CODEEFFECTIFPROMUSIE-1\",\n  \"effectifPromuSie3IvoirienH\": 0,\n  \"effectifPromuSie3IvoirienF\": 0,\n  \"effectifPromuSie3HandicapH\": 0,\n  \"effectifPromuSie3HandicapF\": 0,\n  \"effectifPromuSie3NonIvoirienF\": 0,\n  \"effectifPromuSie3NonIvoirienH\": 0,\n  \"effectifPromuSie46IvoirienF\": 0,\n  \"effectifPromuSie46IvoirienH\": 0,\n  \"effectifPromuSie46HandicapH\": 0,\n  \"effectifPromuSie46HandicapF\": 0,\n  \"effectifPromuSie46NonIvoiriienH\": 0,\n  \"effectifPromuSie46NonIvoiriienF\": 0,\n  \"effectifPromuSie79IvoirienH\": 0,\n  \"effectifPromuSie79IvoirienF\": 0,\n  \"effectifPromuSie79HandicapH\": 0,\n  \"effectifPromuSie79HandicapF\": 0,\n  \"effectifPromuSie79NonIvoirienF\": 0,\n  \"effectifPromuSie79NonIvoirienH\": 0,\n  \"effectifPromuSie1012IvoirienF\": 0,\n  \"effectifPromuSie1012IvoirienH\": 0,\n  \"effectifPromuSie1012HandicapH\": 0,\n  \"effectifPromuSie1012HandicapF\": 0,\n  \"effectifPromuSie1012NonIvoirienH\": 0,\n  \"effectifPromuSie1012NonIvoirienF\": 0,\n  \"effectifPromuSie1314EtPlusIvoirienF\": 0,\n  \"effectifPromuSie1314EtPlusIvoirienH\": 0,\n  \"effectifPromuSie1314EtPlusHandicapF\": 0,\n  \"effectifPromuSie1314EtPlusHandicapH\": 0,\n  \"effectifPromuSieNiveauSie\": 0\n}"
                 }
               }
             },
@@ -10904,7 +10904,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"codeEffectifReverseFormelSie\": \"CODEEFFECTIFREVERSEFORMELSIE-1\",\n  \"effectifReverseFormelSie3IvoirienH\": 0,\n  \"effectifReverseFormelSie3IvoirienF\": 0,\n  \"effectifReverseFormelSie3HandicapH\": 0,\n  \"effectifReverseFormelSie3HandicapF\": 0,\n  \"effectifReverseFormelSie3NonIvoirienF\": 0,\n  \"effectifReverseFormelSie3NonIvoirienH\": 0,\n  \"effectifReverseFormelSie46IvoirienF\": 0,\n  \"effectifReverseFormelSie46IvoirienH\": 0,\n  \"effectifReverseFormelSie46HandicapH\": 0,\n  \"effectifReverseFormelSie46HandicapF\": 0,\n  \"effectifReverseFormelSie46NonIvoiriienH\": 0,\n  \"effectifReverseFormelSie46NonIvoiriienF\": 0,\n  \"effectifReverseFormelSie79IvoirienH\": 0,\n  \"effectifReverseFormelSie79IvoirienF\": 0,\n  \"effectifReverseFormelSie79HandicapH\": 0,\n  \"effectifReverseFormelSie79HandicapF\": 0,\n  \"effectifReverseFormelSie79NonIvoirienF\": 0,\n  \"effectifReverseFormelSie79NonIvoirienH\": 0,\n  \"effectifReverseFormelSie1012IvoirienF\": 0,\n  \"effectifReverseFormelSie1012IvoirienH\": 0,\n  \"effectifReverseFormelSie1012HandicapH\": 0,\n  \"effectifReverseFormelSie1012HandicapF\": 0,\n  \"effectifReverseFormelSie1012NonIvoirienH\": 0,\n  \"effectifReverseFormelSie1012NonIvoirienF\": 0,\n  \"effectifReverseFormelSie1314EtPlusIvoirienF\": 0,\n  \"effectifReverseFormelSie1314EtPlusIvoirienH\": 0,\n  \"effectifReverseFormelSie1314EtPlusHandicapF\": 0,\n  \"effectifReverseFormelSie1314EtPlusHandicapH\": 0,\n  \"effectifReverseFormelSieNiveauSie\": 0\n}"
                 }
               }
             },
@@ -10941,7 +10941,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"codeEffectifReverseFormelSie\": \"CODEEFFECTIFREVERSEFORMELSIE-1\",\n  \"effectifReverseFormelSie3IvoirienH\": 0,\n  \"effectifReverseFormelSie3IvoirienF\": 0,\n  \"effectifReverseFormelSie3HandicapH\": 0,\n  \"effectifReverseFormelSie3HandicapF\": 0,\n  \"effectifReverseFormelSie3NonIvoirienF\": 0,\n  \"effectifReverseFormelSie3NonIvoirienH\": 0,\n  \"effectifReverseFormelSie46IvoirienF\": 0,\n  \"effectifReverseFormelSie46IvoirienH\": 0,\n  \"effectifReverseFormelSie46HandicapH\": 0,\n  \"effectifReverseFormelSie46HandicapF\": 0,\n  \"effectifReverseFormelSie46NonIvoiriienH\": 0,\n  \"effectifReverseFormelSie46NonIvoiriienF\": 0,\n  \"effectifReverseFormelSie79IvoirienH\": 0,\n  \"effectifReverseFormelSie79IvoirienF\": 0,\n  \"effectifReverseFormelSie79HandicapH\": 0,\n  \"effectifReverseFormelSie79HandicapF\": 0,\n  \"effectifReverseFormelSie79NonIvoirienF\": 0,\n  \"effectifReverseFormelSie79NonIvoirienH\": 0,\n  \"effectifReverseFormelSie1012IvoirienF\": 0,\n  \"effectifReverseFormelSie1012IvoirienH\": 0,\n  \"effectifReverseFormelSie1012HandicapH\": 0,\n  \"effectifReverseFormelSie1012HandicapF\": 0,\n  \"effectifReverseFormelSie1012NonIvoirienH\": 0,\n  \"effectifReverseFormelSie1012NonIvoirienF\": 0,\n  \"effectifReverseFormelSie1314EtPlusIvoirienF\": 0,\n  \"effectifReverseFormelSie1314EtPlusIvoirienH\": 0,\n  \"effectifReverseFormelSie1314EtPlusHandicapF\": 0,\n  \"effectifReverseFormelSie1314EtPlusHandicapH\": 0,\n  \"effectifReverseFormelSieNiveauSie\": 0\n}"
                 }
               }
             },
@@ -11062,7 +11062,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauSie\": 1,\n  \"codeEffectifSie\": \"CODEEFFECTIFSIE-1\",\n  \"effectifSie3IvoirienH\": 0,\n  \"effectifSie3IvoirienF\": 0,\n  \"effectifSie3HandicapH\": 0,\n  \"effectifSie3HandicapF\": 0,\n  \"effectifSie3NonIvoirienF\": 0,\n  \"effectifSie3NonIvoirienH\": 0,\n  \"effectifSie46IvoirienF\": 0,\n  \"effectifSie46IvoirienH\": 0,\n  \"effectifSie46HandicapH\": 0,\n  \"effectifSie46HandicapF\": 0,\n  \"effectifSie46NonIvoiriienH\": 0,\n  \"effectifSie79IvoirienH\": 0,\n  \"effectifSie79IvoirienF\": 0,\n  \"effectifSie79HandicapH\": 0,\n  \"effectifSie79HandicapF\": 0,\n  \"effectifSie79NonIvoirienF\": 0,\n  \"effectifSie79NonIvoirienH\": 0,\n  \"effectifSie1012IvoirienF\": 0,\n  \"effectifSie1012IvoirienH\": 0,\n  \"effectifSie1012HandicapH\": 0,\n  \"effectifSie1012HandicapF\": 0,\n  \"effectifSie1012NonIvoirienH\": 0,\n  \"effectifSie1012NonIvoirienF\": 0,\n  \"effectifSie1314EtPlusIvoirienF\": 0,\n  \"effectifSie1314EtPlusIvoirienH\": 0,\n  \"effectifSie1314EtPlusHandicapF\": 0,\n  \"effectifSie1314EtPlusHandicapH\": 0,\n  \"effectifSieNiveauSie\": 0,\n  \"effectifSie46NonIvoiriienF\": 0\n}"
                 }
               }
             },
@@ -11099,7 +11099,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauSie\": 1,\n  \"codeEffectifSie\": \"CODEEFFECTIFSIE-1\",\n  \"effectifSie3IvoirienH\": 0,\n  \"effectifSie3IvoirienF\": 0,\n  \"effectifSie3HandicapH\": 0,\n  \"effectifSie3HandicapF\": 0,\n  \"effectifSie3NonIvoirienF\": 0,\n  \"effectifSie3NonIvoirienH\": 0,\n  \"effectifSie46IvoirienF\": 0,\n  \"effectifSie46IvoirienH\": 0,\n  \"effectifSie46HandicapH\": 0,\n  \"effectifSie46HandicapF\": 0,\n  \"effectifSie46NonIvoiriienH\": 0,\n  \"effectifSie79IvoirienH\": 0,\n  \"effectifSie79IvoirienF\": 0,\n  \"effectifSie79HandicapH\": 0,\n  \"effectifSie79HandicapF\": 0,\n  \"effectifSie79NonIvoirienF\": 0,\n  \"effectifSie79NonIvoirienH\": 0,\n  \"effectifSie1012IvoirienF\": 0,\n  \"effectifSie1012IvoirienH\": 0,\n  \"effectifSie1012HandicapH\": 0,\n  \"effectifSie1012HandicapF\": 0,\n  \"effectifSie1012NonIvoirienH\": 0,\n  \"effectifSie1012NonIvoirienF\": 0,\n  \"effectifSie1314EtPlusIvoirienF\": 0,\n  \"effectifSie1314EtPlusIvoirienH\": 0,\n  \"effectifSie1314EtPlusHandicapF\": 0,\n  \"effectifSie1314EtPlusHandicapH\": 0,\n  \"effectifSieNiveauSie\": 0,\n  \"effectifSie46NonIvoiriienF\": 0\n}"
                 }
               }
             },
@@ -11220,7 +11220,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idPeriodeActivite\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifSituationHandicapAlpha\": \"CODEEFFECTIFSITUATIONHANDICAPALPHA-1\",\n  \"effectifSituationHandicapAlphaNiveauHomme\": 0,\n  \"effectifSituationHandicapalphaNiveauFemme\": 0,\n  \"effectifSituationHandicapAlphaMoins15F\": 0,\n  \"effectifSituationHandicapAlphaMoins15H\": 0,\n  \"effectifSituationHandicapAlphaMoins15IvoirienH\": 0,\n  \"effectifSituationHandicapAlphaMoins15IvoirienF\": 0,\n  \"effectifSituationHandicapAlphaMoins15HandicapH\": 0,\n  \"effectifSituationHandicapAlphaMoins15HandicapF\": 0,\n  \"effectifSituationHandicapAlpha1524F\": 0,\n  \"effectifSituationHandicapAlpha1524H\": 0,\n  \"effectifSituationHandicapAlpha1524IvoirienH\": 0,\n  \"effectifSituationHandicapAlpha1524IvoirienF\": 0,\n  \"effectifSituationHandicapAlpha1524HandicapH\": 0,\n  \"effectifSituationHandicapAlpha1524HandicapF\": 0,\n  \"effectifSituationHandicapAlpha2549F\": 0,\n  \"effectifSituationHandicapAlpha2549H\": 0,\n  \"effectifSituationHandicapAlpha2549IvoirienF\": 0,\n  \"effectifSituationHandicapAlpha2549IvoirienH\": 0,\n  \"effectifSituationHandicapAlpha2549HandicapH\": 0,\n  \"effectifSituationHandicapAlpha2549HandicapF\": 0,\n  \"effectifSituationHandicapAlpha50PlusF\": 0,\n  \"effectifSituationHandicapAlpha50PlusH\": 0,\n  \"effectifSituationHandicapAlpha50PlusIvoirienH\": 0,\n  \"effectifSituationHandicapAlpha50PlusIvoirienF\": 0,\n  \"effectifSituationHandicapAlpha50PlusHandicapH\": 0,\n  \"effectifSituationHandicapAlpha50PlusHandicapF\": 0\n}"
                 }
               }
             },
@@ -11257,7 +11257,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idPeriodeActivite\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifSituationHandicapAlpha\": \"CODEEFFECTIFSITUATIONHANDICAPALPHA-1\",\n  \"effectifSituationHandicapAlphaNiveauHomme\": 0,\n  \"effectifSituationHandicapalphaNiveauFemme\": 0,\n  \"effectifSituationHandicapAlphaMoins15F\": 0,\n  \"effectifSituationHandicapAlphaMoins15H\": 0,\n  \"effectifSituationHandicapAlphaMoins15IvoirienH\": 0,\n  \"effectifSituationHandicapAlphaMoins15IvoirienF\": 0,\n  \"effectifSituationHandicapAlphaMoins15HandicapH\": 0,\n  \"effectifSituationHandicapAlphaMoins15HandicapF\": 0,\n  \"effectifSituationHandicapAlpha1524F\": 0,\n  \"effectifSituationHandicapAlpha1524H\": 0,\n  \"effectifSituationHandicapAlpha1524IvoirienH\": 0,\n  \"effectifSituationHandicapAlpha1524IvoirienF\": 0,\n  \"effectifSituationHandicapAlpha1524HandicapH\": 0,\n  \"effectifSituationHandicapAlpha1524HandicapF\": 0,\n  \"effectifSituationHandicapAlpha2549F\": 0,\n  \"effectifSituationHandicapAlpha2549H\": 0,\n  \"effectifSituationHandicapAlpha2549IvoirienF\": 0,\n  \"effectifSituationHandicapAlpha2549IvoirienH\": 0,\n  \"effectifSituationHandicapAlpha2549HandicapH\": 0,\n  \"effectifSituationHandicapAlpha2549HandicapF\": 0,\n  \"effectifSituationHandicapAlpha50PlusF\": 0,\n  \"effectifSituationHandicapAlpha50PlusH\": 0,\n  \"effectifSituationHandicapAlpha50PlusIvoirienH\": 0,\n  \"effectifSituationHandicapAlpha50PlusIvoirienF\": 0,\n  \"effectifSituationHandicapAlpha50PlusHandicapH\": 0,\n  \"effectifSituationHandicapAlpha50PlusHandicapF\": 0\n}"
                 }
               }
             },
@@ -11378,7 +11378,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"codeEffectifSituationHandicapCec\": \"CODEEFFECTIFSITUATIONHANDICAPCEC-1\",\n  \"effectifSituationHandicapCecMoins3F\": 0,\n  \"effectifSituationHandicapCecMoins3H\": 0,\n  \"effectifSituationHandicapCecMoins3IvoirienH\": 0,\n  \"effectifSituationHandicapCecMoins3IvoirienF\": 0,\n  \"effectifSituationHandicapCec35F\": 0,\n  \"effectifSituationHandicapCec35H\": 0,\n  \"effectifSituationHandicapCec35IvoirienH\": 0,\n  \"effectifSituationHandicapCec35IvoirienF\": 0,\n  \"effectifSituationHandicapCec68F\": 0,\n  \"effectifSituationHandicapCec68H\": 0,\n  \"effectifSituationHandicapCec68IvoirienF\": 0,\n  \"effectifSituationHandicapCec68IvoirienH\": 0,\n  \"effectifSituationHandicapCec911IvoirienH\": 0,\n  \"effectifSituationHandicapCec911IvoirienF\": 0,\n  \"effectifSituationHandicapCec1216F\": 0,\n  \"effectifSituationHandicapCec1216H\": 0,\n  \"effectifSituationHandicapCec1216IvoirienH\": 0,\n  \"effectifSituationHandicapCec1216IvoirienF\": 0,\n  \"effectifSituationHandicapCecNiveauCec\": 0\n}"
                 }
               }
             },
@@ -11415,7 +11415,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"codeEffectifSituationHandicapCec\": \"CODEEFFECTIFSITUATIONHANDICAPCEC-1\",\n  \"effectifSituationHandicapCecMoins3F\": 0,\n  \"effectifSituationHandicapCecMoins3H\": 0,\n  \"effectifSituationHandicapCecMoins3IvoirienH\": 0,\n  \"effectifSituationHandicapCecMoins3IvoirienF\": 0,\n  \"effectifSituationHandicapCec35F\": 0,\n  \"effectifSituationHandicapCec35H\": 0,\n  \"effectifSituationHandicapCec35IvoirienH\": 0,\n  \"effectifSituationHandicapCec35IvoirienF\": 0,\n  \"effectifSituationHandicapCec68F\": 0,\n  \"effectifSituationHandicapCec68H\": 0,\n  \"effectifSituationHandicapCec68IvoirienF\": 0,\n  \"effectifSituationHandicapCec68IvoirienH\": 0,\n  \"effectifSituationHandicapCec911IvoirienH\": 0,\n  \"effectifSituationHandicapCec911IvoirienF\": 0,\n  \"effectifSituationHandicapCec1216F\": 0,\n  \"effectifSituationHandicapCec1216H\": 0,\n  \"effectifSituationHandicapCec1216IvoirienH\": 0,\n  \"effectifSituationHandicapCec1216IvoirienF\": 0,\n  \"effectifSituationHandicapCecNiveauCec\": 0\n}"
                 }
               }
             },
@@ -11536,7 +11536,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauCp\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifSituationHandicapCp\": \"CODEEFFECTIFSITUATIONHANDICAPCP-1\",\n  \"effectifSituationHandicapCp911IvoirienH\": 0,\n  \"effectifSituationHandicapCp911IvoirienF\": 0,\n  \"effectifSituationHandicapCp911HandicapH\": 0,\n  \"effectifSituationHandicapCp911HandicapF\": 0,\n  \"effectifSituationHandicapCp911NonIvoirienF\": 0,\n  \"effectifSituationHandicapCp911NonIvoirienH\": 0,\n  \"effectifSituationHandicapCp1213IvoirienF\": 0,\n  \"effectifSituationHandicapCp1213IvoirienH\": 0,\n  \"effectifSituationHandicapCp1213HandicapH\": 0,\n  \"effectifSituationHandicapCp1213HandicapF\": 0,\n  \"effectifSituationHandicapCp1213NonIvoiriienH\": 0,\n  \"effectifSituationHandicapCp14IvoirienH\": 0,\n  \"effectifSituationHandicapCp14IvoirienF\": 0,\n  \"effectifSituationHandicapCp14HandicapH\": 0,\n  \"effectifSituationHandicapCp14HandicapF\": 0,\n  \"effectifSituationHandicapCp14NonIvoirienF\": 0,\n  \"effectifSituationHandicapCp14NonIvoirienH\": 0,\n  \"effectifSituationHandicapCpNiveauCp\": 0,\n  \"effectifSituationHandicapCp1213NonIvoiriienF\": 0\n}"
                 }
               }
             },
@@ -11573,7 +11573,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idAnneeScolaire\": 1,\n  \"idNiveauCp\": 1,\n  \"idCentre\": 1,\n  \"codeEffectifSituationHandicapCp\": \"CODEEFFECTIFSITUATIONHANDICAPCP-1\",\n  \"effectifSituationHandicapCp911IvoirienH\": 0,\n  \"effectifSituationHandicapCp911IvoirienF\": 0,\n  \"effectifSituationHandicapCp911HandicapH\": 0,\n  \"effectifSituationHandicapCp911HandicapF\": 0,\n  \"effectifSituationHandicapCp911NonIvoirienF\": 0,\n  \"effectifSituationHandicapCp911NonIvoirienH\": 0,\n  \"effectifSituationHandicapCp1213IvoirienF\": 0,\n  \"effectifSituationHandicapCp1213IvoirienH\": 0,\n  \"effectifSituationHandicapCp1213HandicapH\": 0,\n  \"effectifSituationHandicapCp1213HandicapF\": 0,\n  \"effectifSituationHandicapCp1213NonIvoiriienH\": 0,\n  \"effectifSituationHandicapCp14IvoirienH\": 0,\n  \"effectifSituationHandicapCp14IvoirienF\": 0,\n  \"effectifSituationHandicapCp14HandicapH\": 0,\n  \"effectifSituationHandicapCp14HandicapF\": 0,\n  \"effectifSituationHandicapCp14NonIvoirienF\": 0,\n  \"effectifSituationHandicapCp14NonIvoirienH\": 0,\n  \"effectifSituationHandicapCpNiveauCp\": 0,\n  \"effectifSituationHandicapCp1213NonIvoiriienF\": 0\n}"
                 }
               }
             },
@@ -11694,7 +11694,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"codeEffectifSituationHandicapSie\": \"CODEEFFECTIFSITUATIONHANDICAPSIE-1\",\n  \"effectifSituationHandicapSie3IvoirienH\": 0,\n  \"effectifSituationHandicapSie3IvoirienF\": 0,\n  \"effectifSituationHandicapSie3NonIvoirienF\": 0,\n  \"effectifSituationHandicapSie3NonIvoirienH\": 0,\n  \"effectifSituationHandicapSie46IvoirienF\": 0,\n  \"effectifSituationHandicapSie46IvoirienH\": 0,\n  \"effectifSituationHandicapSie79IvoirienH\": 0,\n  \"effectifSituationHandicapSie79IvoirienF\": 0,\n  \"effectifSituationHandicapSie79NonIvoirienF\": 0,\n  \"effectifSituationHandicapSie79NonIvoirienH\": 0,\n  \"effectifSituationHandicapSie1012IvoirienF\": 0,\n  \"effectifSituationHandicapSie1012IvoirienH\": 0,\n  \"effectifSituationHandicaplSie1012NonIvoirienH\": 0,\n  \"effectifSituationHandicapSie1012NonIvoirienF\": 0,\n  \"effectifSituationHandicapSie1314EtPlusIvoirienF\": 0,\n  \"effectifSituationHandicapSie1314EtPlusIvoirienH\": 0,\n  \"effectifSituationHandicapSieNiveauSie\": 0\n}"
                 }
               }
             },
@@ -11731,7 +11731,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"codeEffectifSituationHandicapSie\": \"CODEEFFECTIFSITUATIONHANDICAPSIE-1\",\n  \"effectifSituationHandicapSie3IvoirienH\": 0,\n  \"effectifSituationHandicapSie3IvoirienF\": 0,\n  \"effectifSituationHandicapSie3NonIvoirienF\": 0,\n  \"effectifSituationHandicapSie3NonIvoirienH\": 0,\n  \"effectifSituationHandicapSie46IvoirienF\": 0,\n  \"effectifSituationHandicapSie46IvoirienH\": 0,\n  \"effectifSituationHandicapSie79IvoirienH\": 0,\n  \"effectifSituationHandicapSie79IvoirienF\": 0,\n  \"effectifSituationHandicapSie79NonIvoirienF\": 0,\n  \"effectifSituationHandicapSie79NonIvoirienH\": 0,\n  \"effectifSituationHandicapSie1012IvoirienF\": 0,\n  \"effectifSituationHandicapSie1012IvoirienH\": 0,\n  \"effectifSituationHandicaplSie1012NonIvoirienH\": 0,\n  \"effectifSituationHandicapSie1012NonIvoirienF\": 0,\n  \"effectifSituationHandicapSie1314EtPlusIvoirienF\": 0,\n  \"effectifSituationHandicapSie1314EtPlusIvoirienH\": 0,\n  \"effectifSituationHandicapSieNiveauSie\": 0\n}"
                 }
               }
             },
@@ -11852,7 +11852,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeFonctionnalite\": \"CODEFONCTIONNALITE-1\",\n  \"libelleFonctionnalite\": \"Libelle libelleFonctionnalite\",\n  \"module\": \"module test\"\n}"
                 }
               }
             },
@@ -11889,7 +11889,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeFonctionnalite\": \"CODEFONCTIONNALITE-1\",\n  \"libelleFonctionnalite\": \"Libelle libelleFonctionnalite\",\n  \"module\": \"module test\"\n}"
                 }
               }
             },
@@ -12010,7 +12010,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDrena\": 1,\n  \"codeIep\": \"CODEIEP-1\",\n  \"nomIep\": \"Nom test\",\n  \"mailIep\": \"mailIep test\",\n  \"telephoneIep\": \"telephoneIep test\"\n}"
                 }
               }
             },
@@ -12047,7 +12047,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDrena\": 1,\n  \"codeIep\": \"CODEIEP-1\",\n  \"nomIep\": \"Nom test\",\n  \"mailIep\": \"mailIep test\",\n  \"telephoneIep\": \"telephoneIep test\"\n}"
                 }
               }
             },
@@ -12168,7 +12168,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeImpact\": \"CODEIMPACT-1\",\n  \"libelleImpact\": \"Libelle libelleImpact\"\n}"
                 }
               }
             },
@@ -12205,7 +12205,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeImpact\": \"CODEIMPACT-1\",\n  \"libelleImpact\": \"Libelle libelleImpact\"\n}"
                 }
               }
             },
@@ -12326,7 +12326,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idImpact\": 1,\n  \"idCentre\": 1,\n  \"codeImpactAlpha\": \"CODEIMPACTALPHA-1\"\n}"
                 }
               }
             },
@@ -12363,7 +12363,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idImpact\": 1,\n  \"idCentre\": 1,\n  \"codeImpactAlpha\": \"CODEIMPACTALPHA-1\"\n}"
                 }
               }
             },
@@ -12484,7 +12484,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeInfrastructure\": \"CODEINFRASTRUCTURE-1\",\n  \"libelleInfrastructure\": \"Libelle libelleInfrastructure\"\n}"
                 }
               }
             },
@@ -12521,7 +12521,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeInfrastructure\": \"CODEINFRASTRUCTURE-1\",\n  \"libelleInfrastructure\": \"Libelle libelleInfrastructure\"\n}"
                 }
               }
             },
@@ -12642,7 +12642,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idCentre\": 1,\n  \"idInfrastructure\": 1,\n  \"libelleAutreInfrastructure\": \"Libelle libelleAutreInfrastructure\"\n}"
                 }
               }
             },
@@ -12679,7 +12679,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idCentre\": 1,\n  \"idInfrastructure\": 1,\n  \"libelleAutreInfrastructure\": \"Libelle libelleAutreInfrastructure\"\n}"
                 }
               }
             },
@@ -12800,7 +12800,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idSousPrefecture\": 1,\n  \"idMilieuImplentation\": 1,\n  \"idCommune\": 1,\n  \"codeLocalite\": \"CODELOCALITE-1\",\n  \"nomLocalite\": \"Nom test\"\n}"
                 }
               }
             },
@@ -12837,7 +12837,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idSousPrefecture\": 1,\n  \"idMilieuImplentation\": 1,\n  \"idCommune\": 1,\n  \"codeLocalite\": \"CODELOCALITE-1\",\n  \"nomLocalite\": \"Nom test\"\n}"
                 }
               }
             },
@@ -12958,7 +12958,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeMilieuImplentation\": \"CODEMILIEUIMPLENTATION-1\",\n  \"libelleTypeImplentation\": \"Libelle libelleTypeImplentation\"\n}"
                 }
               }
             },
@@ -12995,7 +12995,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeMilieuImplentation\": \"CODEMILIEUIMPLENTATION-1\",\n  \"libelleTypeImplentation\": \"Libelle libelleTypeImplentation\"\n}"
                 }
               }
             },
@@ -13116,7 +13116,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeNiveauPersonnel\": \"CODENIVEAUPERSONNEL-1\",\n  \"libelleNiveauPersonnel\": \"Libelle libelleNiveauPersonnel\"\n}"
                 }
               }
             },
@@ -13153,7 +13153,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeNiveauPersonnel\": \"CODENIVEAUPERSONNEL-1\",\n  \"libelleNiveauPersonnel\": \"Libelle libelleNiveauPersonnel\"\n}"
                 }
               }
             },
@@ -13274,7 +13274,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"personnemorale\": {\n    \"id\": 1\n  },\n  \"libelleOng\": \"Libelle libelleOng\",\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"denomination\": \"denomination test\",\n  \"nomProgramme\": \"Nom test\",\n  \"nomRepresentantLegalStructure\": \"Nom test\",\n  \"contact\": \"0102030405\",\n  \"boitePostale\": \"boitePostale test\",\n  \"mail\": \"test@example.com\"\n}"
                 }
               }
             },
@@ -13311,7 +13311,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"personnemorale\": {\n    \"id\": 1\n  },\n  \"libelleOng\": \"Libelle libelleOng\",\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"denomination\": \"denomination test\",\n  \"nomProgramme\": \"Nom test\",\n  \"nomRepresentantLegalStructure\": \"Nom test\",\n  \"contact\": \"0102030405\",\n  \"boitePostale\": \"boitePostale test\",\n  \"mail\": \"test@example.com\"\n}"
                 }
               }
             },
@@ -13432,7 +13432,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"personnemorale\": {\n    \"id\": 1\n  },\n  \"libelleParticulier\": \"Libelle libelleParticulier\",\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"denomination\": \"denomination test\",\n  \"nomProgramme\": \"Nom test\",\n  \"nomRepresentantLegalStructure\": \"Nom test\",\n  \"contact\": \"0102030405\",\n  \"boitePostale\": \"boitePostale test\",\n  \"mail\": \"test@example.com\"\n}"
                 }
               }
             },
@@ -13469,7 +13469,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"personnemorale\": {\n    \"id\": 1\n  },\n  \"libelleParticulier\": \"Libelle libelleParticulier\",\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"denomination\": \"denomination test\",\n  \"nomProgramme\": \"Nom test\",\n  \"nomRepresentantLegalStructure\": \"Nom test\",\n  \"contact\": \"0102030405\",\n  \"boitePostale\": \"boitePostale test\",\n  \"mail\": \"test@example.com\"\n}"
                 }
               }
             },
@@ -13590,7 +13590,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codePermission\": \"CODEPERMISSION-1\",\n  \"libellePermission\": \"Libelle libellePermission\"\n}"
                 }
               }
             },
@@ -13627,7 +13627,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codePermission\": \"CODEPERMISSION-1\",\n  \"libellePermission\": \"Libelle libellePermission\"\n}"
                 }
               }
             },
@@ -13748,7 +13748,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauPersonnel\": 1,\n  \"idFonction\": 1,\n  \"idCivilite\": 1,\n  \"idCentre\": 1,\n  \"idStructureFormationCertification\": 1,\n  \"idStatutPersonnel\": 1,\n  \"codePersonnel\": \"CODEPERSONNEL-1\",\n  \"certifierPersonnel\": true,\n  \"nomPersonnel\": \"Nom test\",\n  \"prenomsPersonnel\": \"prenomsPersonnel test\",\n  \"anneExpePersonnel\": 0,\n  \"sexePersonnel\": \"sexePersonnel test\",\n  \"dateNaissance\": \"2026-01-01\",\n  \"ancienneFonctPromoPesonnel\": 0,\n  \"contactPersonnel\": \"0102030405\",\n  \"boitePostalePersonnel\": \"boitePostalePersonnel test\",\n  \"emailPersonnel\": \"test@example.com\",\n  \"denominationPersonnel\": \"denominationPersonnel test\",\n  \"nomDuPrgramme\": \"Nom test\",\n  \"nomRepresentantLegalSturcture\": \"Nom test\"\n}"
                 }
               }
             },
@@ -13785,7 +13785,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauPersonnel\": 1,\n  \"idFonction\": 1,\n  \"idCivilite\": 1,\n  \"idCentre\": 1,\n  \"idStructureFormationCertification\": 1,\n  \"idStatutPersonnel\": 1,\n  \"codePersonnel\": \"CODEPERSONNEL-1\",\n  \"certifierPersonnel\": true,\n  \"nomPersonnel\": \"Nom test\",\n  \"prenomsPersonnel\": \"prenomsPersonnel test\",\n  \"anneExpePersonnel\": 0,\n  \"sexePersonnel\": \"sexePersonnel test\",\n  \"dateNaissance\": \"2026-01-01\",\n  \"ancienneFonctPromoPesonnel\": 0,\n  \"contactPersonnel\": \"0102030405\",\n  \"boitePostalePersonnel\": \"boitePostalePersonnel test\",\n  \"emailPersonnel\": \"test@example.com\",\n  \"denominationPersonnel\": \"denominationPersonnel test\",\n  \"nomDuPrgramme\": \"Nom test\",\n  \"nomRepresentantLegalSturcture\": \"Nom test\"\n}"
                 }
               }
             },
@@ -13906,7 +13906,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"promoteur\": {\n    \"id\": 1\n  },\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"denomination\": \"denomination test\",\n  \"nomProgramme\": \"Nom test\",\n  \"nomRepresentantLegalStructure\": \"Nom test\",\n  \"contact\": \"0102030405\",\n  \"boitePostale\": \"boitePostale test\",\n  \"mail\": \"test@example.com\",\n  \"typePersonneMorale\": {\n    \"id\": 1\n  }\n}"
                 }
               }
             },
@@ -13943,7 +13943,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"promoteur\": {\n    \"id\": 1\n  },\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"denomination\": \"denomination test\",\n  \"nomProgramme\": \"Nom test\",\n  \"nomRepresentantLegalStructure\": \"Nom test\",\n  \"contact\": \"0102030405\",\n  \"boitePostale\": \"boitePostale test\",\n  \"mail\": \"test@example.com\",\n  \"typePersonneMorale\": {\n    \"id\": 1\n  }\n}"
                 }
               }
             },
@@ -14064,7 +14064,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"promoteur\": {\n    \"id\": 1\n  },\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"libellePersonnePhysique\": \"Libelle libellePersonnePhysique\",\n  \"nom\": \"Nom test\",\n  \"prenom\": \"prenom test\",\n  \"contact\": \"0102030405\",\n  \"fonction\": \"fonction test\"\n}"
                 }
               }
             },
@@ -14101,7 +14101,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"promoteur\": {\n    \"id\": 1\n  },\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"libellePersonnePhysique\": \"Libelle libellePersonnePhysique\",\n  \"nom\": \"Nom test\",\n  \"prenom\": \"prenom test\",\n  \"contact\": \"0102030405\",\n  \"fonction\": \"fonction test\"\n}"
                 }
               }
             },
@@ -14222,7 +14222,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeProgramme\": \"CODEPROGRAMME-1\"\n}"
                 }
               }
             },
@@ -14259,7 +14259,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeProgramme\": \"CODEPROGRAMME-1\"\n}"
                 }
               }
             },
@@ -14380,7 +14380,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idProgramme\": 1,\n  \"idCentre\": 1\n}"
                 }
               }
             },
@@ -14417,7 +14417,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idProgramme\": 1,\n  \"idCentre\": 1\n}"
                 }
               }
             },
@@ -14538,7 +14538,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"typePromoteur\": {\n    \"id\": 1\n  }\n}"
                 }
               }
             },
@@ -14575,7 +14575,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"typePromoteur\": {\n    \"id\": 1\n  }\n}"
                 }
               }
             },
@@ -14854,7 +14854,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"personnemorale\": {\n    \"id\": 1\n  },\n  \"libellePtf\": \"Libelle libellePtf\",\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"denomination\": \"denomination test\",\n  \"nomProgramme\": \"Nom test\",\n  \"nomRepresentantLegalStructure\": \"Nom test\",\n  \"contact\": \"0102030405\",\n  \"boitePostale\": \"boitePostale test\",\n  \"mail\": \"test@example.com\"\n}"
                 }
               }
             },
@@ -14891,7 +14891,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"personnemorale\": {\n    \"id\": 1\n  },\n  \"libellePtf\": \"Libelle libellePtf\",\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"denomination\": \"denomination test\",\n  \"nomProgramme\": \"Nom test\",\n  \"nomRepresentantLegalStructure\": \"Nom test\",\n  \"contact\": \"0102030405\",\n  \"boitePostale\": \"boitePostale test\",\n  \"mail\": \"test@example.com\"\n}"
                 }
               }
             },
@@ -15012,7 +15012,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idCentre\": 1,\n  \"idDesignation\": 1,\n  \"sourceFinancement\": \"sourceFinancement test\",\n  \"montant\": 0\n}"
                 }
               }
             },
@@ -15049,7 +15049,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idCentre\": 1,\n  \"idDesignation\": 1,\n  \"sourceFinancement\": \"sourceFinancement test\",\n  \"montant\": 0\n}"
                 }
               }
             },
@@ -15170,7 +15170,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"role\": {\n    \"id\": 1\n  },\n  \"fonctionnalite\": {\n    \"id\": 1\n  },\n  \"permission\": {\n    \"id\": 1\n  }\n}"
                 }
               }
             },
@@ -15207,7 +15207,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"role\": {\n    \"id\": 1\n  },\n  \"fonctionnalite\": {\n    \"id\": 1\n  },\n  \"permission\": {\n    \"id\": 1\n  }\n}"
                 }
               }
             },
@@ -15351,7 +15351,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"centreId\": {{centreId}},\n  \"libelle\": \"Libelle test\"\n}"
                 }
               }
             },
@@ -15497,7 +15497,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"centre\": {\n    \"id\": 1\n  },\n  \"idLocalite\": 1,\n  \"idPeriodicite\": 1,\n  \"idIep\": 1,\n  \"idAutoriteAutorisation\": 1,\n  \"idNaturecentre\": 1,\n  \"idPromoteur\": 1,\n  \"codeCentre\": \"CODECENTRE-1\",\n  \"autorisation\": true,\n  \"encadreurNonMena\": \"encadreurNonMena test\",\n  \"encadrerParMena\": true,\n  \"estElectrifie\": true,\n  \"aDeLeau\": true,\n  \"nombreVisite\": 0,\n  \"localisationCentre\": \"localisationCentre test\",\n  \"nomMilieuImplentation\": \"Nom test\",\n  \"libelleSie\": \"Libelle libelleSie\"\n}"
                 }
               }
             },
@@ -15618,7 +15618,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeSieNiveau\": \"CODESIENIVEAU-1\",\n  \"nombreSalleSie\": 0\n}"
                 }
               }
             },
@@ -15655,7 +15655,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idNiveauSie\": 1,\n  \"idAnneeScolaire\": 1,\n  \"idCentre\": 1,\n  \"codeSieNiveau\": \"CODESIENIVEAU-1\",\n  \"nombreSalleSie\": 0\n}"
                 }
               }
             },
@@ -15776,7 +15776,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"personnemorale\": {\n    \"id\": 1\n  },\n  \"libelleSocieteCivile\": \"Libelle libelleSocieteCivile\",\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"denomination\": \"denomination test\",\n  \"nomProgramme\": \"Nom test\",\n  \"nomRepresentantLegalStructure\": \"Nom test\",\n  \"contact\": \"0102030405\",\n  \"boitePostale\": \"boitePostale test\",\n  \"mail\": \"test@example.com\"\n}"
                 }
               }
             },
@@ -15813,7 +15813,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"personnemorale\": {\n    \"id\": 1\n  },\n  \"libelleSocieteCivile\": \"Libelle libelleSocieteCivile\",\n  \"codePromoteur\": \"CODEPROMOTEUR-1\",\n  \"libellePromoteur\": \"Libelle libellePromoteur\",\n  \"denomination\": \"denomination test\",\n  \"nomProgramme\": \"Nom test\",\n  \"nomRepresentantLegalStructure\": \"Nom test\",\n  \"contact\": \"0102030405\",\n  \"boitePostale\": \"boitePostale test\",\n  \"mail\": \"test@example.com\"\n}"
                 }
               }
             },
@@ -15934,7 +15934,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDepartement\": 1,\n  \"codeSousPrefecture\": \"CODESOUSPREFECTURE-1\",\n  \"nomSousPrefecture\": \"Nom test\"\n}"
                 }
               }
             },
@@ -15971,7 +15971,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idDepartement\": 1,\n  \"codeSousPrefecture\": \"CODESOUSPREFECTURE-1\",\n  \"nomSousPrefecture\": \"Nom test\"\n}"
                 }
               }
             },
@@ -16092,7 +16092,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeStructureCertification\": \"CODESTRUCTURECERTIFICATION-1\",\n  \"libelleStructureCertification\": \"Libelle libelleStructureCertification\"\n}"
                 }
               }
             },
@@ -16129,7 +16129,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"codeStructureCertification\": \"CODESTRUCTURECERTIFICATION-1\",\n  \"libelleStructureCertification\": \"Libelle libelleStructureCertification\"\n}"
                 }
               }
             },
@@ -16250,7 +16250,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idSupportDidactique\": 1,\n  \"idCentre\": 1,\n  \"libelleAutreSupport\": \"Libelle libelleAutreSupport\"\n}"
                 }
               }
             },
@@ -16287,7 +16287,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{}"
+                  "raw": "{\n  \"idSupportDidactique\": 1,\n  \"idCentre\": 1,\n  \"libelleAutreSupport\": \"Libelle libelleAutreSupport\"\n}"
                 }
               }
             },
@@ -16326,49 +16326,822 @@
             {
               "name": "Referentiels (CRUD + Search)",
               "item": [
-                { "name": "Discipline - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/disciplines", "host": ["{{baseUrl}}"], "path": ["api","disciplines"] } } },
-                { "name": "Discipline - GET by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/disciplines/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","disciplines","{{id}}"] } } },
-                { "name": "Discipline - POST", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/disciplines", "host": ["{{baseUrl}}"], "path": ["api","disciplines"] }, "body": { "mode": "raw", "raw": "{\n  \"codeDiscipline\": \"DIS-TEST\",\n  \"libelleDiscipline\": \"Lecture\"\n}" } } },
-                { "name": "Discipline - PUT", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/disciplines/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","disciplines","{{id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"codeDiscipline\": \"DIS-TEST-U\",\n  \"libelleDiscipline\": \"Lecture MAJ\"\n}" } } },
-                { "name": "Discipline - DELETE", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/disciplines/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","disciplines","{{id}}"] } } },
-                { "name": "Discipline - SEARCH", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/disciplines/search?code=DIS&libelle=Lecture", "host": ["{{baseUrl}}"], "path": ["api","disciplines","search"], "query": [{"key":"code","value":"DIS"},{"key":"libelle","value":"Lecture"}] } } },
-                { "name": "Manuel - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/manuels", "host": ["{{baseUrl}}"], "path": ["api","manuels"] } } },
-                { "name": "Niveau Controle - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/niveaux-controle", "host": ["{{baseUrl}}"], "path": ["api","niveaux-controle"] } } },
-                { "name": "Periode Evaluation - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/periodes-evaluation", "host": ["{{baseUrl}}"], "path": ["api","periodes-evaluation"] } } },
-                { "name": "Niveau Evaluation - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/niveaux-evaluation", "host": ["{{baseUrl}}"], "path": ["api","niveaux-evaluation"] } } },
-                { "name": "Theme Eval N1 - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/themes-evaluation-niveau1", "host": ["{{baseUrl}}"], "path": ["api","themes-evaluation-niveau1"] } } },
-                { "name": "Theme Eval N2 - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/themes-evaluation-niveau2-post-alpha", "host": ["{{baseUrl}}"], "path": ["api","themes-evaluation-niveau2-post-alpha"] } } },
-                { "name": "Taux Evaluation - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/taux-evaluation", "host": ["{{baseUrl}}"], "path": ["api","taux-evaluation"] } } },
-                { "name": "Aspect A Ameliorer - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/aspects-a-ameliorer", "host": ["{{baseUrl}}"], "path": ["api","aspects-a-ameliorer"] } } }
+                {
+                  "name": "Discipline - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disciplines",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disciplines"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Discipline - GET by id",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disciplines/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disciplines",
+                        "{{id}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Discipline - POST",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disciplines",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disciplines"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"codeDiscipline\": \"DIS-TEST\",\n  \"libelleDiscipline\": \"Lecture\"\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Discipline - PUT",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disciplines/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disciplines",
+                        "{{id}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"codeDiscipline\": \"DIS-TEST-U\",\n  \"libelleDiscipline\": \"Lecture MAJ\"\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Discipline - DELETE",
+                  "request": {
+                    "method": "DELETE",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disciplines/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disciplines",
+                        "{{id}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Discipline - SEARCH",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disciplines/search?code=DIS&libelle=Lecture",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disciplines",
+                        "search"
+                      ],
+                      "query": [
+                        {
+                          "key": "code",
+                          "value": "DIS"
+                        },
+                        {
+                          "key": "libelle",
+                          "value": "Lecture"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Manuel - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/manuels",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "manuels"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Niveau Controle - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/niveaux-controle",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "niveaux-controle"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Periode Evaluation - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/periodes-evaluation",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "periodes-evaluation"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Niveau Evaluation - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/niveaux-evaluation",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "niveaux-evaluation"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Theme Evaluation - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/themes-evaluation",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "themes-evaluation"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Theme Evaluation - POST",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/themes-evaluation",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "themes-evaluation"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"libelleThemeEvaluation\": \"Comprehension\",\n  \"niveau\": \"NIVEAU_1\"\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Theme Evaluation - SEARCH",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/themes-evaluation/search?niveau=NIVEAU_1",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "themes-evaluation",
+                        "search"
+                      ],
+                      "query": [
+                        {
+                          "key": "niveau",
+                          "value": "NIVEAU_1"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Taux Evaluation - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/taux-evaluation",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "taux-evaluation"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Aspect A Ameliorer - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/aspects-a-ameliorer",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "aspects-a-ameliorer"
+                      ]
+                    }
+                  }
+                }
               ]
             },
             {
               "name": "Metier Alpha (CRUD + Search)",
               "item": [
-                { "name": "Controle - POST", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/controle", "host": ["{{baseUrl}}"], "path": ["api","controle"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idDiscipline\": 1,\n  \"idManuel\": 1,\n  \"idNiveauControle\": 1,\n  \"jourHeureFormation\": \"Lundi 08h\",\n  \"nombreKitManuelsSyllabaire\": 20,\n  \"nombreKitManuelsCalculaire\": 20,\n  \"nombreKitManuelsCvc\": 20,\n  \"nombreKitAutre\": 2,\n  \"conformiteProgramme\": true\n}" } } },
-                { "name": "Controle - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/controle", "host": ["{{baseUrl}}"], "path": ["api","controle"] } } },
-                { "name": "Controle - GET by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/controle/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","controle","{{id}}"] } } },
-                { "name": "Controle - PUT", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/controle/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","controle","{{id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idDiscipline\": 1,\n  \"idManuel\": 1,\n  \"idNiveauControle\": 1,\n  \"jourHeureFormation\": \"Mardi 09h\",\n  \"nombreKitManuelsSyllabaire\": 22,\n  \"conformiteProgramme\": false\n}" } } },
-                { "name": "Controle - DELETE", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/controle/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","controle","{{id}}"] } } },
-                { "name": "Controle - SEARCH", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/controle/search?idAlpha={{alphaId}}&idDiscipline=1", "host": ["{{baseUrl}}"], "path": ["api","controle","search"], "query": [{"key":"idAlpha","value":"{{alphaId}}"},{"key":"idDiscipline","value":"1"}] } } },
-                { "name": "Evaluation - POST", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/evaluation", "host": ["{{baseUrl}}"], "path": ["api","evaluation"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idPeriodeEvaluation\": 1,\n  \"idNiveauEvaluation\": 1,\n  \"idThemeEvaluationNiveau1\": 1,\n  \"idTauxEvaluation\": 1,\n  \"idAspectAAmeliorer\": 1,\n  \"themeEvaluation\": \"Comprehension\"\n}" } } },
-                { "name": "Evaluation - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/evaluation", "host": ["{{baseUrl}}"], "path": ["api","evaluation"] } } },
-                { "name": "Evaluation - GET by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/evaluation/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","evaluation","{{id}}"] } } },
-                { "name": "Evaluation - PUT", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/evaluation/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","evaluation","{{id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idPeriodeEvaluation\": 1,\n  \"idNiveauEvaluation\": 1,\n  \"themeEvaluation\": \"Comprehension MAJ\"\n}" } } },
-                { "name": "Evaluation - DELETE", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/evaluation/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","evaluation","{{id}}"] } } },
-                { "name": "Evaluation - SEARCH", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/evaluation/search?idAlpha={{alphaId}}&idNiveauEvaluation=1", "host": ["{{baseUrl}}"], "path": ["api","evaluation","search"], "query": [{"key":"idAlpha","value":"{{alphaId}}"},{"key":"idNiveauEvaluation","value":"1"}] } } },
-                { "name": "Performance - POST", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/performance", "host": ["{{baseUrl}}"], "path": ["api","performance"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"tauxFrequentationParMois\": \"85\",\n  \"tauxProgressionApprentissageLecture\": \"70\",\n  \"tauxProgressionApprentissageEcriture\": \"65\",\n  \"tauxProgressionApprentissageCalcul\": \"60\",\n  \"tauxProgressionApprentissageCvc\": \"75\"\n}" } } },
-                { "name": "Performance - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/performance", "host": ["{{baseUrl}}"], "path": ["api","performance"] } } },
-                { "name": "Performance - GET by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/performance/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","performance","{{id}}"] } } },
-                { "name": "Performance - PUT", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/performance/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","performance","{{id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"tauxFrequentationParMois\": \"90\"\n}" } } },
-                { "name": "Performance - DELETE", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/performance/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","performance","{{id}}"] } } },
-                { "name": "Performance - SEARCH", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/performance/search?idAlpha={{alphaId}}&tauxFrequentationParMois=85", "host": ["{{baseUrl}}"], "path": ["api","performance","search"], "query": [{"key":"idAlpha","value":"{{alphaId}}"},{"key":"tauxFrequentationParMois","value":"85"}] } } },
-                { "name": "Visite - POST", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/visite", "host": ["{{baseUrl}}"], "path": ["api","visite"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"maitriseSeanceLecture\": \"Bonne\",\n  \"maitriseSeanceEcriture\": \"Moyenne\",\n  \"maitriseSeanceCalcul\": \"Bonne\",\n  \"maitriseSeanceCvc\": \"Bonne\",\n  \"nombreVisiteRealiseParConseiller\": 3\n}" } } },
-                { "name": "Visite - GET all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/visite", "host": ["{{baseUrl}}"], "path": ["api","visite"] } } },
-                { "name": "Visite - GET by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/visite/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","visite","{{id}}"] } } },
-                { "name": "Visite - PUT", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "url": { "raw": "{{baseUrl}}/api/visite/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","visite","{{id}}"] }, "body": { "mode": "raw", "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"maitriseSeanceLecture\": \"Excellente\",\n  \"nombreVisiteRealiseParConseiller\": 4\n}" } } },
-                { "name": "Visite - DELETE", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/visite/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","visite","{{id}}"] } } },
-                { "name": "Visite - SEARCH", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/visite/search?idAlpha={{alphaId}}&maitriseSeanceLecture=Bonne", "host": ["{{baseUrl}}"], "path": ["api","visite","search"], "query": [{"key":"idAlpha","value":"{{alphaId}}"},{"key":"maitriseSeanceLecture","value":"Bonne"}] } } }
+                {
+                  "name": "Controle - POST",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/controle",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "controle"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idDiscipline\": 1,\n  \"idManuel\": 1,\n  \"idNiveauControle\": 1,\n  \"dateDemarrageAppren\": \"2026-05-06\",\n  \"jourHeureFormation\": \"Lundi 08h\",\n  \"nombreKitManuelsSyllabaire\": 20,\n  \"nombreKitManuelsCalculaire\": 20,\n  \"nombreKitManuelsCvc\": 20,\n  \"nombreKitAutre\": 2,\n  \"conformiteProgramme\": true\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Controle - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/controle",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "controle"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Controle - GET by id",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/controle/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "controle",
+                        "{{id}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Controle - PUT",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/controle/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "controle",
+                        "{{id}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idDiscipline\": 1,\n  \"idManuel\": 1,\n  \"idNiveauControle\": 1,\n  \"dateDemarrageAppren\": \"2026-05-07\",\n  \"jourHeureFormation\": \"Mardi 09h\",\n  \"nombreKitManuelsSyllabaire\": 22,\n  \"conformiteProgramme\": false\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Controle - DELETE",
+                  "request": {
+                    "method": "DELETE",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/controle/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "controle",
+                        "{{id}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Controle - SEARCH",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/controle/search?idAlpha={{alphaId}}&idDiscipline=1",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "controle",
+                        "search"
+                      ],
+                      "query": [
+                        {
+                          "key": "idAlpha",
+                          "value": "{{alphaId}}"
+                        },
+                        {
+                          "key": "idDiscipline",
+                          "value": "1"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Evaluation - POST",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/evaluation",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "evaluation"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idPeriodeEvaluation\": 1,\n  \"idNiveauEvaluation\": 1,\n  \"idThemeEvaluation\": 1,\n  \"idTauxEvaluation\": 1\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Evaluation - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/evaluation",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "evaluation"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Evaluation - GET by id",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/evaluation/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "evaluation",
+                        "{{id}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Evaluation - PUT",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/evaluation/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "evaluation",
+                        "{{id}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"idPeriodeEvaluation\": 1,\n  \"idNiveauEvaluation\": 1,\n  \"idThemeEvaluation\": 1,\n  \"idTauxEvaluation\": 1\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Evaluation - DELETE",
+                  "request": {
+                    "method": "DELETE",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/evaluation/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "evaluation",
+                        "{{id}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Evaluation - SEARCH",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/evaluation/search?idAlpha={{alphaId}}&idNiveauEvaluation=1",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "evaluation",
+                        "search"
+                      ],
+                      "query": [
+                        {
+                          "key": "idAlpha",
+                          "value": "{{alphaId}}"
+                        },
+                        {
+                          "key": "idNiveauEvaluation",
+                          "value": "1"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Performance - POST",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/performance",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "performance"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"tauxFrequentationParMois\": \"85\",\n  \"tauxProgressionApprentissageLecture\": \"70\",\n  \"tauxProgressionApprentissageEcriture\": \"65\",\n  \"tauxProgressionApprentissageCalcul\": \"60\",\n  \"tauxProgressionApprentissageCvc\": \"75\"\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Performance - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/performance",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "performance"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Performance - GET by id",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/performance/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "performance",
+                        "{{id}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Performance - PUT",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/performance/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "performance",
+                        "{{id}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"tauxFrequentationParMois\": \"90\"\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Performance - DELETE",
+                  "request": {
+                    "method": "DELETE",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/performance/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "performance",
+                        "{{id}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Performance - SEARCH",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/performance/search?idAlpha={{alphaId}}&tauxFrequentationParMois=85",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "performance",
+                        "search"
+                      ],
+                      "query": [
+                        {
+                          "key": "idAlpha",
+                          "value": "{{alphaId}}"
+                        },
+                        {
+                          "key": "tauxFrequentationParMois",
+                          "value": "85"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Visite - POST",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/visite",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "visite"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"maitriseSeanceLecture\": \"Bonne\",\n  \"maitriseSeanceEcriture\": \"Moyenne\",\n  \"maitriseSeanceCalcul\": \"Bonne\",\n  \"maitriseSeanceCvc\": \"Bonne\",\n  \"nombreVisiteRealiseParConseiller\": 3\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Visite - GET all",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/visite",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "visite"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Visite - GET by id",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/visite/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "visite",
+                        "{{id}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Visite - PUT",
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/visite/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "visite",
+                        "{{id}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"idAlpha\": {{alphaId}},\n  \"maitriseSeanceLecture\": \"Excellente\",\n  \"nombreVisiteRealiseParConseiller\": 4\n}"
+                    }
+                  }
+                },
+                {
+                  "name": "Visite - DELETE",
+                  "request": {
+                    "method": "DELETE",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/visite/{{id}}",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "visite",
+                        "{{id}}"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "Visite - SEARCH",
+                  "request": {
+                    "method": "GET",
+                    "url": {
+                      "raw": "{{baseUrl}}/api/visite/search?idAlpha={{alphaId}}&maitriseSeanceLecture=Bonne",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "visite",
+                        "search"
+                      ],
+                      "query": [
+                        {
+                          "key": "idAlpha",
+                          "value": "{{alphaId}}"
+                        },
+                        {
+                          "key": "maitriseSeanceLecture",
+                          "value": "Bonne"
+                        }
+                      ]
+                    }
+                  }
+                }
               ]
             }
           ]

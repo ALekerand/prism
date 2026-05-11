@@ -1,5 +1,7 @@
 package com.dcspa.prism.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,11 +21,18 @@ public class CentreTypeListItem {
     private Integer idAutoriteAutorisation;
     private Boolean autorisation;
     private Boolean estElectrifie;
+
+    @JsonProperty("aDeLeau")
+    @JsonAlias({"adeLeau"})
     private Boolean aDeLeau;
+
     private Integer nombreVisite;
     private String localisationCentre;
     private String nomMilieuImplentation;
     private String encadreurNonMena;
     private Boolean encadrerParMena;
+
+    /** FK promoteur (liste / filtres UI). */
+    private Integer idPromoteur;
 }
 

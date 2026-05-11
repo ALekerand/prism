@@ -1,7 +1,6 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.controller.support.ReferentialPutHelper;
-
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.LocaliteDImplantationRequest;
 import com.dcspa.prism.entity.Commune;
 import com.dcspa.prism.entity.LocaliteDImplantation;
@@ -13,6 +12,7 @@ import com.dcspa.prism.repository.SousPrefectureRepository;
 import com.dcspa.prism.service.LocaliteDImplantationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,55 +37,58 @@ public class LocaliteDImplantationController {
 	private final MilieuImplantationRepository milieuImplantationRepository;
 	private final CommuneRepository communeRepository;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
-		// Evite LazyInitializationException sur sous-prefecture / milieu / commune
 		List<Map<String, Object>> list = localiteDImplantationService.findAll().stream()
-				.map(l -> {
-					Map<String, Object> m = new LinkedHashMap<>();
-					m.put("id", l.getId());
-					m.put("codeLocalite", l.getCodeLocalite());
-					m.put("nomLocalite", l.getNomLocalite());
-					m.put("idSousPrefecture", l.getIdSousPrefecture() != null ? l.getIdSousPrefecture().getId() : null);
-					m.put("nomSousPrefecture", l.getIdSousPrefecture() != null ? l.getIdSousPrefecture().getNomSousPrefecture() : null);
-					m.put("idMilieuImplentation", l.getIdMilieuImplentation() != null ? l.getIdMilieuImplentation().getId() : null);
-					m.put("libelleMilieuImplentation", l.getIdMilieuImplentation() != null ? l.getIdMilieuImplentation().getLibelleTypeImplentation() : null);
-					m.put("idCommune", l.getIdCommune() != null ? l.getIdCommune().getId() : null);
-					m.put("nomCommune", l.getIdCommune() != null ? l.getIdCommune().getNomCommune() : null);
-					return m;
-				})
+				.map(this::toLocaliteRow)
 				.collect(Collectors.toList());
 		return ResponseEntity.ok(list);
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<LocaliteDImplantation> findById(@PathVariable Integer id) {
+	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return localiteDImplantationService.findById(id)
+				.map(this::toLocaliteRow)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
-	public ResponseEntity<LocaliteDImplantation> create(@RequestBody LocaliteDImplantationRequest req) {
+	public ResponseEntity<Map<String, Object>> create(@RequestBody LocaliteDImplantationRequest req) {
 		LocaliteDImplantation entity = new LocaliteDImplantation();
 		applyRequest(entity, req);
-		return ResponseEntity.status(201).body(localiteDImplantationService.save(entity));
+		return ResponseEntity.status(201).body(toLocaliteRow(localiteDImplantationService.save(entity)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<LocaliteDImplantation> update(@PathVariable Integer id, @RequestBody LocaliteDImplantationRequest req) {
+	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody LocaliteDImplantationRequest req) {
 		LocaliteDImplantation existing = localiteDImplantationService.findById(id).orElse(null);
 		if (existing == null) {
 			return ResponseEntity.notFound().build();
 		}
 		applyRequest(existing, req);
-		return ResponseEntity.ok(localiteDImplantationService.save(existing));
+		return ResponseEntity.ok(toLocaliteRow(localiteDImplantationService.save(existing)));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		localiteDImplantationService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private Map<String, Object> toLocaliteRow(LocaliteDImplantation l) {
+		Map<String, Object> m = new LinkedHashMap<>();
+		m.put("id", l.getId());
+		m.put("codeLocalite", l.getCodeLocalite());
+		m.put("nomLocalite", l.getNomLocalite());
+		ReferentielEnricher.putRef(m, "SousPrefecture", l.getIdSousPrefecture());
+		ReferentielEnricher.putRef(m, "MilieuImplantation", l.getIdMilieuImplentation());
+		ReferentielEnricher.putRef(m, "Commune", l.getIdCommune());
+		return m;
 	}
 
 	private void applyRequest(LocaliteDImplantation entity, LocaliteDImplantationRequest req) {

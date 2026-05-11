@@ -9,9 +9,6 @@ public class EvaluationRequest {
 	private Integer idAlpha;
 	private Integer idPeriodeEvaluation;
 	private Integer idNiveauEvaluation;
-	private Integer idThemeEvaluationNiveau1;
-	private Integer idThemeEvaluationN2PostAlpha;
+	private Integer idThemeEvaluation;
 	private Integer idTauxEvaluation;
-	private Integer idAspectAAmeliorer;
-	private String themeEvaluation;
 }

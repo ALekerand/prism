@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : mer. 06 mai 2026 à 14:37
+-- Généré le : jeu. 07 mai 2026 à 11:31
 -- Version du serveur : 8.0.30
 -- Version de PHP : 8.1.10
 
@@ -94,8 +94,17 @@ CREATE TABLE `appui_partenaire` (
   `id_categorie_appui` int NOT NULL,
   `id_centre` int NOT NULL,
   `id_partenaire` int NOT NULL,
-  `code_appui_partenaire` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `code_appui_partenaire` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `libelle_appui_partenaire` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `appui_partenaire`
+--
+
+INSERT INTO `appui_partenaire` (`id_appui_partenaire`, `id_categorie_appui`, `id_centre`, `id_partenaire`, `code_appui_partenaire`, `libelle_appui_partenaire`) VALUES
+(1, 1, 1, 1, 'APA0000001', 'Appui test'),
+(2, 1, 1, 1, 'APA0000002', 'Appui test');
 
 -- --------------------------------------------------------
 
@@ -386,6 +395,7 @@ CREATE TABLE `code_sequence` (
 
 INSERT INTO `code_sequence` (`next_value`, `prefix`) VALUES
 (5, 'ALP'),
+(3, 'APA'),
 (5, 'CAM'),
 (5, 'CEN'),
 (3, 'CIV'),
@@ -396,7 +406,8 @@ INSERT INTO `code_sequence` (`next_value`, `prefix`) VALUES
 (13, 'NAL'),
 (13, 'NSC'),
 (5, 'PRO'),
-(2, 'TDO');
+(2, 'TDO'),
+(4, 'TEV');
 
 -- --------------------------------------------------------
 
@@ -503,7 +514,8 @@ CREATE TABLE `controle` (
 --
 
 INSERT INTO `controle` (`id_controle`, `conformite_programme`, `date_demarrage_appren`, `jour_heure_formation`, `nombre_kit_autre`, `nombre_kit_manuels_calculaire`, `nombre_kit_manuels_cvc`, `nombre_kit_manuels_syllabaire`, `id_alpha`, `id_discipline`, `id_manuel`, `id_niveau_controle`) VALUES
-(2, b'1', NULL, 'Lundi 08h', 2, 20, 20, 20, 7, 1, 1, 1);
+(2, b'1', NULL, 'Lundi 08h', 2, 20, 20, 20, 7, 1, 1, 1),
+(3, b'1', '2026-05-06', 'Lundi 08h', 2, 20, 20, 20, 7, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1550,15 +1562,20 @@ CREATE TABLE `effectif_situation_handicap_sie` (
 
 CREATE TABLE `evaluation` (
   `id_evaluation` int NOT NULL,
-  `theme_evaluation` varchar(255) DEFAULT NULL,
   `id_alpha` int NOT NULL,
-  `id_aspect_a_ameliorer` int DEFAULT NULL,
   `id_niveau_evaluation` int DEFAULT NULL,
   `id_periode_evaluation` int DEFAULT NULL,
   `id_taux_evaluation` int DEFAULT NULL,
-  `id_theme_evaluation_n2_post_alpha` int DEFAULT NULL,
-  `id_theme_evaluation_niveau1` int DEFAULT NULL
+  `id_theme_evaluation` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `evaluation`
+--
+
+INSERT INTO `evaluation` (`id_evaluation`, `id_alpha`, `id_niveau_evaluation`, `id_periode_evaluation`, `id_taux_evaluation`, `id_theme_evaluation`) VALUES
+(1, 7, 1, 1, 1, 1),
+(2, 7, 1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -1714,7 +1731,8 @@ INSERT INTO `fonctionnalite` (`id_fonctionnalite`, `code_fonctionnalite`, `modul
 (113, 'THEMES-EVALUATION-NIVEAU2-POST-ALPHA', 'API', 'Gestion themes-evaluation-niveau2-post-alpha'),
 (114, 'NIVEAUX-CONTROLE', 'API', 'Gestion niveaux-controle'),
 (115, 'PERFORMANCE', 'API', 'Gestion performance'),
-(116, 'CONTROLE', 'API', 'Gestion controle');
+(116, 'CONTROLE', 'API', 'Gestion controle'),
+(117, 'THEMES-EVALUATION', 'API', 'Gestion themes-evaluation');
 
 -- --------------------------------------------------------
 
@@ -2016,15 +2034,7 @@ INSERT INTO `niveau_alpha` (`id_centre`, `id_niveau_alpha`, `code_niveau_alpha`,
 (7, 1, 'NAL0000001', 'Niveau 1'),
 (7, 2, 'NAL0000002', 'Niveau 2'),
 (7, 3, 'NAL0000003', 'Niveau 3'),
-(7, 4, 'NAL0000004', 'NIVEAU_1'),
-(7, 5, 'NAL0000005', 'NIVEAU_2'),
-(7, 6, 'NAL0000006', 'POST_ALPHA'),
-(11, 7, 'NAL0000007', 'NIVEAU_1'),
-(11, 8, 'NAL0000008', 'NIVEAU_2'),
-(11, 9, 'NAL0000009', 'POST_ALPHA'),
-(12, 10, 'NAL0000010', 'NIVEAU_1'),
-(12, 11, 'NAL0000011', 'NIVEAU_2'),
-(12, 12, 'NAL0000012', 'POST_ALPHA');
+(7, 6, 'NAL0000006', 'Post alpha'),
 
 -- --------------------------------------------------------
 
@@ -3121,6 +3131,28 @@ INSERT INTO `taux_evaluation` (`id_taux_evaluation`, `code_taux_evaluation`, `li
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `theme_evaluation`
+--
+
+CREATE TABLE `theme_evaluation` (
+  `id_theme_evaluation` int NOT NULL,
+  `code_theme_evaluation` varchar(50) DEFAULT NULL,
+  `libelle_theme_evaluation` varchar(200) DEFAULT NULL,
+  `niveau` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `theme_evaluation`
+--
+
+INSERT INTO `theme_evaluation` (`id_theme_evaluation`, `code_theme_evaluation`, `libelle_theme_evaluation`, `niveau`) VALUES
+(1, 'TEV0000001', 'Comprehension', 'NIVEAU_1'),
+(2, 'TEV0000002', 'libelle 2', 'NIVEAU_2'),
+(3, 'TEV0000003', 'libelle 3', 'POST_ALPHA');
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `theme_evaluation_niveau1`
 --
 
@@ -3689,12 +3721,10 @@ ALTER TABLE `effectif_situation_handicap_sie`
 ALTER TABLE `evaluation`
   ADD PRIMARY KEY (`id_evaluation`),
   ADD KEY `FKgvnyiqmggrg6f7jeixtl8sp34` (`id_alpha`),
-  ADD KEY `FKd3cter94ivm8bbg10m2y4hib0` (`id_aspect_a_ameliorer`),
   ADD KEY `FK31w8jsk6oergpxrqjhgeueli0` (`id_niveau_evaluation`),
   ADD KEY `FKi39puo7761exdvti27kgg74d8` (`id_periode_evaluation`),
   ADD KEY `FKk794f33mpcx0cg8vmhosdr61f` (`id_taux_evaluation`),
-  ADD KEY `FKp0e7vf20qm94jlbgjlwbbibpg` (`id_theme_evaluation_n2_post_alpha`),
-  ADD KEY `FKo4ku91hqsxi05crmk1lccb8rv` (`id_theme_evaluation_niveau1`);
+  ADD KEY `FK7sgrj7cjx1axd4l3f0axa3lb3` (`id_theme_evaluation`);
 
 --
 -- Index pour la table `fonction`
@@ -4033,6 +4063,12 @@ ALTER TABLE `taux_evaluation`
   ADD PRIMARY KEY (`id_taux_evaluation`);
 
 --
+-- Index pour la table `theme_evaluation`
+--
+ALTER TABLE `theme_evaluation`
+  ADD PRIMARY KEY (`id_theme_evaluation`);
+
+--
 -- Index pour la table `theme_evaluation_niveau1`
 --
 ALTER TABLE `theme_evaluation_niveau1`
@@ -4090,7 +4126,7 @@ ALTER TABLE `anne_scolaire`
 -- AUTO_INCREMENT pour la table `appui_partenaire`
 --
 ALTER TABLE `appui_partenaire`
-  MODIFY `id_appui_partenaire` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_appui_partenaire` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT pour la table `app_role`
@@ -4174,7 +4210,7 @@ ALTER TABLE `competence_centre`
 -- AUTO_INCREMENT pour la table `controle`
 --
 ALTER TABLE `controle`
-  MODIFY `id_controle` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_controle` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `cp_niveau`
@@ -4378,7 +4414,7 @@ ALTER TABLE `effectif_situation_handicap_sie`
 -- AUTO_INCREMENT pour la table `evaluation`
 --
 ALTER TABLE `evaluation`
-  MODIFY `id_evaluation` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_evaluation` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT pour la table `fonction`
@@ -4390,7 +4426,7 @@ ALTER TABLE `fonction`
 -- AUTO_INCREMENT pour la table `fonctionnalite`
 --
 ALTER TABLE `fonctionnalite`
-  MODIFY `id_fonctionnalite` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
+  MODIFY `id_fonctionnalite` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
 
 --
 -- AUTO_INCREMENT pour la table `iep`
@@ -4631,6 +4667,12 @@ ALTER TABLE `support_didactique_alpha`
 --
 ALTER TABLE `taux_evaluation`
   MODIFY `id_taux_evaluation` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT pour la table `theme_evaluation`
+--
+ALTER TABLE `theme_evaluation`
+  MODIFY `id_theme_evaluation` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `theme_evaluation_niveau1`
@@ -4942,12 +4984,10 @@ ALTER TABLE `effectif_situation_handicap_sie`
 --
 ALTER TABLE `evaluation`
   ADD CONSTRAINT `FK31w8jsk6oergpxrqjhgeueli0` FOREIGN KEY (`id_niveau_evaluation`) REFERENCES `niveau_evaluation` (`id_niveau_evaluation`),
-  ADD CONSTRAINT `FKd3cter94ivm8bbg10m2y4hib0` FOREIGN KEY (`id_aspect_a_ameliorer`) REFERENCES `aspect_a_ameliorer` (`id_aspect_a_ameliorer`),
+  ADD CONSTRAINT `FK7sgrj7cjx1axd4l3f0axa3lb3` FOREIGN KEY (`id_theme_evaluation`) REFERENCES `theme_evaluation` (`id_theme_evaluation`),
   ADD CONSTRAINT `FKgvnyiqmggrg6f7jeixtl8sp34` FOREIGN KEY (`id_alpha`) REFERENCES `alpha` (`id_centre`),
   ADD CONSTRAINT `FKi39puo7761exdvti27kgg74d8` FOREIGN KEY (`id_periode_evaluation`) REFERENCES `periode_evaluation` (`id_periode_evaluation`),
-  ADD CONSTRAINT `FKk794f33mpcx0cg8vmhosdr61f` FOREIGN KEY (`id_taux_evaluation`) REFERENCES `taux_evaluation` (`id_taux_evaluation`),
-  ADD CONSTRAINT `FKo4ku91hqsxi05crmk1lccb8rv` FOREIGN KEY (`id_theme_evaluation_niveau1`) REFERENCES `theme_evaluation_niveau1` (`id_theme_evaluation_niveau1`),
-  ADD CONSTRAINT `FKp0e7vf20qm94jlbgjlwbbibpg` FOREIGN KEY (`id_theme_evaluation_n2_post_alpha`) REFERENCES `theme_evaluation_niveau2_post_alpha` (`id_theme_evaluation_n2_post_alpha`);
+  ADD CONSTRAINT `FKk794f33mpcx0cg8vmhosdr61f` FOREIGN KEY (`id_taux_evaluation`) REFERENCES `taux_evaluation` (`id_taux_evaluation`);
 
 --
 -- Contraintes pour la table `iep`

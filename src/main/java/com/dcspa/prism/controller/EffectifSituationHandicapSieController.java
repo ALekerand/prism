@@ -3,10 +3,12 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.EffectifSituationHandicapSie;
 import com.dcspa.prism.service.EffectifSituationHandicapSieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,13 @@ public class EffectifSituationHandicapSieController {
 
 	private final EffectifSituationHandicapSieService effectifSituationHandicapSieService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(effectifSituationHandicapSieService.findAll().stream().map(this::toRow).collect(Collectors.toList()));
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifSituationHandicapSieService.findById(id)
@@ -42,12 +46,14 @@ public class EffectifSituationHandicapSieController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifSituationHandicapSie body) {
 		EffectifSituationHandicapSie saved = effectifSituationHandicapSieService.save(body);
 		return ResponseEntity.status(201).body(toRow(saved));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifSituationHandicapSie body) {
 		Optional<EffectifSituationHandicapSie> opt = effectifSituationHandicapSieService.findById(id);
@@ -68,8 +74,8 @@ public class EffectifSituationHandicapSieController {
 	private Map<String, Object> toRow(EffectifSituationHandicapSie e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idNiveauSie", JpaAssociationIds.intIdOrNull(e.getIdNiveauSie()));
-		m.put("idAnneeScolaire", JpaAssociationIds.intIdOrNull(e.getIdAnneeScolaire()));
+		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
+		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
 		m.put("codeEffectifSituationHandicapSie", e.getCodeEffectifSituationHandicapSie());
 		m.put("effectifSituationHandicapSie3IvoirienH", e.getEffectifSituationHandicapSie3IvoirienH());
 		m.put("effectifSituationHandicapSie3IvoirienF", e.getEffectifSituationHandicapSie3IvoirienF());

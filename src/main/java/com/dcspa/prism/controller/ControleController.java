@@ -1,6 +1,7 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.ControleRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Controle;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,16 +32,19 @@ public class ControleController {
 	private final ManuelRepository manuelRepository;
 	private final NiveauControleRepository niveauControleRepository;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(controleRepository.findAll().stream().map(this::toRow).toList());
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return controleRepository.findById(id).map(this::toRow).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/search")
 	public ResponseEntity<List<Map<String, Object>>> search(
 			@RequestParam(required = false) Integer idAlpha,
@@ -57,6 +62,7 @@ public class ControleController {
 				.toList());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<?> create(@RequestBody ControleRequest body) {
 		try {
@@ -68,6 +74,7 @@ public class ControleController {
 		}
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody ControleRequest body) {
 		Optional<Controle> opt = controleRepository.findById(id);
@@ -109,10 +116,10 @@ public class ControleController {
 	private Map<String, Object> toRow(Controle e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idAlpha", JpaAssociationIds.intIdOrNull(e.getIdAlpha()));
-		m.put("idDiscipline", JpaAssociationIds.intIdOrNull(e.getIdDiscipline()));
-		m.put("idManuel", JpaAssociationIds.intIdOrNull(e.getIdManuel()));
-		m.put("idNiveauControle", JpaAssociationIds.intIdOrNull(e.getIdNiveauControle()));
+		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
+		ReferentielEnricher.putRef(m, "Discipline", e.getIdDiscipline());
+		ReferentielEnricher.putRef(m, "Manuel", e.getIdManuel());
+		ReferentielEnricher.putRef(m, "NiveauControle", e.getIdNiveauControle());
 		m.put("dateDemarrageAppren", e.getDateDemarrageAppren());
 		m.put("jourHeureFormation", e.getJourHeureFormation());
 		m.put("nombreKitManuelsSyllabaire", e.getNombreKitManuelsSyllabaire());

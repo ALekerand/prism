@@ -1,6 +1,7 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.codegen.AutoCodePutMerge;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.NiveauAlphaRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.NiveauAlpha;
@@ -9,6 +10,7 @@ import com.dcspa.prism.service.NiveauAlphaService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +33,7 @@ public class NiveauAlphaController {
 	private final NiveauAlphaService niveaualphaService;
 	private final AlphaRepository alphaRepository;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		List<Map<String, Object>> list = niveaualphaService.findAll()
@@ -40,6 +43,7 @@ public class NiveauAlphaController {
 		return ResponseEntity.ok(list);
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return niveaualphaService.findById(id)
@@ -48,12 +52,14 @@ public class NiveauAlphaController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody NiveauAlphaRequest request) {
 		NiveauAlpha saved = niveaualphaService.save(toEntity(null, request));
 		return ResponseEntity.status(200).body(toRow(saved));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody NiveauAlphaRequest request) {
 		NiveauAlpha saved = niveaualphaService.save(toEntity(id, request));
@@ -86,7 +92,7 @@ public class NiveauAlphaController {
 	private Map<String, Object> toRow(NiveauAlpha n) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", n.getId());
-		m.put("idCentre", n.getIdCentre() != null ? n.getIdCentre().getId() : null);
+		ReferentielEnricher.putRef(m, "Alpha", n.getIdCentre());
 		m.put("codeNiveauAlpha", n.getCodeNiveauAlpha());
 		m.put("libelleNiveauAlpha", n.getLibelleNiveauAlpha());
 		return m;

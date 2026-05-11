@@ -1,12 +1,14 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.controller.support.JpaAssociationIds;
-import com.dcspa.prism.controller.support.ReferentialPutHelper;
+import com.dcspa.prism.codegen.AutoCodePutMerge;
+
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 
 import com.dcspa.prism.entity.EffectifCec;
 import com.dcspa.prism.service.EffectifCecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/effectif-cec")
@@ -27,11 +30,13 @@ public class EffectifCecController {
 
 	private final EffectifCecService effectifCecService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(effectifCecService.findAll().stream().map(this::toRow).toList());
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifCecService.findById(id)
@@ -40,14 +45,22 @@ public class EffectifCecController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
-	public ResponseEntity<EffectifCec> create(@RequestBody EffectifCec body) {
-		return ResponseEntity.status(201).body(effectifCecService.save(body));
+	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifCec body) {
+		return ResponseEntity.status(201).body(toRow(effectifCecService.save(body)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<EffectifCec> update(@PathVariable Integer id, @RequestBody EffectifCec body) {
-		return ReferentialPutHelper.putPreservingAutoCode(id, body, effectifCecService::findById, effectifCecService::save);
+	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifCec body) {
+		Optional<EffectifCec> opt = effectifCecService.findById(id);
+		if (opt.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		AutoCodePutMerge.preserveAutoCodeFromExisting(opt.get(), body);
+		body.setId(id);
+		return ResponseEntity.ok(toRow(effectifCecService.save(body)));
 	}
 
 	@DeleteMapping("/{id}")
@@ -59,9 +72,9 @@ public class EffectifCecController {
 	private Map<String, Object> toRow(EffectifCec entity) {
 		Map<String, Object> row = new LinkedHashMap<>();
 		row.put("id", entity.getId());
-		row.put("idPeriodeActivite", JpaAssociationIds.intIdOrNull(entity.getIdPeriodeActivite()));
-		row.put("idNiveauSie", JpaAssociationIds.intIdOrNull(entity.getIdNiveauSie()));
-		row.put("idCentre", JpaAssociationIds.intIdOrNull(entity.getIdCentre()));
+		ReferentielEnricher.putRef(row, "PeriodeActivite", entity.getIdPeriodeActivite());
+		ReferentielEnricher.putRef(row, "NiveauSie", entity.getIdNiveauSie());
+		ReferentielEnricher.putRef(row, "Centre", entity.getIdCentre());
 		row.put("codeEffectifCec", entity.getCodeEffectifCec());
 		row.put("effectifCecMoins3F", entity.getEffectifCecMoins3F());
 		row.put("effectifCecMoins3H", entity.getEffectifCecMoins3H());

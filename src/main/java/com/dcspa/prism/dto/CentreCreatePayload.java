@@ -1,5 +1,7 @@
 package com.dcspa.prism.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +20,10 @@ public class CentreCreatePayload {
     private String encadreurNonMena;
     private Boolean encadrerParMena;
     private Boolean estElectrifie;
+
+    /** JSON stable : {@code aDeLeau} (alias historique {@code adeLeau}, déduit du getter Lombok). */
+    @JsonProperty("aDeLeau")
+    @JsonAlias({"adeLeau"})
     private Boolean aDeLeau;
     private Integer nombreVisite;
 

@@ -3,10 +3,12 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.CompetenceCentre;
 import com.dcspa.prism.service.CompetenceCentreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,13 @@ public class CompetenceCentreController {
 
 	private final CompetenceCentreService competenceCentreService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(competenceCentreService.findAll().stream().map(this::toRow).collect(Collectors.toList()));
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return competenceCentreService.findById(id)
@@ -42,12 +46,14 @@ public class CompetenceCentreController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody CompetenceCentre body) {
 		CompetenceCentre saved = competenceCentreService.save(body);
 		return ResponseEntity.status(201).body(toRow(saved));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody CompetenceCentre body) {
 		Optional<CompetenceCentre> opt = competenceCentreService.findById(id);
@@ -68,8 +74,8 @@ public class CompetenceCentreController {
 	private Map<String, Object> toRow(CompetenceCentre e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idCompetence", JpaAssociationIds.intIdOrNull(e.getIdCompetence()));
-		m.put("idCentre", JpaAssociationIds.intIdOrNull(e.getIdCentre()));
+		ReferentielEnricher.putRef(m, "Competence", e.getIdCompetence());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeCompetenceCentre", e.getCodeCompetenceCentre());
 		return m;
 	}

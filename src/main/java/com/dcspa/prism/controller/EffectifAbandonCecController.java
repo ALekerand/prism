@@ -3,10 +3,12 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.EffectifAbandonCec;
 import com.dcspa.prism.service.EffectifAbandonCecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +31,13 @@ public class EffectifAbandonCecController {
 
 	private final EffectifAbandonCecService effectifAbandonCecService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		return ResponseEntity.ok(effectifAbandonCecService.findAll().stream().map(this::toRow).collect(Collectors.toList()));
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifAbandonCecService.findById(id)
@@ -42,12 +46,14 @@ public class EffectifAbandonCecController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifAbandonCec body) {
 		EffectifAbandonCec saved = effectifAbandonCecService.save(body);
 		return ResponseEntity.status(201).body(toRow(saved));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifAbandonCec body) {
 		Optional<EffectifAbandonCec> opt = effectifAbandonCecService.findById(id);
@@ -68,9 +74,9 @@ public class EffectifAbandonCecController {
 	private Map<String, Object> toRow(EffectifAbandonCec e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idAnneeScolaire", JpaAssociationIds.intIdOrNull(e.getIdAnneeScolaire()));
-		m.put("idNiveauSie", JpaAssociationIds.intIdOrNull(e.getIdNiveauSie()));
-		m.put("idCentre", JpaAssociationIds.intIdOrNull(e.getIdCentre()));
+		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifAbandonCec", e.getCodeEffectifAbandonCec());
 		m.put("effectifAbandonCecMoins3F", e.getEffectifAbandonCecMoins3F());
 		m.put("effectifAbandonCecMoins3H", e.getEffectifAbandonCecMoins3H());

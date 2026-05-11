@@ -20,12 +20,12 @@ public class RegimealphabetisationService {
 
 	@Transactional(readOnly = true)
 	public Optional<Regimealphabetisation> findById(Integer id) {
-		return id == null ? Optional.empty() : repository.findById(id.longValue());
+		return id == null ? Optional.empty() : repository.findById(id);
 	}
 
 	@Transactional
 	public Regimealphabetisation save(Regimealphabetisation entity) { return repository.save(entity); }
 
 	@Transactional
-	public void deleteById(Integer id) { if (id != null) repository.deleteById(id.longValue()); }
+	public void deleteById(Integer id) { if (id != null) repository.deleteById(id); }
 }

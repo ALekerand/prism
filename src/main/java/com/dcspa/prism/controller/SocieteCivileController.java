@@ -1,11 +1,12 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.controller.support.ReferentialPutHelper;
-
+import com.dcspa.prism.codegen.AutoCodePutMerge;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.SocieteCivile;
 import com.dcspa.prism.service.SocieteCivileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/societe-civile")
@@ -24,31 +28,43 @@ public class SocieteCivileController {
 
 	private final SocieteCivileService societeCivileService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
-	public ResponseEntity<List<SocieteCivile>> findAll() {
-		return ResponseEntity.ok(societeCivileService.findAll());
+	public ResponseEntity<List<Map<String, Object>>> findAll() {
+		return ResponseEntity.ok(societeCivileService.findAll().stream().map(this::toRow).toList());
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<SocieteCivile> findById(@PathVariable Integer id) {
-		return societeCivileService.findById(id)
-				.map(ResponseEntity::ok)
-				.orElse(ResponseEntity.notFound().build());
+	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
+		return societeCivileService.findById(id).map(this::toRow).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
-	public ResponseEntity<SocieteCivile> create(@RequestBody SocieteCivile body) {
-		return ResponseEntity.status(201).body(societeCivileService.save(body));
+	public ResponseEntity<Map<String, Object>> create(@RequestBody SocieteCivile body) {
+		return ResponseEntity.status(201).body(toRow(societeCivileService.save(body)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<SocieteCivile> update(@PathVariable Integer id, @RequestBody SocieteCivile body) {
-		return ReferentialPutHelper.putPreservingAutoCode(id, body, societeCivileService::findById, societeCivileService::save);
+	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody SocieteCivile body) {
+		Optional<SocieteCivile> opt = societeCivileService.findById(id);
+		if (opt.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		AutoCodePutMerge.preserveAutoCodeFromExisting(opt.get(), body);
+		body.setId(id);
+		return ResponseEntity.ok(toRow(societeCivileService.save(body)));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		societeCivileService.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private Map<String, Object> toRow(SocieteCivile e) {
+		return new LinkedHashMap<>(ReferentielEnricher.toRef(e));
 	}
 }

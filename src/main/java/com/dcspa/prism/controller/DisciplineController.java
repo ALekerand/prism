@@ -1,11 +1,17 @@
 package com.dcspa.prism.controller;
 
-import com.dcspa.prism.controller.support.ReferentialPutHelper;
+import com.dcspa.prism.codegen.AutoCodePutMerge;
+
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.Discipline;
 import com.dcspa.prism.repository.DisciplineRepository;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,13 +28,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class DisciplineController {
 	private final DisciplineRepository repository;
 
+	@Transactional(readOnly = true)
 	@GetMapping
-	public ResponseEntity<List<Discipline>> findAll() {
-		return ResponseEntity.ok(repository.findAll());
+	public ResponseEntity<List<Map<String, Object>>> findAll() {
+		return ResponseEntity.ok(repository.findAll().stream().map(this::toRow).toList());
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/search")
-	public ResponseEntity<List<Discipline>> search(
+	public ResponseEntity<List<Map<String, Object>>> search(
 			@RequestParam(required = false) String code,
 			@RequestParam(required = false) String libelle) {
 		String c = code == null ? null : code.toLowerCase();
@@ -36,27 +44,41 @@ public class DisciplineController {
 		return ResponseEntity.ok(repository.findAll().stream()
 				.filter(x -> c == null || (x.getCodeDiscipline() != null && x.getCodeDiscipline().toLowerCase().contains(c)))
 				.filter(x -> l == null || (x.getLibelleDiscipline() != null && x.getLibelleDiscipline().toLowerCase().contains(l)))
+				.map(this::toRow)
 				.toList());
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<Discipline> findById(@PathVariable Integer id) {
-		return repository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
+		return repository.findById(id).map(this::toRow).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
-	public ResponseEntity<Discipline> create(@RequestBody Discipline body) {
-		return ResponseEntity.status(201).body(repository.save(body));
+	public ResponseEntity<Map<String, Object>> create(@RequestBody Discipline body) {
+		return ResponseEntity.status(201).body(toRow(repository.save(body)));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<Discipline> update(@PathVariable Integer id, @RequestBody Discipline body) {
-		return ReferentialPutHelper.putPreservingAutoCode(id, body, repository::findById, repository::save);
+	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody Discipline body) {
+		Optional<Discipline> opt = repository.findById(id);
+		if (opt.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		AutoCodePutMerge.preserveAutoCodeFromExisting(opt.get(), body);
+		body.setId(id);
+		return ResponseEntity.ok(toRow(repository.save(body)));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		repository.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	private Map<String, Object> toRow(Discipline e) {
+		return new LinkedHashMap<>(ReferentielEnricher.toRef(e));
 	}
 }

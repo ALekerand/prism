@@ -37,21 +37,10 @@ public class Evaluation {
 	private NiveauEvaluation idNiveauEvaluation;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_THEME_EVALUATION_NIVEAU1")
-	private ThemeEvaluationNiveau1 idThemeEvaluationNiveau1;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_THEME_EVALUATION_N2_POST_ALPHA")
-	private ThemeEvaluationNiveau2PostAlpha idThemeEvaluationN2PostAlpha;
+	@JoinColumn(name = "ID_THEME_EVALUATION")
+	private ThemeEvaluation idThemeEvaluation;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_TAUX_EVALUATION")
 	private TauxEvaluation idTauxEvaluation;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_ASPECT_A_AMELIORER")
-	private AspectAAmeliorer idAspectAAmeliorer;
-
-	@Column(name = "THEME_EVALUATION", length = 255)
-	private String themeEvaluation;
 }

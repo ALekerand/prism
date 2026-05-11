@@ -3,10 +3,12 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.EffectifAbandonAlpha;
 import com.dcspa.prism.service.EffectifAbandonAlphaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,7 @@ public class EffectifAbandonAlphaController {
 
 	private final EffectifAbandonAlphaService effectifAbandonAlphaService;
 
+	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll() {
 		List<Map<String, Object>> rows = effectifAbandonAlphaService.findAll().stream()
@@ -37,6 +40,7 @@ public class EffectifAbandonAlphaController {
 		return ResponseEntity.ok(rows);
 	}
 
+	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
 		return effectifAbandonAlphaService.findById(id)
@@ -45,12 +49,14 @@ public class EffectifAbandonAlphaController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifAbandonAlpha body) {
 		EffectifAbandonAlpha saved = effectifAbandonAlphaService.save(body);
 		return ResponseEntity.status(201).body(toRow(saved));
 	}
 
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody EffectifAbandonAlpha body) {
 		Optional<EffectifAbandonAlpha> opt = effectifAbandonAlphaService.findById(id);
@@ -75,8 +81,8 @@ public class EffectifAbandonAlphaController {
 	private Map<String, Object> toRow(EffectifAbandonAlpha e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
-		m.put("idPeriodeActivite", JpaAssociationIds.intIdOrNull(e.getIdPeriodeActivite()));
-		m.put("idCentre", JpaAssociationIds.intIdOrNull(e.getIdCentre()));
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifAbandonAlpha", e.getCodeEffectifAbandonAlpha());
 		m.put("effectifAbandonAlphaNiveauHomme", e.getEffectifAbandonAlphaNiveauHomme());
 		m.put("effectifAbandonAlphaNiveauFemme", e.getEffectifAbandonAlphaNiveauFemme());

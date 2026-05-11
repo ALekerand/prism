@@ -32,7 +32,8 @@ public final class CentreTypeListItemMapper {
                 a.getLocalisationCentre(),
                 a.getNomMilieuImplentation(),
                 a.getEncadreurNonMena(),
-                a.getEncadrerParMena()
+                a.getEncadrerParMena(),
+                a.getIdPromoteur()
         );
     }
 
@@ -55,7 +56,8 @@ public final class CentreTypeListItemMapper {
                 c.getLocalisationCentre(),
                 c.getNomMilieuImplentation(),
                 c.getEncadreurNonMena(),
-                c.getEncadrerParMena()
+                c.getEncadrerParMena(),
+                c.getIdPromoteur()
         );
     }
 
@@ -78,7 +80,8 @@ public final class CentreTypeListItemMapper {
                 c.getLocalisationCentre(),
                 c.getNomMilieuImplentation(),
                 c.getEncadreurNonMena(),
-                c.getEncadrerParMena()
+                c.getEncadrerParMena(),
+                c.getIdPromoteur()
         );
     }
 
@@ -101,7 +104,8 @@ public final class CentreTypeListItemMapper {
                 s.getLocalisationCentre(),
                 s.getNomMilieuImplentation(),
                 s.getEncadreurNonMena(),
-                s.getEncadrerParMena()
+                s.getEncadrerParMena(),
+                s.getIdPromoteur()
         );
     }
 }
