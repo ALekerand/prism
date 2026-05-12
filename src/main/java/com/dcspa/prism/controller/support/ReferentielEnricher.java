@@ -53,6 +53,7 @@ import com.dcspa.prism.entity.Promoteur;
 import com.dcspa.prism.entity.Ptf;
 import com.dcspa.prism.entity.Programme;
 import com.dcspa.prism.entity.Regimealphabetisation;
+import com.dcspa.prism.entity.Region;
 import com.dcspa.prism.entity.Sie;
 import com.dcspa.prism.entity.SocieteCivile;
 import com.dcspa.prism.entity.SousPrefecture;
@@ -165,6 +166,7 @@ public final class ReferentielEnricher {
 			case NatureDocument nd -> ref3(nd.getId(), null, nd.getLibelleNatureDocument());
 			case Programme prog -> ref3(prog.getId(), prog.getCodeProgramme(), null);
 			case Regimealphabetisation reg -> ref3(reg.getId(), null, reg.getLibelleRegimeAlpha());
+			case Region region -> ref3(region.getId(), region.getCodeRegion(), region.getLibelleRegion());
 			case SupportDidactique sd -> ref3(sd.getId(), null, sd.getLibelleSupportDidactique());
 			case StatutPersonnel stp -> ref3(stp.getId(), stp.getCodeStatutPersonnel(), stp.getLibelleStatutPersonnel());
 			case StructureFormationCertification sfc -> ref3(sfc.getId(), sfc.getCodeStructureCertification(), sfc.getLibelleStructureCertification());

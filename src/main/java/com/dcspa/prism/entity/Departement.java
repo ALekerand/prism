@@ -23,5 +23,9 @@ public class Departement {
     @Column(name = "NOM_DEPARTEMENT", length = 30)
     private String nomDepartement;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_REGION")
+    private Region idRegion;
+
 
 }

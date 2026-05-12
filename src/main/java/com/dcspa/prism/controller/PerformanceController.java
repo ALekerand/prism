@@ -1,18 +1,20 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.PermissionGuard;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.PerformanceRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Performance;
 import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.repository.PerformanceRepository;
+import com.dcspa.prism.security.AuthUser;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,31 +22,41 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/performance")
 @RequiredArgsConstructor
 public class PerformanceController {
+	private static final String FEATURE = "ACTIVITES_CENTRE_PERFORMANCE";
 	private final PerformanceRepository repository;
 	private final AlphaRepository alphaRepository;
 
 	@Transactional(readOnly = true)
 	@GetMapping
-	public ResponseEntity<List<Map<String, Object>>> findAll() {
+	public ResponseEntity<?> findAll(@AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
+		if (denied != null) return denied;
 		return ResponseEntity.ok(repository.findAll().stream().map(this::toRow).toList());
 	}
 
 	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
+	public ResponseEntity<?> findById(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
+		if (denied != null) return denied;
 		return repository.findById(id).map(this::toRow).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Integer id) {
+	public ResponseEntity<?> delete(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "MODIFIER");
+		if (denied != null) return denied;
 		repository.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 
 	@Transactional(readOnly = true)
 	@GetMapping("/search")
-	public ResponseEntity<List<Map<String, Object>>> search(@RequestParam(required = false) Integer idAlpha,
-			@RequestParam(required = false) String tauxFrequentationParMois) {
+	public ResponseEntity<?> search(@RequestParam(required = false) Integer idAlpha,
+			@RequestParam(required = false) String tauxFrequentationParMois,
+			@AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
+		if (denied != null) return denied;
 		String t = tauxFrequentationParMois == null ? null : tauxFrequentationParMois.toLowerCase();
 		return ResponseEntity.ok(repository.findAll().stream()
 				.filter(x -> idAlpha == null || idAlpha.equals(JpaAssociationIds.intIdOrNull(x.getIdAlpha())))
@@ -54,7 +66,9 @@ public class PerformanceController {
 
 	@Transactional
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody PerformanceRequest body) {
+	public ResponseEntity<?> create(@RequestBody PerformanceRequest body, @AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "CREER");
+		if (denied != null) return denied;
 		try {
 			Performance e = new Performance();
 			apply(e, body);
@@ -66,7 +80,9 @@ public class PerformanceController {
 
 	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody PerformanceRequest body) {
+	public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody PerformanceRequest body, @AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "MODIFIER");
+		if (denied != null) return denied;
 		Optional<Performance> opt = repository.findById(id);
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
 		try {

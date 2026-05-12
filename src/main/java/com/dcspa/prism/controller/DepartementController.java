@@ -69,6 +69,8 @@ public class DepartementController {
 	}
 
 	private Map<String, Object> toRow(Departement e) {
-		return new LinkedHashMap<>(ReferentielEnricher.toRef(e));
+		Map<String, Object> row = new LinkedHashMap<>(ReferentielEnricher.toRef(e));
+		row.put("region", ReferentielEnricher.toRef(e.getIdRegion()));
+		return row;
 	}
 }

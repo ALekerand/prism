@@ -1,6 +1,7 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
+import com.dcspa.prism.controller.support.PermissionGuard;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.AppuiPartenaireRequest;
 import com.dcspa.prism.entity.AppuiPartenaire;
@@ -10,9 +11,11 @@ import com.dcspa.prism.entity.Partenaire;
 import com.dcspa.prism.repository.CategorieAppuiRepository;
 import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.repository.PartenaireRepository;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.AppuiPartenaireService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +28,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/appui-partenaire")
 @RequiredArgsConstructor
 public class AppuiPartenaireController {
+	private static final String FEATURE = "ACTIVITES_CENTRE_PARTENARIAT";
 
 	private final AppuiPartenaireService appuiPartenaireService;
 	private final CategorieAppuiRepository categorieAppuiRepository;
@@ -40,13 +43,17 @@ public class AppuiPartenaireController {
 
 	@Transactional(readOnly = true)
 	@GetMapping
-	public ResponseEntity<List<Map<String, Object>>> findAll() {
+	public ResponseEntity<?> findAll(@AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
+		if (denied != null) return denied;
 		return ResponseEntity.ok(appuiPartenaireService.findAll().stream().map(this::toRow).toList());
 	}
 
 	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
+	public ResponseEntity<?> findById(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
+		if (denied != null) return denied;
 		return appuiPartenaireService.findById(id)
 				.map(this::toRow)
 				.map(ResponseEntity::ok)
@@ -55,12 +62,15 @@ public class AppuiPartenaireController {
 
 	@Transactional(readOnly = true)
 	@GetMapping("/search")
-	public ResponseEntity<List<Map<String, Object>>> search(
+	public ResponseEntity<?> search(
 			@RequestParam(required = false) Integer idCategorieAppui,
 			@RequestParam(required = false) Integer idCentre,
 			@RequestParam(required = false) Integer idPartenaire,
 			@RequestParam(required = false) String code,
-			@RequestParam(required = false) String libelle) {
+			@RequestParam(required = false) String libelle,
+			@AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
+		if (denied != null) return denied;
 		String c = code == null ? null : code.toLowerCase();
 		String l = libelle == null ? null : libelle.toLowerCase();
 		return ResponseEntity.ok(appuiPartenaireService.findAll().stream()
@@ -75,7 +85,9 @@ public class AppuiPartenaireController {
 
 	@Transactional
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody AppuiPartenaireRequest body) {
+	public ResponseEntity<?> create(@RequestBody AppuiPartenaireRequest body, @AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "CREER");
+		if (denied != null) return denied;
 		try {
 			AppuiPartenaire entity = new AppuiPartenaire();
 			apply(entity, body);
@@ -87,7 +99,9 @@ public class AppuiPartenaireController {
 
 	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody AppuiPartenaireRequest body) {
+	public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody AppuiPartenaireRequest body, @AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "MODIFIER");
+		if (denied != null) return denied;
 		return appuiPartenaireService.findById(id)
 				.map(existing -> {
 					try {
@@ -125,7 +139,9 @@ public class AppuiPartenaireController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Integer id) {
+	public ResponseEntity<?> delete(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "MODIFIER");
+		if (denied != null) return denied;
 		appuiPartenaireService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}

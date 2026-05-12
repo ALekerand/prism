@@ -2,7 +2,11 @@ package com.dcspa.prism.controller;
 
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
+import com.dcspa.prism.entity.Personnemorale;
+import com.dcspa.prism.entity.Personnephysique;
 import com.dcspa.prism.entity.Promoteur;
+import com.dcspa.prism.repository.PersonnemoraleRepository;
+import com.dcspa.prism.repository.PersonnephysiqueRepository;
 import com.dcspa.prism.service.PromoteurService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +34,8 @@ import java.util.Optional;
 public class PromoteurController {
 
 	private final PromoteurService promoteurService;
+	private final PersonnephysiqueRepository personnephysiqueRepository;
+	private final PersonnemoraleRepository personnemoraleRepository;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -80,9 +86,35 @@ public class PromoteurController {
 	private Map<String, Object> toRow(Promoteur p) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", p.getId());
+		m.put("idPromoteur", p.getId());
 		m.put("codePromoteur", p.getCodePromoteur());
 		m.put("libellePromoteur", p.getLibellePromoteur());
 		m.put("typePromoteur", p.getTypePromoteur());
+		personnephysiqueRepository.findById(p.getId()).ifPresent(pp -> m.put("personnePhysique", toPersonnePhysiqueRow(pp)));
+		personnemoraleRepository.findById(p.getId()).ifPresent(pm -> m.put("personneMorale", toPersonneMoraleRow(pm)));
+		return m;
+	}
+
+	private Map<String, Object> toPersonnePhysiqueRow(Personnephysique pp) {
+		Map<String, Object> m = new LinkedHashMap<>();
+		m.put("libellePersonnePhysique", pp.getLibellePersonnePhysique());
+		m.put("nom", pp.getNom());
+		m.put("prenom", pp.getPrenom());
+		m.put("contact", pp.getContact());
+		m.put("fonction", pp.getFonction());
+		return m;
+	}
+
+	private Map<String, Object> toPersonneMoraleRow(Personnemorale pm) {
+		Map<String, Object> m = new LinkedHashMap<>();
+		m.put("denomination", pm.getDenomination());
+		m.put("nomProgramme", pm.getNomProgramme());
+		m.put("nomRepresentant", pm.getNomRepresentantLegalStructure());
+		m.put("contact", pm.getContact());
+		m.put("boitePostale", pm.getBoitePostale());
+		m.put("mail", pm.getMail());
+		m.put("idTypePersonneMorale", pm.getTypePersonneMorale() != null ? pm.getTypePersonneMorale().getId() : null);
+		m.put("libelleTypePersonneMorale", pm.getTypePersonneMorale() != null ? pm.getTypePersonneMorale().getLibelle() : null);
 		return m;
 	}
 }

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class UpdateCentreTypeInfosRequest {
@@ -25,6 +27,15 @@ public class UpdateCentreTypeInfosRequest {
     private Boolean aDeLeau;
     private Integer nombreVisite;
 
+    private Integer totalApprenants;
+    private Integer totalHommes;
+    private Integer totalFemmes;
+    private String latitudeGps;
+    private String longitudeGps;
+    private Boolean gpsValide;
+    private String structurePartenaire;
+    private String nomPartenaire;
+
     private String localisationCentre;
     private String nomMilieuImplentation;
     private String encadreurNonMena;
@@ -32,5 +43,11 @@ public class UpdateCentreTypeInfosRequest {
 
     /** Si présent, met à jour le promoteur lié au centre sous-jacent. */
     private Integer idPromoteur;
+
+    /** Remplacement complet des niveaux Alpha si le champ est présent. */
+    private List<AlphaNiveauCreatePayload> niveauxAlpha;
+
+    /** Remplacement complet des niveaux CP/CEC/SIE si le champ est présent. */
+    private List<CentreTypeNiveauCreatePayload> niveaux;
 }
 

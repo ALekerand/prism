@@ -1,17 +1,21 @@
 package com.dcspa.prism.config;
 
 import com.dcspa.prism.entity.AppRole;
+import com.dcspa.prism.entity.AppUser;
 import com.dcspa.prism.entity.Fonctionnalite;
 import com.dcspa.prism.entity.Permission;
 import com.dcspa.prism.entity.RoleFonctionnalitePermission;
 import com.dcspa.prism.repository.AppRoleRepository;
+import com.dcspa.prism.repository.AppUserRepository;
 import com.dcspa.prism.repository.FonctionnaliteRepository;
 import com.dcspa.prism.repository.PermissionRepository;
 import com.dcspa.prism.repository.RoleFonctionnalitePermissionRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +24,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class ActivitesCentreRbacInitializer {
 
     private final AppRoleRepository appRoleRepository;
+    private final AppUserRepository appUserRepository;
     private final FonctionnaliteRepository fonctionnaliteRepository;
     private final PermissionRepository permissionRepository;
     private final RoleFonctionnalitePermissionRepository roleFonctionnalitePermissionRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    private static final String TEST_PASSWORD = "123456";
+    private static final List<TestUserSeed> TEST_USERS = List.of(
+            new TestUserSeed("conseiller_test", "conseiller.test@prism.local", "CONSEILLER"),
+            new TestUserSeed("coordonnateur_test", "coordonnateur.test@prism.local", "COORDONNATEUR"),
+            new TestUserSeed("iepp_test", "iepp.test@prism.local", "IEPP"),
+            new TestUserSeed("superviseur_test", "superviseur.test@prism.local", "SUPERVISEUR"),
+            new TestUserSeed("superviseur_aenf_test", "superviseur.aenf.test@prism.local", "SUPERVISEUR_AENF")
+    );
 
     @EventListener(ApplicationReadyEvent.class)
     @Order(30)
@@ -31,27 +46,68 @@ public class ActivitesCentreRbacInitializer {
         Permission creer = getOrCreatePermission("CREER", "Créer");
         Permission lire = getOrCreatePermission("LIRE", "Lire");
         Permission modifier = getOrCreatePermission("MODIFIER", "Modifier");
+        Permission valider = getOrCreatePermission("VALIDER", "Valider");
 
         Fonctionnalite pointsVisites = getOrCreateFonctionnalite("POINTS_VISITES", "Points des visites", "Activités centre");
+        Fonctionnalite validationCoordonnateur = getOrCreateFonctionnalite("VALIDATION_VISITES_CONSEILLER", "Validation des visites conseiller", "Activités centre");
         Fonctionnalite suiviConseiller = getOrCreateFonctionnalite("SUIVI_CONSEILLER", "Suivi du conseiller", "Activités centre");
         Fonctionnalite suiviSuperviseur = getOrCreateFonctionnalite("SUIVI_SUPERVISEUR", "Suivi par le superviseur", "Activités centre");
         Fonctionnalite suiviIepp = getOrCreateFonctionnalite("SUIVI_IEPP", "Suivi par l'IEPP", "Activités centre");
+        Fonctionnalite suiviCentrale = getOrCreateFonctionnalite("SUIVI_CENTRALE", "Suivi central AENF", "Activités centre");
+        Fonctionnalite activitesPartenariat = getOrCreateFonctionnalite("ACTIVITES_CENTRE_PARTENARIAT", "Partenariat activités centre", "Activités centre");
+        Fonctionnalite activitesPerformance = getOrCreateFonctionnalite("ACTIVITES_CENTRE_PERFORMANCE", "Performance activités centre", "Activités centre");
+        Fonctionnalite activitesControle = getOrCreateFonctionnalite("ACTIVITES_CENTRE_CONTROLE", "Contrôle activités centre", "Activités centre");
+        Fonctionnalite activitesEvaluation = getOrCreateFonctionnalite("ACTIVITES_CENTRE_EVALUATION", "Évaluation activités centre", "Activités centre");
+        Fonctionnalite activitesInfos = getOrCreateFonctionnalite("ACTIVITES_CENTRE_INFOS", "Informations centres activités centre", "Activités centre");
 
         AppRole conseiller = getOrCreateRole("CONSEILLER", "Conseiller", "Niveau 1");
+        AppRole coordonnateur = getOrCreateRole("COORDONNATEUR", "Coordonnateur", "Niveau 2");
         AppRole superviseur = getOrCreateRole("SUPERVISEUR", "Superviseur", "Niveau 3");
         AppRole iepp = getOrCreateRole("IEPP", "IEPP", "Inspection de l'enseignement primaire et préscolaire");
+        AppRole superviseurAenf = getOrCreateRole("SUPERVISEUR_AENF", "Superviseur AENF", "Supervision centrale AENF");
         AppRole admin = getOrCreateRole("ADMIN", "Administrateur", "Accès complet à l'application");
         AppRole superAdmin = getOrCreateRole("SUPER_ADMIN", "Super admin", "Niveau 7");
         AppRole superRoot = getOrCreateRole("SUPER_ROOT", "Super Root", "Accès total à toutes les fonctionnalités");
 
         grant(conseiller, pointsVisites, lire, creer, modifier);
         grant(conseiller, suiviConseiller, lire, modifier);
-        grant(superviseur, suiviSuperviseur, lire, modifier);
-        grant(iepp, suiviIepp, lire, modifier);
+        grant(conseiller, activitesPartenariat, lire, creer, modifier);
+        grant(conseiller, activitesPerformance, lire, creer, modifier);
+        grant(conseiller, activitesControle, lire, creer, modifier);
+        grant(conseiller, activitesEvaluation, lire, creer, modifier);
+        grant(conseiller, activitesInfos, lire);
+        grant(coordonnateur, validationCoordonnateur, lire, valider);
+        grant(coordonnateur, activitesPartenariat, lire);
+        grant(coordonnateur, activitesPerformance, lire);
+        grant(coordonnateur, activitesControle, lire);
+        grant(coordonnateur, activitesEvaluation, lire);
+        grant(coordonnateur, activitesInfos, lire);
+        grant(superviseur, suiviSuperviseur, lire, creer, modifier, valider);
+        grant(superviseur, activitesPartenariat, lire);
+        grant(superviseur, activitesPerformance, lire);
+        grant(superviseur, activitesControle, lire);
+        grant(superviseur, activitesEvaluation, lire);
+        grant(superviseur, activitesInfos, lire);
+        grant(iepp, suiviIepp, lire, creer, modifier, valider);
+        grant(iepp, activitesPartenariat, lire);
+        grant(iepp, activitesPerformance, lire);
+        grant(iepp, activitesControle, lire);
+        grant(iepp, activitesEvaluation, lire);
+        grant(iepp, activitesInfos, lire);
+        grant(superviseurAenf, suiviCentrale, lire);
+        grant(superviseurAenf, activitesPartenariat, lire);
+        grant(superviseurAenf, activitesPerformance, lire);
+        grant(superviseurAenf, activitesControle, lire);
+        grant(superviseurAenf, activitesEvaluation, lire);
+        grant(superviseurAenf, activitesInfos, lire);
 
         grantAllPermissionsToRole(admin);
         grantAllPermissionsToRole(superAdmin);
         grantAllPermissionsToRole(superRoot);
+
+        for (TestUserSeed seed : TEST_USERS) {
+            ensureTestUser(seed);
+        }
     }
 
     private Permission getOrCreatePermission(String code, String libelle) {
@@ -103,5 +159,21 @@ public class ActivitesCentreRbacInitializer {
                 grant(role, fonctionnalite, permission);
             }
         }
+    }
+
+    private void ensureTestUser(TestUserSeed seed) {
+        AppRole role = appRoleRepository.findByCodeRole(seed.roleCode())
+                .orElseThrow(() -> new IllegalStateException("Rôle introuvable: " + seed.roleCode()));
+        AppUser user = appUserRepository.findByUsername(seed.username()).orElseGet(AppUser::new);
+        user.setUsername(seed.username());
+        user.setEmail(seed.email());
+        user.setPasswordHash(passwordEncoder.encode(TEST_PASSWORD));
+        user.setActif(true);
+        user.getRoles().clear();
+        user.getRoles().add(role);
+        appUserRepository.save(user);
+    }
+
+    private record TestUserSeed(String username, String email, String roleCode) {
     }
 }

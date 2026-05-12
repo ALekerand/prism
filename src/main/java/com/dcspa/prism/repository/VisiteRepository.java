@@ -5,4 +5,5 @@ import com.dcspa.prism.repositorybase.BaseRepository;
 
 public interface VisiteRepository extends BaseRepository<Visite, Integer> {
 	boolean existsByIdAlpha_Id(Integer idAlpha);
+	long countByIdAlpha_Id(Integer idAlpha);
 }

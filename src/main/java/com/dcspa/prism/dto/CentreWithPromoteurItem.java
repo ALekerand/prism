@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class CentreWithPromoteurItem {
@@ -26,12 +28,25 @@ public class CentreWithPromoteurItem {
     private Boolean aDeLeau;
 
     private Integer nombreVisite;
+    private Integer totalApprenants;
+    private Integer totalHommes;
+    private Integer totalFemmes;
+    private String latitudeGps;
+    private String longitudeGps;
+    private Boolean gpsValide;
+    private String structurePartenaire;
+    private String nomPartenaire;
     private String localisationCentre;
     private String nomMilieuImplentation;
     private String encadreurNonMena;
     private Boolean encadrerParMena;
     private ReferenceDetails localite;
     private ReferenceDetails iep;
+    private ReferenceDetails drena;
+    private ReferenceDetails commune;
+    private ReferenceDetails sousPrefecture;
+    private ReferenceDetails departement;
+    private ReferenceDetails region;
     private ReferenceDetails naturecentre;
     private ReferenceDetails periodicite;
     private ReferenceDetails autoriteAutorisation;
@@ -47,6 +62,7 @@ public class CentreWithPromoteurItem {
     private ReferenceDetails categorieCentreAlpha;
     private ReferenceDetails typeAlpha;
     private ReferenceDetails regimeAlpha;
+    private List<NiveauDetails> niveaux;
 
     @Getter
     @Setter
@@ -54,6 +70,17 @@ public class CentreWithPromoteurItem {
         private Integer id;
         private String code;
         private String libelle;
+    }
+
+    @Getter
+    @Setter
+    public static class NiveauDetails {
+        private Integer id;
+        private Integer niveauId;
+        private String codeNiveau;
+        private String libelleNiveau;
+        private ReferenceDetails anneeScolaire;
+        private Integer nombreSalle;
     }
 
     @Getter

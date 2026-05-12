@@ -57,4 +57,7 @@ public class Visite {
 
 	@Column(name = "NOMBRE_REUNION_POINT_ACTIVITE_ALPHA")
 	private Integer nombreReunionPointActiviteAlpha;
+
+	@Column(name = "VALIDEE_COORDONNATEUR")
+	private Boolean valideeCoordonnateur;
 }

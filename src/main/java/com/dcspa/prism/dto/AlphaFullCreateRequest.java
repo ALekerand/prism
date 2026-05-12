@@ -3,6 +3,8 @@ package com.dcspa.prism.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class AlphaFullCreateRequest {
@@ -14,5 +16,6 @@ public class AlphaFullCreateRequest {
 
     private PromoteurUpsertRequest promoteur;
     private CentreCreatePayload centre;
+    private List<AlphaNiveauCreatePayload> niveaux;
 }
 

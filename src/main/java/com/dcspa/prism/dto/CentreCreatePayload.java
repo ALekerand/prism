@@ -27,6 +27,15 @@ public class CentreCreatePayload {
     private Boolean aDeLeau;
     private Integer nombreVisite;
 
+    private Integer totalApprenants;
+    private Integer totalHommes;
+    private Integer totalFemmes;
+    private String latitudeGps;
+    private String longitudeGps;
+    private Boolean gpsValide;
+    private String structurePartenaire;
+    private String nomPartenaire;
+
     private String localisationCentre;
     private String nomMilieuImplentation;
 }

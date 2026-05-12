@@ -41,6 +41,16 @@ public class VisiteController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@Transactional
+	@PutMapping("/{id}/valider-coordonnateur")
+	public ResponseEntity<?> validateByCoordonnateur(@PathVariable Integer id) {
+		Optional<Visite> opt = repository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Visite e = opt.get();
+		e.setValideeCoordonnateur(true);
+		return ResponseEntity.ok(toRow(repository.save(e)));
+	}
+
 	@Transactional(readOnly = true)
 	@GetMapping("/search")
 	public ResponseEntity<List<Map<String, Object>>> search(@RequestParam(required = false) Integer idAlpha,
@@ -88,28 +98,27 @@ public class VisiteController {
 		e.setMaitriseSeanceEcriture(r.getMaitriseSeanceEcriture());
 		e.setMaitriseSeanceCalcul(r.getMaitriseSeanceCalcul());
 		e.setMaitriseSeanceCvc(r.getMaitriseSeanceCvc());
-		e.setNombreVisiteRealiseParConseiller(r.getNombreVisiteRealiseParConseiller());
-		e.setNombreBulletinEffectueParConseiller(r.getNombreBulletinEffectueParConseiller());
-		e.setNombreVisiteConseillerSuperviseurEffectue(r.getNombreVisiteConseillerSuperviseurEffectue());
-		e.setNombreReunionBilanConseillerSuperviseur(r.getNombreReunionBilanConseillerSuperviseur());
-		e.setNombreVisiteEffectueParIepp(r.getNombreVisiteEffectueParIepp());
-		e.setNombreReunionPointActiviteAlpha(r.getNombreReunionPointActiviteAlpha());
+		if (e.getValideeCoordonnateur() == null) {
+			e.setValideeCoordonnateur(false);
+		}
 	}
 
 	private Map<String, Object> toRow(Visite e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
+		int totalVisitesConseiller = Math.toIntExact(repository.countByIdAlpha_Id(JpaAssociationIds.intIdOrNull(e.getIdAlpha())));
 		m.put("maitriseSeanceLecture", e.getMaitriseSeanceLecture());
 		m.put("maitriseSeanceEcriture", e.getMaitriseSeanceEcriture());
 		m.put("maitriseSeanceCalcul", e.getMaitriseSeanceCalcul());
 		m.put("maitriseSeanceCvc", e.getMaitriseSeanceCvc());
-		m.put("nombreVisiteRealiseParConseiller", e.getNombreVisiteRealiseParConseiller());
-		m.put("nombreBulletinEffectueParConseiller", e.getNombreBulletinEffectueParConseiller());
+		m.put("nombreVisiteRealiseParConseiller", totalVisitesConseiller);
+		m.put("nombreBulletinEffectueParConseiller", totalVisitesConseiller);
 		m.put("nombreVisiteConseillerSuperviseurEffectue", e.getNombreVisiteConseillerSuperviseurEffectue());
 		m.put("nombreReunionBilanConseillerSuperviseur", e.getNombreReunionBilanConseillerSuperviseur());
 		m.put("nombreVisiteEffectueParIepp", e.getNombreVisiteEffectueParIepp());
 		m.put("nombreReunionPointActiviteAlpha", e.getNombreReunionPointActiviteAlpha());
+		m.put("valideeCoordonnateur", Boolean.TRUE.equals(e.getValideeCoordonnateur()));
 		return m;
 	}
 
@@ -118,9 +127,6 @@ public class VisiteController {
 		String mode = normalizeMode(body.getMode());
 		if (mode != null && !"points".equals(mode)) {
 			throw new IllegalArgumentException("Création impossible : utilisez la modification pour le suivi de visite.");
-		}
-		if (repository.existsByIdAlpha_Id(body.getIdAlpha())) {
-			throw new IllegalArgumentException("Création impossible : les points des visites ont déjà été créés pour ce centre.");
 		}
 	}
 

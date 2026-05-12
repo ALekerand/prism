@@ -9,9 +9,14 @@ import com.dcspa.prism.dto.SimpleCentreCreateRequest;
 import com.dcspa.prism.dto.SimpleCentreTypeFullCreateRequest;
 import com.dcspa.prism.dto.UpdateCentreTypeInfosRequest;
 import com.dcspa.prism.dto.UpdateLibelleRequest;
+import com.dcspa.prism.entity.AnneScolaire;
 import com.dcspa.prism.entity.AutoriteAutorisation;
 import com.dcspa.prism.entity.Centre;
+import com.dcspa.prism.entity.Commune;
 import com.dcspa.prism.entity.Cp;
+import com.dcspa.prism.entity.CpNiveau;
+import com.dcspa.prism.entity.Departement;
+import com.dcspa.prism.entity.Drena;
 import com.dcspa.prism.entity.Iep;
 import com.dcspa.prism.entity.LocaliteDImplantation;
 import com.dcspa.prism.entity.MilieuImplantation;
@@ -20,9 +25,12 @@ import com.dcspa.prism.entity.Periodicite;
 import com.dcspa.prism.entity.Personnephysique;
 import com.dcspa.prism.entity.Personnemorale;
 import com.dcspa.prism.entity.Promoteur;
+import com.dcspa.prism.entity.Region;
+import com.dcspa.prism.entity.SousPrefecture;
 import com.dcspa.prism.entity.TypePromoteur;
 import com.dcspa.prism.repository.AutoriteAutorisationRepository;
 import com.dcspa.prism.repository.CentreRepository;
+import com.dcspa.prism.repository.CpNiveauRepository;
 import com.dcspa.prism.repository.CpRepository;
 import com.dcspa.prism.repository.IeppRepository;
 import com.dcspa.prism.repository.LocaliteDImplantationRepository;
@@ -63,6 +71,8 @@ public class CpService {
 	private final PromoteurRepository promoteurRepository;
 	private final PersonnephysiqueRepository personnephysiqueRepository;
 	private final PersonnemoraleRepository personnemoraleRepository;
+	private final CentreNiveauCreationService centreNiveauCreationService;
+	private final CpNiveauRepository cpNiveauRepository;
 
 	// Charge tous les CP.
 	@Transactional(readOnly = true)
@@ -164,13 +174,16 @@ public class CpService {
 		centre.setNombreVisite(c.getNombreVisite());
 		centre.setLocalisationCentre(c.getLocalisationCentre());
 		centre.setNomMilieuImplentation(resolveNomMilieuImplentation(c.getIdMilieuImplentation(), localite));
+		CentreSupplementalFields.applyToCentre(centre, c);
 		Centre savedCentre = centreService.save(centre);
 
 		Cp entity = new Cp();
 		entity.setCentre(savedCentre);
 		entity.setLibellleCp(req.getLibelle());
 		copyCentreFieldsToCp(entity, savedCentre);
-		return CentreTypeListItemMapper.fromCp(save(entity));
+		Cp savedCp = save(entity);
+		centreNiveauCreationService.createCpNiveaux(savedCp, req.getNiveaux());
+		return CentreTypeListItemMapper.fromCp(savedCp);
 	}
 
 	// Met à jour le libellé uniquement.
@@ -204,7 +217,11 @@ public class CpService {
 			existing.setNomMilieuImplentation(resolveNomMilieuImplentationForUpdate(req, existing.getIdLocalite()));
 			existing.setEncadreurNonMena(req.getEncadreurNonMena());
 			existing.setEncadrerParMena(req.getEncadrerParMena());
+			CentreSupplementalFields.applyUpdate(existing, req);
 			CentrePromoteurSync.applyPromoteurChange(req, existing.getId(), centreRepository, promoteurRepository, existing::setIdPromoteur);
+			if (req.getNiveaux() != null) {
+				centreNiveauCreationService.replaceCpNiveaux(existing, req.getNiveaux());
+			}
 		}
 		return Optional.of(CentreTypeListItemMapper.fromCp(save(existing)));
 	}
@@ -239,6 +256,7 @@ public class CpService {
 		cp.setNombreVisite(centre.getNombreVisite());
 		cp.setLocalisationCentre(centre.getLocalisationCentre());
 		cp.setNomMilieuImplentation(centre.getNomMilieuImplentation());
+		CentreSupplementalFields.copyToCp(cp, centre);
 	}
 
 	private CentreWithPromoteurItem toDetailedItem(Cp cp) {
@@ -255,32 +273,53 @@ public class CpService {
 		item.setEstElectrifie(cp.getEstElectrifie());
 		item.setADeLeau(cp.getADeLeau());
 		item.setNombreVisite(cp.getNombreVisite());
+		CentreSupplementalFields.fillItem(item, cp);
 		item.setLocalisationCentre(cp.getLocalisationCentre());
 		item.setNomMilieuImplentation(cp.getNomMilieuImplentation());
 		item.setEncadreurNonMena(cp.getEncadreurNonMena());
 		item.setEncadrerParMena(cp.getEncadrerParMena());
 		attachReferences(item, cp);
 		attachPromoteur(item, cp.getIdPromoteur());
+		item.setNiveaux(cpNiveauRepository.findByIdCentre_Id(cp.getId()).stream()
+				.map(this::toNiveauDetails)
+				.toList());
 		return item;
+	}
+
+	private CentreWithPromoteurItem.NiveauDetails toNiveauDetails(CpNiveau niveau) {
+		CentreWithPromoteurItem.NiveauDetails details = new CentreWithPromoteurItem.NiveauDetails();
+		details.setId(niveau.getId());
+		if (niveau.getIdNiveauCp() != null) {
+			details.setNiveauId(niveau.getIdNiveauCp().getId());
+			details.setLibelleNiveau(niveau.getIdNiveauCp().getLibelleNiveauCp());
+		}
+		details.setAnneeScolaire(toAnneeScolaireRef(niveau.getIdAnneeScolaire()));
+		details.setNombreSalle(niveau.getNombreSalleCp());
+		return details;
+	}
+
+	private CentreWithPromoteurItem.ReferenceDetails toAnneeScolaireRef(AnneScolaire annee) {
+		if (annee == null) return null;
+		CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+		ref.setId(annee.getId());
+		ref.setCode(annee.getCodeAnneeScolaire());
+		if (annee.getDebutAnneeScolaire() != null && annee.getFinAnneeScolaire() != null) {
+			ref.setLibelle(annee.getDebutAnneeScolaire() + " → " + annee.getFinAnneeScolaire());
+		}
+		return ref;
 	}
 
 	private void attachReferences(CentreWithPromoteurItem item, Cp cp) {
 		if (cp.getIdLocalite() != null) {
 			localiteRepository.findById(cp.getIdLocalite()).ifPresent(localite -> {
-				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
-				ref.setId(localite.getId());
-				ref.setCode(localite.getCodeLocalite());
-				ref.setLibelle(localite.getNomLocalite());
-				item.setLocalite(ref);
+				item.setLocalite(toLocaliteRef(localite));
+				attachLocaliteGeography(item, localite);
 			});
 		}
 		if (cp.getIdIep() != null) {
 			iepRepository.findById(cp.getIdIep()).ifPresent(iep -> {
-				CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
-				ref.setId(iep.getId());
-				ref.setCode(iep.getCodeIep());
-				ref.setLibelle(iep.getNomIep());
-				item.setIep(ref);
+				item.setIep(toIepRef(iep));
+				item.setDrena(toDrenaRef(iep.getIdDrena()));
 			});
 		}
 		if (cp.getIdNaturecentre() != null) {
@@ -310,6 +349,80 @@ public class CpService {
 				item.setAutoriteAutorisation(ref);
 			});
 		}
+	}
+
+	private void attachLocaliteGeography(CentreWithPromoteurItem item, LocaliteDImplantation localite) {
+		Commune commune = localite.getIdCommune();
+		if (commune != null) {
+			item.setCommune(toCommuneRef(commune));
+		}
+		SousPrefecture sousPrefecture = localite.getIdSousPrefecture();
+		if (sousPrefecture != null) {
+			item.setSousPrefecture(toSousPrefectureRef(sousPrefecture));
+			Departement departement = sousPrefecture.getIdDepartement();
+			if (departement != null) {
+				item.setDepartement(toDepartementRef(departement));
+				item.setRegion(toRegionRef(departement.getIdRegion()));
+			}
+		}
+	}
+
+	private CentreWithPromoteurItem.ReferenceDetails toLocaliteRef(LocaliteDImplantation localite) {
+		CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+		ref.setId(localite.getId());
+		ref.setCode(localite.getCodeLocalite());
+		ref.setLibelle(localite.getNomLocalite());
+		return ref;
+	}
+
+	private CentreWithPromoteurItem.ReferenceDetails toIepRef(Iep iep) {
+		CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+		ref.setId(iep.getId());
+		ref.setCode(iep.getCodeIep());
+		ref.setLibelle(iep.getNomIep());
+		return ref;
+	}
+
+	private CentreWithPromoteurItem.ReferenceDetails toDrenaRef(Drena drena) {
+		if (drena == null) return null;
+		CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+		ref.setId(drena.getId());
+		ref.setCode(drena.getCodeDrena());
+		ref.setLibelle(drena.getNomDrena());
+		return ref;
+	}
+
+	private CentreWithPromoteurItem.ReferenceDetails toCommuneRef(Commune commune) {
+		CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+		ref.setId(commune.getId());
+		ref.setCode(commune.getCodeCommune());
+		ref.setLibelle(commune.getNomCommune());
+		return ref;
+	}
+
+	private CentreWithPromoteurItem.ReferenceDetails toSousPrefectureRef(SousPrefecture sousPrefecture) {
+		CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+		ref.setId(sousPrefecture.getId());
+		ref.setCode(sousPrefecture.getCodeSousPrefecture());
+		ref.setLibelle(sousPrefecture.getNomSousPrefecture());
+		return ref;
+	}
+
+	private CentreWithPromoteurItem.ReferenceDetails toDepartementRef(Departement departement) {
+		CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+		ref.setId(departement.getId());
+		ref.setCode(departement.getCodeDepartement());
+		ref.setLibelle(departement.getNomDepartement());
+		return ref;
+	}
+
+	private CentreWithPromoteurItem.ReferenceDetails toRegionRef(Region region) {
+		if (region == null) return null;
+		CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+		ref.setId(region.getId());
+		ref.setCode(region.getCodeRegion());
+		ref.setLibelle(region.getLibelleRegion());
+		return ref;
 	}
 
 	private String resolveNomMilieuImplentation(Integer milieuId, LocaliteDImplantation localite) {

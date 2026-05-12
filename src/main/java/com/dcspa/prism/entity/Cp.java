@@ -62,6 +62,34 @@ public class Cp {
     @Column(name = "NOMBRE_VISITE")
     private Integer nombreVisite;
 
+    @Column(name = "TOTAL_APPRENANTS")
+    private Integer totalApprenants;
+
+    @Column(name = "TOTAL_HOMMES")
+    private Integer totalHommes;
+
+    @Column(name = "TOTAL_FEMMES")
+    private Integer totalFemmes;
+
+    @Size(max = 50)
+    @Column(name = "LATITUDE_GPS", length = 50)
+    private String latitudeGps;
+
+    @Size(max = 50)
+    @Column(name = "LONGITUDE_GPS", length = 50)
+    private String longitudeGps;
+
+    @Column(name = "GPS_VALIDE")
+    private Boolean gpsValide;
+
+    @Size(max = 150)
+    @Column(name = "STRUCTURE_PARTENAIRE", length = 150)
+    private String structurePartenaire;
+
+    @Size(max = 150)
+    @Column(name = "NOM_PARTENAIRE", length = 150)
+    private String nomPartenaire;
+
     @Size(max = 100)
     @Column(name = "LOCALISATION_CENTRE", length = 100)
     private String localisationCentre;
