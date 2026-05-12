@@ -5,6 +5,7 @@ import com.dcspa.prism.controller.support.PermissionGuard;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.EvaluationRequest;
 import com.dcspa.prism.entity.Evaluation;
+import com.dcspa.prism.entity.EvaluationThemeTaux;
 import com.dcspa.prism.entity.NiveauEvaluation;
 import com.dcspa.prism.entity.PeriodeEvaluation;
 import com.dcspa.prism.entity.TauxEvaluation;
@@ -118,12 +119,47 @@ public class EvaluationController {
 		e.setIdAlpha(alphaRepository.findById(r.getIdAlpha())
 				.orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdAlpha())));
 		NiveauEvaluation niveau = resolveNiveau(r.getIdNiveauEvaluation());
-		ThemeEvaluation theme = resolveTheme(r.getIdThemeEvaluation());
-		validateThemeForNiveau(niveau, theme);
+		String typeEvaluation = normalizeTypeEvaluation(r.getTypeEvaluation());
+		validateTypeForNiveau(niveau, typeEvaluation);
 		e.setIdPeriodeEvaluation(resolvePeriode(r.getIdPeriodeEvaluation()));
 		e.setIdNiveauEvaluation(niveau);
-		e.setIdThemeEvaluation(theme);
+		e.setTypeEvaluation(typeEvaluation);
 		e.setIdTauxEvaluation(resolveTaux(r.getIdTauxEvaluation()));
+		if (r.getThemesTaux() != null) {
+			replaceThemesTaux(e, r, niveau);
+		} else {
+			ThemeEvaluation theme = resolveTheme(r.getIdThemeEvaluation());
+			validateThemeForNiveau(niveau, theme);
+			e.setIdThemeEvaluation(theme);
+		}
+	}
+
+	private void replaceThemesTaux(Evaluation e, EvaluationRequest r, NiveauEvaluation niveau) {
+		if (r.getThemesTaux().isEmpty()) {
+			throw new IllegalArgumentException("Au moins un thème avec taux est obligatoire");
+		}
+		e.getThemesTaux().clear();
+		ThemeEvaluation firstTheme = null;
+		for (EvaluationRequest.ThemeTauxRequest item : r.getThemesTaux()) {
+			if (item == null || item.getIdThemeEvaluation() == null) {
+				throw new IllegalArgumentException("Le thème d'évaluation est obligatoire");
+			}
+			if (item.getTaux() == null || item.getTaux() < 0 || item.getTaux() > 100) {
+				throw new IllegalArgumentException("Le taux doit être compris entre 0 et 100");
+			}
+			ThemeEvaluation theme = resolveTheme(item.getIdThemeEvaluation());
+			validateThemeForNiveau(niveau, theme);
+			EvaluationThemeTaux row = new EvaluationThemeTaux();
+			row.setEvaluation(e);
+			row.setThemeEvaluation(theme);
+			row.setTaux(item.getTaux());
+			e.getThemesTaux().add(row);
+			if (firstTheme == null) {
+				firstTheme = theme;
+			}
+		}
+		e.setIdThemeEvaluation(firstTheme);
+		e.setIdTauxEvaluation(null);
 	}
 
 	private PeriodeEvaluation resolvePeriode(Integer id) {
@@ -172,6 +208,33 @@ public class EvaluationController {
 		}
 	}
 
+	private void validateTypeForNiveau(NiveauEvaluation niveau, String typeEvaluation) {
+		if (niveau == null || typeEvaluation == null || typeEvaluation.isBlank()) {
+			return;
+		}
+		String niveauCode = normalizeNiveau(niveau);
+		if (niveauCode == null) {
+			return;
+		}
+		if ("FORMATIVE".equals(typeEvaluation) && !"NIVEAU_1".equals(niveauCode)) {
+			throw new IllegalArgumentException("L'évaluation formative concerne uniquement le Niveau 1");
+		}
+		if ("CERTIFICATIVE".equals(typeEvaluation) && !("NIVEAU_2".equals(niveauCode) || "POST_ALPHA".equals(niveauCode))) {
+			throw new IllegalArgumentException("L'évaluation certificative concerne uniquement le Niveau 2 et Post Alpha");
+		}
+	}
+
+	private String normalizeTypeEvaluation(String typeEvaluation) {
+		if (typeEvaluation == null || typeEvaluation.isBlank()) {
+			return null;
+		}
+		String normalized = normalize(typeEvaluation);
+		if (!normalized.equals("FORMATIVE") && !normalized.equals("SOMMATIVE") && !normalized.equals("CERTIFICATIVE")) {
+			throw new IllegalArgumentException("Type d'évaluation invalide: " + typeEvaluation);
+		}
+		return normalized;
+	}
+
 	private String normalizeNiveau(NiveauEvaluation niveau) {
 		String text = normalize((niveau.getCodeNiveauEvaluation() == null ? "" : niveau.getCodeNiveauEvaluation())
 				+ " " + (niveau.getLibelleNiveauEvaluation() == null ? "" : niveau.getLibelleNiveauEvaluation()));
@@ -198,6 +261,16 @@ public class EvaluationController {
 		ReferentielEnricher.putRef(m, "NiveauEvaluation", e.getIdNiveauEvaluation());
 		ReferentielEnricher.putRef(m, "ThemeEvaluation", e.getIdThemeEvaluation());
 		ReferentielEnricher.putRef(m, "TauxEvaluation", e.getIdTauxEvaluation());
+		m.put("typeEvaluation", e.getTypeEvaluation());
+		m.put("themesTaux", e.getThemesTaux().stream().map(this::toThemeTauxRow).toList());
+		return m;
+	}
+
+	private Map<String, Object> toThemeTauxRow(EvaluationThemeTaux item) {
+		Map<String, Object> m = new LinkedHashMap<>();
+		m.put("id", item.getId());
+		ReferentielEnricher.putRef(m, "ThemeEvaluation", item.getThemeEvaluation());
+		m.put("taux", item.getTaux());
 		return m;
 	}
 }

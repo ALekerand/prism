@@ -25,6 +25,7 @@ import com.dcspa.prism.entity.Fonction;
 import com.dcspa.prism.entity.Fonctionnalite;
 import com.dcspa.prism.entity.Impact;
 import com.dcspa.prism.entity.Infrastructure;
+import com.dcspa.prism.entity.Iep;
 import com.dcspa.prism.entity.LangueApprentissage;
 import com.dcspa.prism.entity.Manuel;
 import com.dcspa.prism.entity.MaterielsPedagogique;
@@ -123,6 +124,7 @@ public final class ReferentielEnricher {
 			case Departement dep -> ref3(dep.getId(), dep.getCodeDepartement(), dep.getNomDepartement());
 			case Diplome dip -> ref3(dip.getId(), dip.getCodeDiplome(), dip.getLibelleDiplome());
 			case Drena dr -> ref3(dr.getId(), dr.getCodeDrena(), dr.getNomDrena());
+			case Iep iep -> ref3(iep.getId(), iep.getCodeIep(), iep.getNomIep());
 			case Fonctionnalite fn -> ref3(fn.getId(), fn.getCodeFonctionnalite(), fn.getLibelleFonctionnalite());
 			case Infrastructure inf -> ref3(inf.getId(), inf.getCodeInfrastructure(), inf.getLibelleInfrastructure());
 			case LangueApprentissage lang -> refLangueApprentissage(lang);

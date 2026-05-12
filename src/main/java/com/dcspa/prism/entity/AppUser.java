@@ -33,6 +33,34 @@ public class AppUser {
     @Column(name = "ACTIF")
     private Boolean actif;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_REGION")
+    private Region idRegion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_DRENA")
+    private Drena idDrena;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_IEP")
+    private Iep idIep;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_DEPARTEMENT")
+    private Departement idDepartement;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_SOUS_PREFECTURE")
+    private SousPrefecture idSousPrefecture;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_COMMUNE")
+    private Commune idCommune;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_LOCALITE")
+    private LocaliteDImplantation idLocalite;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_role",

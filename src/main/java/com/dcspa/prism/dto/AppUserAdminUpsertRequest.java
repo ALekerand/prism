@@ -15,5 +15,13 @@ public class AppUserAdminUpsertRequest {
 
     /** Rôles à associer (optionnel). */
     private List<Integer> roleIds;
+
+    private Integer idRegion;
+    private Integer idDrena;
+    private Integer idIep;
+    private Integer idDepartement;
+    private Integer idSousPrefecture;
+    private Integer idCommune;
+    private Integer idLocalite;
 }
 

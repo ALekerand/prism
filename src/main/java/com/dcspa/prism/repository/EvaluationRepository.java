@@ -9,22 +9,26 @@ import org.springframework.data.repository.query.Param;
 
 public interface EvaluationRepository extends BaseRepository<Evaluation, Integer> {
 	@Query("""
-			select e from Evaluation e
+			select distinct e from Evaluation e
 			left join fetch e.idAlpha
 			left join fetch e.idPeriodeEvaluation
 			left join fetch e.idNiveauEvaluation
 			left join fetch e.idThemeEvaluation
 			left join fetch e.idTauxEvaluation
+			left join fetch e.themesTaux tt
+			left join fetch tt.themeEvaluation
 			""")
 	List<Evaluation> findAllWithRefs();
 
 	@Query("""
-			select e from Evaluation e
+			select distinct e from Evaluation e
 			left join fetch e.idAlpha
 			left join fetch e.idPeriodeEvaluation
 			left join fetch e.idNiveauEvaluation
 			left join fetch e.idThemeEvaluation
 			left join fetch e.idTauxEvaluation
+			left join fetch e.themesTaux tt
+			left join fetch tt.themeEvaluation
 			where e.id = :id
 			""")
 	Optional<Evaluation> findByIdWithRefs(@Param("id") Integer id);

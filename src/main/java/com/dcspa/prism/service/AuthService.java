@@ -4,7 +4,14 @@ import com.dcspa.prism.dto.LoginRequest;
 import com.dcspa.prism.dto.LoginResponse;
 import com.dcspa.prism.entity.AppRole;
 import com.dcspa.prism.entity.AppUser;
+import com.dcspa.prism.entity.Commune;
+import com.dcspa.prism.entity.Departement;
+import com.dcspa.prism.entity.Drena;
+import com.dcspa.prism.entity.Iep;
+import com.dcspa.prism.entity.LocaliteDImplantation;
+import com.dcspa.prism.entity.Region;
 import com.dcspa.prism.entity.RoleFonctionnalitePermission;
+import com.dcspa.prism.entity.SousPrefecture;
 import com.dcspa.prism.repository.AppUserRepository;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.security.JwtUtil;
@@ -17,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -69,16 +77,30 @@ public class AuthService implements UserDetailsService {
                 .email(user.getEmail())
                 .roles(roleCodes)
                 .permissions(authUser.getPermissions())
+                .idRegion(authUser.getIdRegion())
+                .idDrena(authUser.getIdDrena())
+                .idIep(authUser.getIdIep())
+                .idDepartement(authUser.getIdDepartement())
+                .idSousPrefecture(authUser.getIdSousPrefecture())
+                .idCommune(authUser.getIdCommune())
+                .idLocalite(authUser.getIdLocalite())
                 .build();
     }
 
     // Corps JSON pour GET /api/auth/me.
     public Map<String, Object> buildAuthenticatedUserPayload(AuthUser user) {
-        return Map.of(
-                "userId", user.getUserId(),
-                "username", user.getUsername(),
-                "permissions", user.getPermissions()
-        );
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("userId", user.getUserId());
+        payload.put("username", user.getUsername());
+        payload.put("permissions", user.getPermissions());
+        payload.put("idRegion", user.getIdRegion());
+        payload.put("idDrena", user.getIdDrena());
+        payload.put("idIep", user.getIdIep());
+        payload.put("idDepartement", user.getIdDepartement());
+        payload.put("idSousPrefecture", user.getIdSousPrefecture());
+        payload.put("idCommune", user.getIdCommune());
+        payload.put("idLocalite", user.getIdLocalite());
+        return payload;
     }
 
     // Construit le principal avec la liste des permissions fonctionnelles.
@@ -98,7 +120,30 @@ public class AuthService implements UserDetailsService {
                 user.getUsername(),
                 user.getPasswordHash(),
                 Boolean.TRUE.equals(user.getActif()),
-                permissions
+                permissions,
+                idOf(user.getIdRegion()),
+                idOf(user.getIdDrena()),
+                idOf(user.getIdIep()),
+                idOf(user.getIdDepartement()),
+                idOf(user.getIdSousPrefecture()),
+                idOf(user.getIdCommune()),
+                idOf(user.getIdLocalite())
         );
+    }
+
+    private Integer idOf(Object entity) {
+        if (entity == null) {
+            return null;
+        }
+        return switch (entity) {
+            case Region region -> region.getId();
+            case Drena drena -> drena.getId();
+            case Iep iep -> iep.getId();
+            case Departement departement -> departement.getId();
+            case SousPrefecture sousPrefecture -> sousPrefecture.getId();
+            case Commune commune -> commune.getId();
+            case LocaliteDImplantation localite -> localite.getId();
+            default -> null;
+        };
     }
 }

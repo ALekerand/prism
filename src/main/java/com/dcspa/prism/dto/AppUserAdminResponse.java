@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -17,5 +18,19 @@ public class AppUserAdminResponse {
     private String email;
     private Boolean actif;
     private List<Integer> roleIds;
+    private Integer idRegion;
+    private Integer idDrena;
+    private Integer idIep;
+    private Integer idDepartement;
+    private Integer idSousPrefecture;
+    private Integer idCommune;
+    private Integer idLocalite;
+    private Map<String, Object> region;
+    private Map<String, Object> drena;
+    private Map<String, Object> iep;
+    private Map<String, Object> departement;
+    private Map<String, Object> sousPrefecture;
+    private Map<String, Object> commune;
+    private Map<String, Object> localite;
 }
 

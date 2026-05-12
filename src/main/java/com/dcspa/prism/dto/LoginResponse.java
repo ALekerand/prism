@@ -16,5 +16,12 @@ public class LoginResponse {
     private final String email;
     private final List<String> roles;
     private final List<String> permissions;
+    private final Integer idRegion;
+    private final Integer idDrena;
+    private final Integer idIep;
+    private final Integer idDepartement;
+    private final Integer idSousPrefecture;
+    private final Integer idCommune;
+    private final Integer idLocalite;
 }
 

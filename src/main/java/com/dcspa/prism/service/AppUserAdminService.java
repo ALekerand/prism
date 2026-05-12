@@ -1,5 +1,6 @@
 package com.dcspa.prism.service;
 
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.AppUserAdminResponse;
 import com.dcspa.prism.dto.AppUserAdminUpsertRequest;
 import com.dcspa.prism.dto.AppUserUpdateRolesRequest;
@@ -7,16 +8,25 @@ import com.dcspa.prism.entity.AppRole;
 import com.dcspa.prism.entity.AppUser;
 import com.dcspa.prism.repository.AppRoleRepository;
 import com.dcspa.prism.repository.AppUserRepository;
+import com.dcspa.prism.repository.CommuneRepository;
+import com.dcspa.prism.repository.DepartementRepository;
+import com.dcspa.prism.repository.DrenaRepository;
+import com.dcspa.prism.repository.IeppRepository;
+import com.dcspa.prism.repository.LocaliteDImplantationRepository;
+import com.dcspa.prism.repository.RegionRepository;
+import com.dcspa.prism.repository.SousPrefectureRepository;
 import com.dcspa.prism.service.pagination.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,7 +37,21 @@ public class AppUserAdminService {
 
     private final AppUserRepository appUserRepository;
     private final AppRoleRepository appRoleRepository;
+    private final RegionRepository regionRepository;
+    private final DrenaRepository drenaRepository;
+    private final IeppRepository ieppRepository;
+    private final DepartementRepository departementRepository;
+    private final SousPrefectureRepository sousPrefectureRepository;
+    private final CommuneRepository communeRepository;
+    private final LocaliteDImplantationRepository localiteDImplantationRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private static final Set<String> SCOPED_ROLE_CODES = Set.of(
+            "CONSEILLER",
+            "COORDONNATEUR",
+            "SUPERVISEUR",
+            "IEPP"
+    );
 
     @Transactional(readOnly = true)
     public Page<AppUserAdminResponse> findAllWithRoles(Pageable pageable) {
@@ -71,7 +95,10 @@ public class AppUserAdminService {
         u.setEmail(request.getEmail());
         u.setActif(Boolean.TRUE.equals(request.getActif()));
         u.setPasswordHash(passwordEncoder.encode(password));
-        u.setRoles(resolveRoles(request.getRoleIds()));
+        Set<AppRole> roles = resolveRoles(request.getRoleIds());
+        u.setRoles(roles);
+        applyScope(u, request);
+        validateScopeForRoles(roles, u);
         return toDto(appUserRepository.save(u));
     }
 
@@ -98,6 +125,9 @@ public class AppUserAdminService {
         if (request.getRoleIds() != null) {
             u.setRoles(resolveRoles(request.getRoleIds()));
         }
+
+        applyScope(u, request);
+        validateScopeForRoles(u.getRoles(), u);
 
         return toDto(appUserRepository.save(u));
     }
@@ -132,11 +162,68 @@ public class AppUserAdminService {
         return normalized;
     }
 
+    private void applyScope(AppUser user, AppUserAdminUpsertRequest request) {
+        user.setIdRegion(resolveOptional(regionRepository, request.getIdRegion(), "Région"));
+        user.setIdDrena(resolveOptional(drenaRepository, request.getIdDrena(), "DRENA"));
+        user.setIdIep(resolveOptional(ieppRepository, request.getIdIep(), "IEPP"));
+        user.setIdDepartement(resolveOptional(departementRepository, request.getIdDepartement(), "Département"));
+        user.setIdSousPrefecture(resolveOptional(sousPrefectureRepository, request.getIdSousPrefecture(), "Sous-préfecture"));
+        user.setIdCommune(resolveOptional(communeRepository, request.getIdCommune(), "Commune"));
+        user.setIdLocalite(resolveOptional(localiteDImplantationRepository, request.getIdLocalite(), "Localité"));
+    }
+
+    private <T> T resolveOptional(JpaRepository<T, Integer> repository, Integer id, String label) {
+        if (id == null) {
+            return null;
+        }
+        return repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(label + " introuvable: " + id));
+    }
+
+    private void validateScopeForRoles(Set<AppRole> roles, AppUser user) {
+        boolean needsScope = roles.stream()
+                .map(AppRole::getCodeRole)
+                .filter(Objects::nonNull)
+                .anyMatch(SCOPED_ROLE_CODES::contains);
+        if (!needsScope) {
+            return;
+        }
+        if (!hasAnyScope(user)) {
+            throw new IllegalArgumentException("Une circonscription est obligatoire pour les rôles CONSEILLER, COORDONNATEUR, SUPERVISEUR et IEPP.");
+        }
+        boolean isIepp = roles.stream().anyMatch(role -> "IEPP".equals(role.getCodeRole()));
+        if (isIepp && user.getIdIep() == null) {
+            throw new IllegalArgumentException("Le rôle IEPP doit être rattaché à une IEPP.");
+        }
+    }
+
+    private boolean hasAnyScope(AppUser user) {
+        return user.getIdRegion() != null
+                || user.getIdDrena() != null
+                || user.getIdIep() != null
+                || user.getIdDepartement() != null
+                || user.getIdSousPrefecture() != null
+                || user.getIdCommune() != null
+                || user.getIdLocalite() != null;
+    }
+
+    private Integer idOf(Map<String, Object> ref) {
+        Object id = ref != null ? ref.get("id") : null;
+        return id instanceof Number number ? number.intValue() : null;
+    }
+
     private AppUserAdminResponse toDto(AppUser u) {
         List<Integer> roleIds = u.getRoles()
                 .stream()
                 .map(AppRole::getId)
                 .collect(Collectors.toList());
+        Map<String, Object> region = ReferentielEnricher.toRef(u.getIdRegion());
+        Map<String, Object> drena = ReferentielEnricher.toRef(u.getIdDrena());
+        Map<String, Object> iep = ReferentielEnricher.toRef(u.getIdIep());
+        Map<String, Object> departement = ReferentielEnricher.toRef(u.getIdDepartement());
+        Map<String, Object> sousPrefecture = ReferentielEnricher.toRef(u.getIdSousPrefecture());
+        Map<String, Object> commune = ReferentielEnricher.toRef(u.getIdCommune());
+        Map<String, Object> localite = ReferentielEnricher.toRef(u.getIdLocalite());
 
         return AppUserAdminResponse.builder()
                 .id(u.getId())
@@ -144,6 +231,20 @@ public class AppUserAdminService {
                 .email(u.getEmail())
                 .actif(u.getActif())
                 .roleIds(roleIds)
+                .idRegion(idOf(region))
+                .idDrena(idOf(drena))
+                .idIep(idOf(iep))
+                .idDepartement(idOf(departement))
+                .idSousPrefecture(idOf(sousPrefecture))
+                .idCommune(idOf(commune))
+                .idLocalite(idOf(localite))
+                .region(region)
+                .drena(drena)
+                .iep(iep)
+                .departement(departement)
+                .sousPrefecture(sousPrefecture)
+                .commune(commune)
+                .localite(localite)
                 .build();
     }
 }
