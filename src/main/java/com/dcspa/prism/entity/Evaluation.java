@@ -21,7 +21,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "evaluation")
-public class Evaluation {
+public class Evaluation implements ActivitesCentreWorkflowEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_EVALUATION", nullable = false)
@@ -50,6 +50,15 @@ public class Evaluation {
 
 	@Column(name = "TYPE_EVALUATION", length = 30)
 	private String typeEvaluation;
+
+	@Column(name = "VALIDEE_COORDONNATEUR")
+	private Boolean valideeCoordonnateur;
+
+	@Column(name = "VALIDEE_SUPERVISEUR")
+	private Boolean valideeSuperviseur;
+
+	@Column(name = "VALIDEE_CENTRALE")
+	private Boolean valideeCentrale;
 
 	@OneToMany(mappedBy = "evaluation", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EvaluationThemeTaux> themesTaux = new ArrayList<>();

@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ActivitesCentreWorkflow;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.PermissionGuard;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
@@ -86,6 +87,7 @@ public class ControleController {
 		try {
 			Controle e = new Controle();
 			apply(e, body);
+			ActivitesCentreWorkflow.initializeDraft(e);
 			return ResponseEntity.status(201).body(toRow(controleRepository.save(e)));
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
@@ -101,6 +103,7 @@ public class ControleController {
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
 		try {
 			Controle e = opt.get();
+			ActivitesCentreWorkflow.ensureEditable(e);
 			apply(e, body);
 			return ResponseEntity.ok(toRow(controleRepository.save(e)));
 		} catch (IllegalArgumentException ex) {
@@ -112,8 +115,48 @@ public class ControleController {
 	public ResponseEntity<?> delete(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "MODIFIER");
 		if (denied != null) return denied;
+		Optional<Controle> opt = controleRepository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		try {
+			ActivitesCentreWorkflow.ensureEditable(opt.get());
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+		}
 		controleRepository.deleteById(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@Transactional
+	@PutMapping("/{id}/valider-coordonnateur")
+	public ResponseEntity<?> validateCoordonnateur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		Optional<Controle> opt = controleRepository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Controle e = opt.get();
+		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCoordonnateur(e, user, FEATURE);
+		if (denied != null) return denied;
+		return ResponseEntity.ok(toRow(controleRepository.save(e)));
+	}
+
+	@Transactional
+	@PutMapping("/{id}/valider-superviseur")
+	public ResponseEntity<?> validateSuperviseur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		Optional<Controle> opt = controleRepository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Controle e = opt.get();
+		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateSuperviseur(e, user, FEATURE);
+		if (denied != null) return denied;
+		return ResponseEntity.ok(toRow(controleRepository.save(e)));
+	}
+
+	@Transactional
+	@PutMapping("/{id}/valider-centrale")
+	public ResponseEntity<?> validateCentrale(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		Optional<Controle> opt = controleRepository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Controle e = opt.get();
+		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCentrale(e, user, FEATURE);
+		if (denied != null) return denied;
+		return ResponseEntity.ok(toRow(controleRepository.save(e)));
 	}
 
 	private void apply(Controle e, ControleRequest r) {
@@ -195,6 +238,7 @@ public class ControleController {
 		m.put("nombreKitManuelsCvc", e.getNombreKitManuelsCvc());
 		m.put("nombreKitAutre", e.getNombreKitAutre());
 		m.put("conformiteProgramme", e.getConformiteProgramme());
+		ActivitesCentreWorkflow.putStatus(m, e);
 		m.put("horairesFormation", e.getHorairesFormation().stream().map(this::toHoraireRow).toList());
 		m.put("kitsManuels", e.getKitsManuels().stream().map(this::toKitRow).toList());
 		return m;

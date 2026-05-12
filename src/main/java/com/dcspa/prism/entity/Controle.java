@@ -22,7 +22,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "controle")
-public class Controle {
+public class Controle implements ActivitesCentreWorkflowEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_CONTROLE", nullable = false)
@@ -69,6 +69,15 @@ public class Controle {
 
 	@Column(name = "CONFORMITE_PROGRAMME")
 	private Boolean conformiteProgramme;
+
+	@Column(name = "VALIDEE_COORDONNATEUR")
+	private Boolean valideeCoordonnateur;
+
+	@Column(name = "VALIDEE_SUPERVISEUR")
+	private Boolean valideeSuperviseur;
+
+	@Column(name = "VALIDEE_CENTRALE")
+	private Boolean valideeCentrale;
 
 	@OneToMany(mappedBy = "controle", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ControleHoraireFormation> horairesFormation = new ArrayList<>();

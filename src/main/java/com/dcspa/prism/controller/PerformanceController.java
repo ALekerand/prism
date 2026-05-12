@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ActivitesCentreWorkflow;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.PermissionGuard;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
@@ -46,6 +47,13 @@ public class PerformanceController {
 	public ResponseEntity<?> delete(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "MODIFIER");
 		if (denied != null) return denied;
+		Optional<Performance> opt = repository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		try {
+			ActivitesCentreWorkflow.ensureEditable(opt.get());
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+		}
 		repository.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
@@ -72,6 +80,7 @@ public class PerformanceController {
 		try {
 			Performance e = new Performance();
 			apply(e, body);
+			ActivitesCentreWorkflow.initializeDraft(e);
 			return ResponseEntity.status(201).body(toRow(repository.save(e)));
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
@@ -87,11 +96,45 @@ public class PerformanceController {
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
 		try {
 			Performance e = opt.get();
+			ActivitesCentreWorkflow.ensureEditable(e);
 			apply(e, body);
 			return ResponseEntity.ok(toRow(repository.save(e)));
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
 		}
+	}
+
+	@Transactional
+	@PutMapping("/{id}/valider-coordonnateur")
+	public ResponseEntity<?> validateCoordonnateur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		Optional<Performance> opt = repository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Performance e = opt.get();
+		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCoordonnateur(e, user, FEATURE);
+		if (denied != null) return denied;
+		return ResponseEntity.ok(toRow(repository.save(e)));
+	}
+
+	@Transactional
+	@PutMapping("/{id}/valider-superviseur")
+	public ResponseEntity<?> validateSuperviseur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		Optional<Performance> opt = repository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Performance e = opt.get();
+		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateSuperviseur(e, user, FEATURE);
+		if (denied != null) return denied;
+		return ResponseEntity.ok(toRow(repository.save(e)));
+	}
+
+	@Transactional
+	@PutMapping("/{id}/valider-centrale")
+	public ResponseEntity<?> validateCentrale(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		Optional<Performance> opt = repository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Performance e = opt.get();
+		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCentrale(e, user, FEATURE);
+		if (denied != null) return denied;
+		return ResponseEntity.ok(toRow(repository.save(e)));
 	}
 
 	private void apply(Performance e, PerformanceRequest r) {
@@ -114,6 +157,7 @@ public class PerformanceController {
 		m.put("tauxProgressionApprentissageEcriture", e.getTauxProgressionApprentissageEcriture());
 		m.put("tauxProgressionApprentissageCalcul", e.getTauxProgressionApprentissageCalcul());
 		m.put("tauxProgressionApprentissageCvc", e.getTauxProgressionApprentissageCvc());
+		ActivitesCentreWorkflow.putStatus(m, e);
 		return m;
 	}
 }

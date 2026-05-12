@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ActivitesCentreWorkflow;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.PermissionGuard;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
@@ -58,6 +59,13 @@ public class EvaluationController {
 	public ResponseEntity<?> delete(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "MODIFIER");
 		if (denied != null) return denied;
+		Optional<Evaluation> opt = repository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		try {
+			ActivitesCentreWorkflow.ensureEditable(opt.get());
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+		}
 		repository.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
@@ -90,6 +98,7 @@ public class EvaluationController {
 		try {
 			Evaluation e = new Evaluation();
 			apply(e, body);
+			ActivitesCentreWorkflow.initializeDraft(e);
 			return ResponseEntity.status(201).body(toRow(repository.save(e)));
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
@@ -105,11 +114,45 @@ public class EvaluationController {
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
 		try {
 			Evaluation e = opt.get();
+			ActivitesCentreWorkflow.ensureEditable(e);
 			apply(e, body);
 			return ResponseEntity.ok(toRow(repository.save(e)));
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
 		}
+	}
+
+	@Transactional
+	@PutMapping("/{id}/valider-coordonnateur")
+	public ResponseEntity<?> validateCoordonnateur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		Optional<Evaluation> opt = repository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Evaluation e = opt.get();
+		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCoordonnateur(e, user, FEATURE);
+		if (denied != null) return denied;
+		return ResponseEntity.ok(toRow(repository.save(e)));
+	}
+
+	@Transactional
+	@PutMapping("/{id}/valider-superviseur")
+	public ResponseEntity<?> validateSuperviseur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		Optional<Evaluation> opt = repository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Evaluation e = opt.get();
+		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateSuperviseur(e, user, FEATURE);
+		if (denied != null) return denied;
+		return ResponseEntity.ok(toRow(repository.save(e)));
+	}
+
+	@Transactional
+	@PutMapping("/{id}/valider-centrale")
+	public ResponseEntity<?> validateCentrale(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		Optional<Evaluation> opt = repository.findById(id);
+		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Evaluation e = opt.get();
+		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCentrale(e, user, FEATURE);
+		if (denied != null) return denied;
+		return ResponseEntity.ok(toRow(repository.save(e)));
 	}
 
 	private void apply(Evaluation e, EvaluationRequest r) {
@@ -262,6 +305,7 @@ public class EvaluationController {
 		ReferentielEnricher.putRef(m, "ThemeEvaluation", e.getIdThemeEvaluation());
 		ReferentielEnricher.putRef(m, "TauxEvaluation", e.getIdTauxEvaluation());
 		m.put("typeEvaluation", e.getTypeEvaluation());
+		ActivitesCentreWorkflow.putStatus(m, e);
 		m.put("themesTaux", e.getThemesTaux().stream().map(this::toThemeTauxRow).toList());
 		return m;
 	}

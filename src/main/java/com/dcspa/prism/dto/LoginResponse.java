@@ -1,6 +1,7 @@
 package com.dcspa.prism.dto;
 
 import java.util.List;
+import java.util.Map;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -23,5 +24,12 @@ public class LoginResponse {
     private final Integer idSousPrefecture;
     private final Integer idCommune;
     private final Integer idLocalite;
+    private final Map<String, Object> region;
+    private final Map<String, Object> drena;
+    private final Map<String, Object> iep;
+    private final Map<String, Object> departement;
+    private final Map<String, Object> sousPrefecture;
+    private final Map<String, Object> commune;
+    private final Map<String, Object> localite;
 }
 

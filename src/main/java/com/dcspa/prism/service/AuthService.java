@@ -2,6 +2,7 @@ package com.dcspa.prism.service;
 
 import com.dcspa.prism.dto.LoginRequest;
 import com.dcspa.prism.dto.LoginResponse;
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.AppRole;
 import com.dcspa.prism.entity.AppUser;
 import com.dcspa.prism.entity.Commune;
@@ -84,14 +85,25 @@ public class AuthService implements UserDetailsService {
                 .idSousPrefecture(authUser.getIdSousPrefecture())
                 .idCommune(authUser.getIdCommune())
                 .idLocalite(authUser.getIdLocalite())
+                .region(ReferentielEnricher.toRef(user.getIdRegion()))
+                .drena(ReferentielEnricher.toRef(user.getIdDrena()))
+                .iep(ReferentielEnricher.toRef(user.getIdIep()))
+                .departement(ReferentielEnricher.toRef(user.getIdDepartement()))
+                .sousPrefecture(ReferentielEnricher.toRef(user.getIdSousPrefecture()))
+                .commune(ReferentielEnricher.toRef(user.getIdCommune()))
+                .localite(ReferentielEnricher.toRef(user.getIdLocalite()))
                 .build();
     }
 
     // Corps JSON pour GET /api/auth/me.
+    @Transactional(readOnly = true)
     public Map<String, Object> buildAuthenticatedUserPayload(AuthUser user) {
+        AppUser appUser = appUserRepository.findByUsername(user.getUsername()).orElse(null);
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("userId", user.getUserId());
         payload.put("username", user.getUsername());
+        payload.put("email", appUser != null ? appUser.getEmail() : null);
+        payload.put("roles", appUser != null ? roleCodes(appUser) : List.of());
         payload.put("permissions", user.getPermissions());
         payload.put("idRegion", user.getIdRegion());
         payload.put("idDrena", user.getIdDrena());
@@ -100,6 +112,13 @@ public class AuthService implements UserDetailsService {
         payload.put("idSousPrefecture", user.getIdSousPrefecture());
         payload.put("idCommune", user.getIdCommune());
         payload.put("idLocalite", user.getIdLocalite());
+        payload.put("region", appUser != null ? ReferentielEnricher.toRef(appUser.getIdRegion()) : null);
+        payload.put("drena", appUser != null ? ReferentielEnricher.toRef(appUser.getIdDrena()) : null);
+        payload.put("iep", appUser != null ? ReferentielEnricher.toRef(appUser.getIdIep()) : null);
+        payload.put("departement", appUser != null ? ReferentielEnricher.toRef(appUser.getIdDepartement()) : null);
+        payload.put("sousPrefecture", appUser != null ? ReferentielEnricher.toRef(appUser.getIdSousPrefecture()) : null);
+        payload.put("commune", appUser != null ? ReferentielEnricher.toRef(appUser.getIdCommune()) : null);
+        payload.put("localite", appUser != null ? ReferentielEnricher.toRef(appUser.getIdLocalite()) : null);
         return payload;
     }
 
@@ -121,6 +140,7 @@ public class AuthService implements UserDetailsService {
                 user.getPasswordHash(),
                 Boolean.TRUE.equals(user.getActif()),
                 permissions,
+                roleCodes(user),
                 idOf(user.getIdRegion()),
                 idOf(user.getIdDrena()),
                 idOf(user.getIdIep()),
@@ -129,6 +149,12 @@ public class AuthService implements UserDetailsService {
                 idOf(user.getIdCommune()),
                 idOf(user.getIdLocalite())
         );
+    }
+
+    private List<String> roleCodes(AppUser user) {
+        return user.getRoles().stream()
+                .map(AppRole::getCodeRole)
+                .collect(Collectors.toList());
     }
 
     private Integer idOf(Object entity) {

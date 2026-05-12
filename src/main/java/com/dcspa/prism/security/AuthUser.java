@@ -18,6 +18,7 @@ public class AuthUser implements UserDetails {
     private final String passwordHash;
     private final boolean enabled;
     private final List<String> permissions;
+    private final List<String> roles;
     private final Integer idRegion;
     private final Integer idDrena;
     private final Integer idIep;
@@ -27,7 +28,7 @@ public class AuthUser implements UserDetails {
     private final Integer idLocalite;
 
     public AuthUser(Integer userId, String username, String passwordHash, boolean enabled, List<String> permissions) {
-        this(userId, username, passwordHash, enabled, permissions, null, null, null, null, null, null, null);
+        this(userId, username, passwordHash, enabled, permissions, List.of(), null, null, null, null, null, null, null);
     }
 
     public AuthUser(
@@ -36,6 +37,7 @@ public class AuthUser implements UserDetails {
             String passwordHash,
             boolean enabled,
             List<String> permissions,
+            List<String> roles,
             Integer idRegion,
             Integer idDrena,
             Integer idIep,
@@ -48,6 +50,7 @@ public class AuthUser implements UserDetails {
         this.passwordHash = passwordHash;
         this.enabled = enabled;
         this.permissions = permissions != null ? List.copyOf(permissions) : List.of();
+        this.roles = roles != null ? List.copyOf(roles) : List.of();
         this.idRegion = idRegion;
         this.idDrena = idDrena;
         this.idIep = idIep;
@@ -101,5 +104,17 @@ public class AuthUser implements UserDetails {
     public boolean hasPermission(String fonctionnaliteCode, String permissionCode) {
         String key = fonctionnaliteCode + ":" + permissionCode;
         return permissions.contains(key);
+    }
+
+    public boolean hasAnyRole(String... roleCodes) {
+        if (roleCodes == null || roleCodes.length == 0) {
+            return false;
+        }
+        for (String roleCode : roleCodes) {
+            if (roles.contains(roleCode)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

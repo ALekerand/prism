@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "performance")
-public class Performance {
+public class Performance implements ActivitesCentreWorkflowEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID_PERFORMANCE", nullable = false)
@@ -42,4 +42,13 @@ public class Performance {
 
 	@Column(name = "TAUX_PROGRESSION_APPRENTISSAGE_CVC")
 	private String tauxProgressionApprentissageCvc;
+
+	@Column(name = "VALIDEE_COORDONNATEUR")
+	private Boolean valideeCoordonnateur;
+
+	@Column(name = "VALIDEE_SUPERVISEUR")
+	private Boolean valideeSuperviseur;
+
+	@Column(name = "VALIDEE_CENTRALE")
+	private Boolean valideeCentrale;
 }
