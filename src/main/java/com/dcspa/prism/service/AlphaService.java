@@ -271,6 +271,7 @@ public class AlphaService {
 	// Supprime un Alpha par identifiant.
 	@Transactional
 	public void deleteById(Integer id) {
+		niveauAlphaRepository.deleteByIdCentre_Id(id);
 		alphaRepository.deleteById(id);
 	}
 

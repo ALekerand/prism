@@ -59,7 +59,7 @@ public final class DocumentSpecifications {
 				List<Predicate> ors = new ArrayList<>();
 				ors.add(SpecificationSupport.containsIgnoreCase(cb, root.get("codeDocument"), t));
 				ors.add(SpecificationSupport.containsIgnoreCase(cb, centreJoin.get("codeCentre"), t));
-				ors.add(SpecificationSupport.containsIgnoreCase(cb, centreJoin.get("libelleAlpha"), t));
+				ors.add(SpecificationSupport.containsIgnoreCase(cb, centreJoin.get("localisationCentre"), t));
 				ors.add(SpecificationSupport.containsIgnoreCase(cb, natureJoin.get("libelleNatureDocument"), t));
 				ors.add(SpecificationSupport.containsIgnoreCase(cb, typeJoin.get("codeTypeDocument"), t));
 				ors.add(SpecificationSupport.containsIgnoreCase(cb, typeJoin.get("libelleTypeDocument"), t));

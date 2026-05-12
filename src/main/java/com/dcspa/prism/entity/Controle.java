@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 @Getter
 @Setter
@@ -80,8 +81,10 @@ public class Controle implements ActivitesCentreWorkflowEntity {
 	private Boolean valideeCentrale;
 
 	@OneToMany(mappedBy = "controle", cascade = CascadeType.ALL, orphanRemoval = true)
+	@BatchSize(size = 50)
 	private List<ControleHoraireFormation> horairesFormation = new ArrayList<>();
 
 	@OneToMany(mappedBy = "controle", cascade = CascadeType.ALL, orphanRemoval = true)
+	@BatchSize(size = 50)
 	private List<ControleKitManuel> kitsManuels = new ArrayList<>();
 }

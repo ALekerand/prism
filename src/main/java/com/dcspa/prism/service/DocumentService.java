@@ -59,7 +59,7 @@ public class DocumentService {
 			throw new IllegalArgumentException("Le type de document est obligatoire.");
 		}
 		if (entity.getIdCentre() == null) {
-			throw new IllegalArgumentException("Le centre (Alpha) est obligatoire pour un document.");
+			throw new IllegalArgumentException("Le centre est obligatoire pour un document.");
 		}
 	}
 }

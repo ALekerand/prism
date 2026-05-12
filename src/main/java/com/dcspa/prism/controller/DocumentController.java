@@ -3,11 +3,11 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.DocumentRequest;
-import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.Document;
 import com.dcspa.prism.entity.NatureDocument;
 import com.dcspa.prism.entity.TypeDocument;
-import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.repository.NatureDocumentRepository;
 import com.dcspa.prism.repository.TypeDocumentRepository;
 import com.dcspa.prism.service.DocumentService;
@@ -35,7 +35,7 @@ public class DocumentController {
 	private final DocumentService documentService;
 	private final NatureDocumentRepository natureDocumentRepository;
 	private final TypeDocumentRepository typeDocumentRepository;
-	private final AlphaRepository alphaRepository;
+	private final CentreRepository centreRepository;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -78,7 +78,7 @@ public class DocumentController {
 		m.put("id", d.getId());
 		ReferentielEnricher.putRef(m, "NatureDocument", d.getIdNatureDocument());
 		ReferentielEnricher.putRef(m, "TypeDocument", d.getIdTypeDocument());
-		ReferentielEnricher.putRef(m, "Alpha", d.getIdCentre());
+		ReferentielEnricher.putRef(m, "Centre", d.getIdCentre());
 		m.put("existe", d.getExiste());
 		m.put("ajour", d.getAjour());
 		m.put("bientenu", d.getBientenu());
@@ -96,8 +96,8 @@ public class DocumentController {
 				.orElseThrow(() -> new IllegalArgumentException("NatureDocument introuvable: " + r.getIdNatureDocument()));
 		TypeDocument type = typeDocumentRepository.findById(toLong(r.getIdTypeDocument()))
 				.orElseThrow(() -> new IllegalArgumentException("TypeDocument introuvable: " + r.getIdTypeDocument()));
-		Alpha centre = alphaRepository.findById(r.getIdCentre())
-				.orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdCentre()));
+		Centre centre = centreRepository.findById(r.getIdCentre())
+				.orElseThrow(() -> new IllegalArgumentException("Centre introuvable: " + r.getIdCentre()));
 
 		d.setIdNatureDocument(nature);
 		d.setIdTypeDocument(type);

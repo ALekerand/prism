@@ -8,4 +8,6 @@ import java.util.List;
 public interface NiveauAlphaRepository extends JpaRepository<NiveauAlpha, Long> {
 
 	List<NiveauAlpha> findByIdCentre_Id(Integer centreId);
+
+	void deleteByIdCentre_Id(Integer centreId);
 }

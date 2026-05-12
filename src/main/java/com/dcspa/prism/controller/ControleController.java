@@ -47,7 +47,7 @@ public class ControleController {
 	public ResponseEntity<?> findAll(@AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return ResponseEntity.ok(controleRepository.findAll().stream().map(this::toRow).toList());
+		return ResponseEntity.ok(controleRepository.findAllWithRefs().stream().map(this::toRow).toList());
 	}
 
 	@Transactional(readOnly = true)
@@ -55,7 +55,7 @@ public class ControleController {
 	public ResponseEntity<?> findById(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return controleRepository.findById(id).map(this::toRow).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+		return controleRepository.findByIdWithRefs(id).map(this::toRow).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 
 	@Transactional(readOnly = true)
@@ -69,7 +69,7 @@ public class ControleController {
 			@AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return ResponseEntity.ok(controleRepository.findAll().stream()
+		return ResponseEntity.ok(controleRepository.findAllWithRefs().stream()
 				.filter(x -> idAlpha == null || idAlpha.equals(JpaAssociationIds.intIdOrNull(x.getIdAlpha())))
 				.filter(x -> idDiscipline == null || idDiscipline.equals(JpaAssociationIds.intIdOrNull(x.getIdDiscipline())))
 				.filter(x -> idManuel == null || idManuel.equals(JpaAssociationIds.intIdOrNull(x.getIdManuel())))

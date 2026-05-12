@@ -33,7 +33,7 @@ public class Document {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CENTRE", nullable = false)
-    private Alpha idCentre;
+    private Centre idCentre;
 
     @Size(max = 5)
     @Column(name = "EXISTE", length = 5)

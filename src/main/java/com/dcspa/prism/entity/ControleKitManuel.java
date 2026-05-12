@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 @Getter
 @Setter
@@ -31,6 +32,7 @@ public class ControleKitManuel {
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "ID_MANUEL", nullable = false)
+	@BatchSize(size = 50)
 	private Manuel manuel;
 
 	@NotNull
