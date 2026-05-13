@@ -30,7 +30,7 @@ public class ReferentielDemoDataInitializer {
     private static final String DEMO_CENTRE_CEC = "CTR-CEC-01";
     private static final String DEMO_CENTRE_CP = "CTR-CP-01";
     private static final String DEMO_CENTRE_SIE = "CTR-SIE-01";
-    private static final List<String> NIVEAUX_ALPHA_REELS = List.of("NIVEAU_1", "NIVEAU_2", "POST_ALPHA");
+    private static final List<String> NIVEAUX_ALPHA_REELS = List.of("NIVEAU 1", "NIVEAU 2", "POST ALPHA");
     private static final List<String> NIVEAUX_CEC_SIE_REELS = List.of("PS", "MS", "GS", "PRE_PRIMAIRE", "CP1", "CP2", "CE1", "CE2", "CM1", "CM2");
     private static final List<String> NIVEAUX_CP_REELS = List.of("CPU", "CEU", "CMU");
 
@@ -872,16 +872,13 @@ public class ReferentielDemoDataInitializer {
 
     private void seedNiveauxAlpha() {
         if (niveauAlphaRepository.count() > 0) return;
-        Alpha alpha = alphaRepository.findAll().stream().findFirst().orElse(null);
-        if (alpha == null) return;
         for (String libelle : NIVEAUX_ALPHA_REELS) {
-            saveNiveauAlpha(alpha, libelle);
+            saveNiveauAlpha(libelle);
         }
     }
 
-    private void saveNiveauAlpha(Alpha alpha, String libelle) {
+    private void saveNiveauAlpha(String libelle) {
         NiveauAlpha n = new NiveauAlpha();
-        n.setIdCentre(alpha);
         n.setLibelleNiveauAlpha(libelle.length() > 100 ? libelle.substring(0, 100) : libelle);
         niveauAlphaRepository.save(n);
     }
@@ -921,24 +918,16 @@ public class ReferentielDemoDataInitializer {
     }
 
     private void syncNiveauxAlphaRealite() {
-        List<Alpha> alphas = alphaRepository.findAll();
-        if (alphas.isEmpty()) return;
-        for (Alpha a : alphas) {
-            for (String libelle : NIVEAUX_ALPHA_REELS) {
-                upsertNiveauAlpha(a, libelle);
-            }
+        for (String libelle : NIVEAUX_ALPHA_REELS) {
+            upsertNiveauAlpha(libelle);
         }
     }
 
-    private void upsertNiveauAlpha(Alpha alpha, String libelle) {
+    private void upsertNiveauAlpha(String libelle) {
         boolean exists = niveauAlphaRepository.findAll().stream()
-                .anyMatch(x ->
-                        x.getIdCentre() != null &&
-                                alpha.getId().equals(x.getIdCentre().getId()) &&
-                                libelle.equalsIgnoreCase(String.valueOf(x.getLibelleNiveauAlpha()))
-                );
+                .anyMatch(x -> libelle.equalsIgnoreCase(String.valueOf(x.getLibelleNiveauAlpha())));
         if (!exists) {
-            saveNiveauAlpha(alpha, libelle);
+            saveNiveauAlpha(libelle);
         }
     }
 

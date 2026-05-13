@@ -110,7 +110,7 @@ public class EffectifAlphaController {
 				.orElseThrow(() -> new IllegalArgumentException("Centre alpha introuvable: " + r.getIdCentre()));
 		NiveauAlpha niveauAlpha = null;
 		if (r.getIdNiveauAlpha() != null) {
-			niveauAlpha = niveauAlphaRepository.findById(r.getIdNiveauAlpha().longValue())
+			niveauAlpha = niveauAlphaRepository.findById(r.getIdNiveauAlpha())
 					.orElseThrow(() -> new IllegalArgumentException("Niveau alpha introuvable: " + r.getIdNiveauAlpha()));
 		}
 
@@ -149,6 +149,9 @@ public class EffectifAlphaController {
 	private Map<String, Object> toRow(EffectifAlpha e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
+		if (e.getIdCentre() != null) {
+			m.put("idIep", e.getIdCentre().getIdIep());
+		}
 		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdCentre());
 		ReferentielEnricher.putRef(m, "NiveauAlpha", e.getIdNiveauAlpha());

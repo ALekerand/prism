@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ActivitesCentreSaisieWorkflowGate;
 import com.dcspa.prism.controller.support.ActivitesCentreWorkflow;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.PermissionGuard;
@@ -32,7 +33,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class EvaluationController {
 	private static final String FEATURE = "ACTIVITES_CENTRE_EVALUATION";
+	private static final String WORKFLOW_RESOURCE = "/api/evaluation";
 	private final EvaluationRepository repository;
+	private final ActivitesCentreSaisieWorkflowGate saisieWorkflowGate;
 	private final AlphaRepository alphaRepository;
 	private final PeriodeEvaluationRepository periodeRepository;
 	private final NiveauEvaluationRepository niveauRepository;
@@ -127,6 +130,9 @@ public class EvaluationController {
 	public ResponseEntity<?> validateCoordonnateur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		Optional<Evaluation> opt = repository.findById(id);
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Optional<ResponseEntity<?>> workflowDenied =
+				saisieWorkflowGate.transversalValidate(WORKFLOW_RESOURCE, id, FEATURE, user);
+		if (workflowDenied.isPresent()) return workflowDenied.get();
 		Evaluation e = opt.get();
 		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCoordonnateur(e, user, FEATURE);
 		if (denied != null) return denied;
@@ -138,6 +144,9 @@ public class EvaluationController {
 	public ResponseEntity<?> validateSuperviseur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		Optional<Evaluation> opt = repository.findById(id);
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Optional<ResponseEntity<?>> workflowDenied =
+				saisieWorkflowGate.transversalValidate(WORKFLOW_RESOURCE, id, FEATURE, user);
+		if (workflowDenied.isPresent()) return workflowDenied.get();
 		Evaluation e = opt.get();
 		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateSuperviseur(e, user, FEATURE);
 		if (denied != null) return denied;
@@ -149,6 +158,9 @@ public class EvaluationController {
 	public ResponseEntity<?> validateCentrale(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		Optional<Evaluation> opt = repository.findById(id);
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Optional<ResponseEntity<?>> workflowDenied =
+				saisieWorkflowGate.transversalValidate(WORKFLOW_RESOURCE, id, FEATURE, user);
+		if (workflowDenied.isPresent()) return workflowDenied.get();
 		Evaluation e = opt.get();
 		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCentrale(e, user, FEATURE);
 		if (denied != null) return denied;

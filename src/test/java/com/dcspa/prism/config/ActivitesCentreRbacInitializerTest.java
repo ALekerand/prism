@@ -13,6 +13,7 @@ import com.dcspa.prism.repository.AppRoleRepository;
 import com.dcspa.prism.repository.AppUserRepository;
 import com.dcspa.prism.repository.FonctionnaliteRepository;
 import com.dcspa.prism.repository.PermissionRepository;
+import com.dcspa.prism.repository.IeppRepository;
 import com.dcspa.prism.repository.RoleFonctionnalitePermissionRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,9 @@ class ActivitesCentreRbacInitializerTest {
     private RoleFonctionnalitePermissionRepository roleFonctionnalitePermissionRepository;
 
     @Mock
+    private IeppRepository ieppRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     private final List<AppUser> savedUsers = new ArrayList<>();
@@ -66,6 +70,7 @@ class ActivitesCentreRbacInitializerTest {
             savedUsers.add(user);
             return user;
         });
+        when(ieppRepository.findAll()).thenReturn(List.of());
     }
 
     @Test
@@ -74,18 +79,21 @@ class ActivitesCentreRbacInitializerTest {
 
         assertThat(savedUsers)
                 .extracting(AppUser::getUsername)
-                .containsExactlyInAnyOrder(
-                        "conseiller_test",
-                        "coordonnateur_test",
-                        "iepp_test",
-                        "superviseur_test",
-                        "superviseur_aenf_test"
-                );
+                .containsExactlyInAnyOrderElementsOf(expectedDemoUsernames());
         assertTestUser("conseiller_test", "CONSEILLER");
         assertTestUser("coordonnateur_test", "COORDONNATEUR");
         assertTestUser("iepp_test", "IEPP");
         assertTestUser("superviseur_test", "SUPERVISEUR");
         assertTestUser("superviseur_aenf_test", "SUPERVISEUR_AENF");
+    }
+
+    private static List<String> expectedDemoUsernames() {
+        return List.of(
+                "conseiller_test",
+                "coordonnateur_test",
+                "iepp_test",
+                "superviseur_test",
+                "superviseur_aenf_test");
     }
 
     private ActivitesCentreRbacInitializer initializer() {
@@ -95,6 +103,7 @@ class ActivitesCentreRbacInitializerTest {
                 fonctionnaliteRepository,
                 permissionRepository,
                 roleFonctionnalitePermissionRepository,
+                ieppRepository,
                 passwordEncoder
         );
     }

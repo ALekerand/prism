@@ -1,0 +1,3 @@
+-- Jeu de données « commissions 1 à 4 » : exécuter manuellement sur la base MySQL le fichier
+--   db/commissions-1-4-users-seed.sql
+-- (après création des rôles et du compte conseiller_test, prérequis du script).

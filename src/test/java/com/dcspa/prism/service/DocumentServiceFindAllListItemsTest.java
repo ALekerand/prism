@@ -2,7 +2,7 @@ package com.dcspa.prism.service;
 
 import com.dcspa.prism.dto.DocumentListFilter;
 import com.dcspa.prism.dto.DocumentListItem;
-import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.Document;
 import com.dcspa.prism.entity.NatureDocument;
 import com.dcspa.prism.entity.TypeDocument;
@@ -41,7 +41,7 @@ class DocumentServiceFindAllListItemsTest {
 	@Test
 	void findAllListItemsReturnsFlattenedRows() {
 		Document d = mock(Document.class);
-		Alpha a = mock(Alpha.class);
+		Centre c = mock(Centre.class);
 		NatureDocument n = mock(NatureDocument.class);
 		TypeDocument t = mock(TypeDocument.class);
 
@@ -52,10 +52,10 @@ class DocumentServiceFindAllListItemsTest {
 		when(d.getBientenu()).thenReturn("OUI");
 		when(d.getRespmethode()).thenReturn("OUI");
 		when(d.getBienrensigne()).thenReturn("OUI");
-		when(d.getIdCentre()).thenReturn(a);
-		when(a.getId()).thenReturn(7);
-		when(a.getCodeCentre()).thenReturn("CC-7");
-		when(a.getLibelleAlpha()).thenReturn("Centre test");
+		when(d.getIdCentre()).thenReturn(c);
+		when(c.getId()).thenReturn(7);
+		when(c.getCodeCentre()).thenReturn("CC-7");
+		when(c.getLocalisationCentre()).thenReturn("Centre test");
 		when(d.getIdNatureDocument()).thenReturn(n);
 		when(n.getId()).thenReturn(11);
 		when(n.getLibelleNatureDocument()).thenReturn("Nature X");

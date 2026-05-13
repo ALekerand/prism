@@ -8,8 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 
 @RestController
@@ -21,8 +25,11 @@ public class AppUserAdminController {
 
     @GetMapping
     public ResponseEntity<Page<AppUserAdminResponse>> findAll(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Integer roleId,
+            @RequestParam(required = false) Boolean actif,
             @PageableDefault(size = 20, sort = "id") Pageable pageable) {
-        return ResponseEntity.ok(appUserAdminService.findAllWithRoles(pageable));
+        return ResponseEntity.ok(appUserAdminService.findAllWithRoles(pageable, q, roleId, actif));
     }
 
     @PostMapping
@@ -39,9 +46,14 @@ public class AppUserAdminController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        appUserAdminService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    public Mono<ResponseEntity<Void>> delete(@PathVariable Integer id) {
+        return Mono.fromRunnable(() -> {
+                    if (!appUserAdminService.deleteUserIfExists(id)) {
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable.");
+                    }
+                })
+                .subscribeOn(Schedulers.boundedElastic())
+                .thenReturn(ResponseEntity.noContent().build());
     }
 
     @PutMapping("/{id}/roles")

@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ActivitesCentreSaisieWorkflowGate;
 import com.dcspa.prism.controller.support.ActivitesCentreWorkflow;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.PermissionGuard;
@@ -35,7 +36,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ControleController {
 	private static final String FEATURE = "ACTIVITES_CENTRE_CONTROLE";
+	private static final String WORKFLOW_RESOURCE = "/api/controle";
 	private final ControleRepository controleRepository;
+	private final ActivitesCentreSaisieWorkflowGate saisieWorkflowGate;
 	private final AlphaRepository alphaRepository;
 	private final DisciplineRepository disciplineRepository;
 	private final ManuelRepository manuelRepository;
@@ -131,6 +134,9 @@ public class ControleController {
 	public ResponseEntity<?> validateCoordonnateur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		Optional<Controle> opt = controleRepository.findById(id);
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Optional<ResponseEntity<?>> workflowDenied =
+				saisieWorkflowGate.transversalValidate(WORKFLOW_RESOURCE, id, FEATURE, user);
+		if (workflowDenied.isPresent()) return workflowDenied.get();
 		Controle e = opt.get();
 		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCoordonnateur(e, user, FEATURE);
 		if (denied != null) return denied;
@@ -142,6 +148,9 @@ public class ControleController {
 	public ResponseEntity<?> validateSuperviseur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		Optional<Controle> opt = controleRepository.findById(id);
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Optional<ResponseEntity<?>> workflowDenied =
+				saisieWorkflowGate.transversalValidate(WORKFLOW_RESOURCE, id, FEATURE, user);
+		if (workflowDenied.isPresent()) return workflowDenied.get();
 		Controle e = opt.get();
 		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateSuperviseur(e, user, FEATURE);
 		if (denied != null) return denied;
@@ -153,6 +162,9 @@ public class ControleController {
 	public ResponseEntity<?> validateCentrale(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		Optional<Controle> opt = controleRepository.findById(id);
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Optional<ResponseEntity<?>> workflowDenied =
+				saisieWorkflowGate.transversalValidate(WORKFLOW_RESOURCE, id, FEATURE, user);
+		if (workflowDenied.isPresent()) return workflowDenied.get();
 		Controle e = opt.get();
 		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCentrale(e, user, FEATURE);
 		if (denied != null) return denied;
@@ -165,7 +177,7 @@ public class ControleController {
 		Discipline d = r.getIdDiscipline() == null ? null : disciplineRepository.findById(r.getIdDiscipline()).orElseThrow(() -> new IllegalArgumentException("Discipline introuvable: " + r.getIdDiscipline()));
 		Manuel m = r.getIdManuel() == null ? null : manuelRepository.findById(r.getIdManuel()).orElseThrow(() -> new IllegalArgumentException("Manuel introuvable: " + r.getIdManuel()));
 		NiveauControle n = r.getIdNiveauControle() == null ? null : niveauControleRepository.findById(r.getIdNiveauControle()).orElseThrow(() -> new IllegalArgumentException("Niveau controle introuvable: " + r.getIdNiveauControle()));
-		NiveauAlpha niveauAlpha = r.getIdNiveauAlpha() == null ? null : niveauAlphaRepository.findById(r.getIdNiveauAlpha().longValue()).orElseThrow(() -> new IllegalArgumentException("Niveau Alpha introuvable: " + r.getIdNiveauAlpha()));
+		NiveauAlpha niveauAlpha = r.getIdNiveauAlpha() == null ? null : niveauAlphaRepository.findById(r.getIdNiveauAlpha()).orElseThrow(() -> new IllegalArgumentException("Niveau Alpha introuvable: " + r.getIdNiveauAlpha()));
 		e.setIdAlpha(alpha);
 		e.setIdDiscipline(d);
 		e.setIdManuel(m);

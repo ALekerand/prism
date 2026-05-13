@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NiveauAlphaRequest {
-    private Integer idCentre;
     private String codeNiveauAlpha;
     private String libelleNiveauAlpha;
 }

@@ -3,14 +3,19 @@ package com.dcspa.prism.entity;
 import com.dcspa.prism.codegen.AutoCode;
 import com.dcspa.prism.codegen.AutoCodeEntityListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -24,11 +29,6 @@ public class NiveauAlpha {
     @Column(name = "ID_NIVEAU_ALPHA", nullable = false)
     private Integer id;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ID_CENTRE", nullable = false)
-    private Alpha idCentre;
-
     @Size(max = 50)
     @Column(name = "CODE_NIVEAU_ALPHA", length = 50)
     private String codeNiveauAlpha;
@@ -41,5 +41,8 @@ public class NiveauAlpha {
     @OneToMany(mappedBy = "idNiveauAlpha")
     private Set<EffectifAlpha> effectifsAlpha = new HashSet<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "idNiveauAlpha")
+    private Set<AlphaNiveau> alphaNiveaux = new HashSet<>();
 
 }

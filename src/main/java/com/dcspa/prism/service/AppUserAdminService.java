@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -54,9 +55,22 @@ public class AppUserAdminService {
     );
 
     @Transactional(readOnly = true)
-    public Page<AppUserAdminResponse> findAllWithRoles(Pageable pageable) {
+    public Page<AppUserAdminResponse> findAllWithRoles(
+            Pageable pageable,
+            String q,
+            Integer roleId,
+            Boolean actif) {
         Pageable p = PageableUtils.cap(pageable);
-        return appUserRepository.findAll(p).map(this::toDto);
+        String qNorm = normalizeSearchText(q);
+        return appUserRepository.searchForAdmin(qNorm, roleId, actif, p).map(this::toDto);
+    }
+
+    private static String normalizeSearchText(String q) {
+        if (q == null) {
+            return null;
+        }
+        String t = q.trim();
+        return t.isEmpty() ? null : t;
     }
 
     @Transactional
@@ -132,12 +146,23 @@ public class AppUserAdminService {
         return toDto(appUserRepository.save(u));
     }
 
+    /**
+     * Supprime l'utilisateur s'il existe.
+     *
+     * @return {@code true} si une ligne a été supprimée, {@code false} si aucun utilisateur avec cet id.
+     */
     @Transactional
-    public void deleteUser(Integer id) {
-        if (!appUserRepository.existsById(id)) {
-            throw new IllegalArgumentException("Utilisateur introuvable: " + id);
+    public boolean deleteUserIfExists(Integer id) {
+        Optional<AppUser> existing = appUserRepository.findById(id);
+        if (existing.isEmpty()) {
+            return false;
         }
-        appUserRepository.deleteById(id);
+        AppUser user = existing.get();
+        // Charger puis vider le côté propriétaire du ManyToMany pour supprimer les lignes de user_role
+        // avant DELETE sur app_user (deleteById seul peut laisser le join et violer la FK MySQL).
+        user.getRoles().clear();
+        appUserRepository.delete(user);
+        return true;
     }
 
     private Set<AppRole> resolveRoles(List<Integer> roleIds) {

@@ -10,6 +10,7 @@ import com.dcspa.prism.dto.CentreWithPromoteurItem;
 import com.dcspa.prism.dto.UpdateCentreTypeInfosRequest;
 import com.dcspa.prism.dto.UpdateLibelleRequest;
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.AlphaNiveau;
 import com.dcspa.prism.entity.AutoriteAutorisation;
 import com.dcspa.prism.entity.Campagne;
 import com.dcspa.prism.entity.CategorieCentreAlpha;
@@ -31,6 +32,7 @@ import com.dcspa.prism.entity.Region;
 import com.dcspa.prism.entity.SousPrefecture;
 import com.dcspa.prism.entity.TypeAlpha;
 import com.dcspa.prism.entity.TypePromoteur;
+import com.dcspa.prism.repository.AlphaNiveauRepository;
 import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.repository.AutoriteAutorisationRepository;
 import com.dcspa.prism.repository.CampagneRepository;
@@ -40,14 +42,15 @@ import com.dcspa.prism.repository.IeppRepository;
 import com.dcspa.prism.repository.LocaliteDImplantationRepository;
 import com.dcspa.prism.repository.MilieuImplantationRepository;
 import com.dcspa.prism.repository.NaturecentreRepository;
-import com.dcspa.prism.repository.NiveauAlphaRepository;
 import com.dcspa.prism.repository.PeriodiciteRepository;
 import com.dcspa.prism.repository.PersonnephysiqueRepository;
 import com.dcspa.prism.repository.PersonnemoraleRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.repository.RegimealphabetisationRepository;
 import com.dcspa.prism.repository.TypeAlphaRepository;
+import com.dcspa.prism.repository.spec.AlphaCirconscriptionScope;
 import com.dcspa.prism.repository.spec.AlphaSpecifications;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.pagination.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -84,7 +87,7 @@ public class AlphaService {
 	private final PersonnephysiqueRepository personnephysiqueRepository;
 	private final PersonnemoraleRepository personnemoraleRepository;
 	private final CentreNiveauCreationService centreNiveauCreationService;
-	private final NiveauAlphaRepository niveauAlphaRepository;
+	private final AlphaNiveauRepository alphaNiveauRepository;
 
 	// Charge toutes les entités Alpha depuis la base.
 	@Transactional(readOnly = true)
@@ -94,13 +97,17 @@ public class AlphaService {
 
 	// Liste paginée pour l’API avec filtres optionnels sur chaque colonne.
 	@Transactional(readOnly = true)
-	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, AlphaListFilter filter) {
+	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, AlphaListFilter filter, AuthUser authUser) {
 		Pageable p = PageableUtils.cap(pageable);
-		if (filter == null || filter.isEmpty()) {
+		AlphaListFilter f = filter == null ? new AlphaListFilter() : filter;
+		Specification<Alpha> scope = AlphaCirconscriptionScope.specification(authUser);
+		if (f.isEmpty() && scope == null) {
 			return alphaRepository.findAllAsListItems(p);
 		}
-		Specification<Alpha> spec = AlphaSpecifications.fromFilter(filter);
-		return alphaRepository.findAll(spec, p).map(CentreTypeListItemMapper::fromAlpha);
+		Specification<Alpha> combined = scope == null
+				? AlphaSpecifications.fromFilter(f)
+				: Specification.where(scope).and(AlphaSpecifications.fromFilter(f));
+		return alphaRepository.findAll(combined, p).map(CentreTypeListItemMapper::fromAlpha);
 	}
 
 	// Recherche un Alpha par clé primaire.
@@ -110,17 +117,31 @@ public class AlphaService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<CentreWithPromoteurItem> findDetailedById(Integer id) {
+	public Optional<CentreWithPromoteurItem> findDetailedById(Integer id, AuthUser authUser) {
+		if (!isAlphaWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
 		return alphaRepository.findDetailWithRefsById(id).map(this::toDetailedItem);
 	}
 
 	@Transactional(readOnly = true)
-	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request) {
+	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request, AuthUser authUser) {
 		Map<String, String> criteria = request == null ? null : request.getCriteria();
-		return alphaRepository.findAll().stream()
+		Specification<Alpha> scope = AlphaCirconscriptionScope.specification(authUser);
+		List<Alpha> source = scope == null ? alphaRepository.findAll() : alphaRepository.findAll(scope);
+		return source.stream()
 				.map(this::toDetailedItem)
 				.filter(item -> CentreDetailedSearchSupport.matchesCriteria(item, criteria))
 				.toList();
+	}
+
+	private boolean isAlphaWithinCirconscription(Integer alphaId, AuthUser user) {
+		Specification<Alpha> scope = AlphaCirconscriptionScope.specification(user);
+		if (scope == null) {
+			return true;
+		}
+		Specification<Alpha> idEq = (root, query, cb) -> cb.equal(root.get("id"), alphaId);
+		return alphaRepository.count(Specification.where(scope).and(idEq)) > 0;
 	}
 
 	// Enregistre après validation des champs obligatoires.
@@ -271,7 +292,7 @@ public class AlphaService {
 	// Supprime un Alpha par identifiant.
 	@Transactional
 	public void deleteById(Integer id) {
-		niveauAlphaRepository.deleteByIdCentre_Id(id);
+		alphaNiveauRepository.deleteByIdCentre_Id(id);
 		alphaRepository.deleteById(id);
 	}
 
@@ -334,17 +355,21 @@ public class AlphaService {
 		attachReferences(item, alpha);
 		attachPromoteur(item, alpha.getIdPromoteur());
 		attachAlphaSpecificRefs(item, alpha);
-		item.setNiveaux(niveauAlphaRepository.findByIdCentre_Id(alpha.getId()).stream()
+		item.setNiveaux(alphaNiveauRepository.findByIdCentre_Id(alpha.getId()).stream()
 				.map(this::toNiveauDetails)
 				.toList());
 		return item;
 	}
 
-	private CentreWithPromoteurItem.NiveauDetails toNiveauDetails(NiveauAlpha niveau) {
+	private CentreWithPromoteurItem.NiveauDetails toNiveauDetails(AlphaNiveau alphaNiveau) {
+		NiveauAlpha niveau = alphaNiveau.getIdNiveauAlpha();
 		CentreWithPromoteurItem.NiveauDetails details = new CentreWithPromoteurItem.NiveauDetails();
-		details.setId(niveau.getId());
-		details.setCodeNiveau(niveau.getCodeNiveauAlpha());
-		details.setLibelleNiveau(niveau.getLibelleNiveauAlpha());
+		details.setId(alphaNiveau.getId());
+		if (niveau != null) {
+			details.setNiveauId(niveau.getId());
+			details.setCodeNiveau(niveau.getCodeNiveauAlpha());
+			details.setLibelleNiveau(niveau.getLibelleNiveauAlpha());
+		}
 		return details;
 	}
 

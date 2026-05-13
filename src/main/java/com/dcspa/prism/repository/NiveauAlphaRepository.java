@@ -1,13 +1,10 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.NiveauAlpha;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.dcspa.prism.repositorybase.BaseRepository;
+import java.util.Optional;
 
-import java.util.List;
+public interface NiveauAlphaRepository extends BaseRepository<NiveauAlpha, Integer> {
 
-public interface NiveauAlphaRepository extends JpaRepository<NiveauAlpha, Long> {
-
-	List<NiveauAlpha> findByIdCentre_Id(Integer centreId);
-
-	void deleteByIdCentre_Id(Integer centreId);
+	Optional<NiveauAlpha> findByLibelleNiveauAlphaIgnoreCase(String libelleNiveauAlpha);
 }

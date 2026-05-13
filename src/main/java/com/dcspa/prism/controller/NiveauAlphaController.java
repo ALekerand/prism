@@ -1,11 +1,8 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.codegen.AutoCodePutMerge;
-import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.NiveauAlphaRequest;
-import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.NiveauAlpha;
-import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.service.NiveauAlphaService;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +28,6 @@ import java.util.stream.Collectors;
 public class NiveauAlphaController {
 
 	private final NiveauAlphaService niveaualphaService;
-	private final AlphaRepository alphaRepository;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -75,9 +71,6 @@ public class NiveauAlphaController {
 	private NiveauAlpha toEntity(Integer id, NiveauAlphaRequest r) {
 		NiveauAlpha n = new NiveauAlpha();
 		n.setId(id);
-		Alpha centre = alphaRepository.findById(r.getIdCentre())
-				.orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdCentre()));
-		n.setIdCentre(centre);
 		String codeNiveauAlpha = r.getCodeNiveauAlpha();
 		if (id != null) {
 			codeNiveauAlpha = niveaualphaService.findById(id)
@@ -92,7 +85,6 @@ public class NiveauAlphaController {
 	private Map<String, Object> toRow(NiveauAlpha n) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", n.getId());
-		ReferentielEnricher.putRef(m, "Alpha", n.getIdCentre());
 		m.put("codeNiveauAlpha", n.getCodeNiveauAlpha());
 		m.put("libelleNiveauAlpha", n.getLibelleNiveauAlpha());
 		return m;

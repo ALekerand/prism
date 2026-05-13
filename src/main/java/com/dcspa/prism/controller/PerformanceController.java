@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ActivitesCentreSaisieWorkflowGate;
 import com.dcspa.prism.controller.support.ActivitesCentreWorkflow;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.PermissionGuard;
@@ -24,7 +25,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PerformanceController {
 	private static final String FEATURE = "ACTIVITES_CENTRE_PERFORMANCE";
+	private static final String WORKFLOW_RESOURCE = "/api/performance";
 	private final PerformanceRepository repository;
+	private final ActivitesCentreSaisieWorkflowGate saisieWorkflowGate;
 	private final AlphaRepository alphaRepository;
 
 	@Transactional(readOnly = true)
@@ -109,6 +112,9 @@ public class PerformanceController {
 	public ResponseEntity<?> validateCoordonnateur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		Optional<Performance> opt = repository.findById(id);
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Optional<ResponseEntity<?>> workflowDenied =
+				saisieWorkflowGate.transversalValidate(WORKFLOW_RESOURCE, id, FEATURE, user);
+		if (workflowDenied.isPresent()) return workflowDenied.get();
 		Performance e = opt.get();
 		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCoordonnateur(e, user, FEATURE);
 		if (denied != null) return denied;
@@ -120,6 +126,9 @@ public class PerformanceController {
 	public ResponseEntity<?> validateSuperviseur(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		Optional<Performance> opt = repository.findById(id);
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Optional<ResponseEntity<?>> workflowDenied =
+				saisieWorkflowGate.transversalValidate(WORKFLOW_RESOURCE, id, FEATURE, user);
+		if (workflowDenied.isPresent()) return workflowDenied.get();
 		Performance e = opt.get();
 		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateSuperviseur(e, user, FEATURE);
 		if (denied != null) return denied;
@@ -131,6 +140,9 @@ public class PerformanceController {
 	public ResponseEntity<?> validateCentrale(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		Optional<Performance> opt = repository.findById(id);
 		if (opt.isEmpty()) return ResponseEntity.notFound().build();
+		Optional<ResponseEntity<?>> workflowDenied =
+				saisieWorkflowGate.transversalValidate(WORKFLOW_RESOURCE, id, FEATURE, user);
+		if (workflowDenied.isPresent()) return workflowDenied.get();
 		Performance e = opt.get();
 		ResponseEntity<?> denied = ActivitesCentreWorkflow.validateCentrale(e, user, FEATURE);
 		if (denied != null) return denied;

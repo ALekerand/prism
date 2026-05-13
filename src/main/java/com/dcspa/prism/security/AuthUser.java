@@ -117,4 +117,8 @@ public class AuthUser implements UserDetails {
         }
         return false;
     }
+
+    public boolean hasRole(String roleCode) {
+        return roleCode != null && roles.contains(roleCode);
+    }
 }

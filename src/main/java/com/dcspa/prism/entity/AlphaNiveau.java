@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,27 +17,26 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "controle_kit_manuel")
-public class ControleKitManuel {
+@Table(
+		name = "alpha_niveau",
+		uniqueConstraints = @UniqueConstraint(
+				name = "uk_alpha_niveau_centre_niveau",
+				columnNames = { "ID_CENTRE", "ID_NIVEAU_ALPHA" }
+		)
+)
+public class AlphaNiveau {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_CONTROLE_KIT_MANUEL", nullable = false)
+	@Column(name = "ID_ALPHA_NIVEAU", nullable = false)
 	private Integer id;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "ID_CONTROLE", nullable = false)
-	private Controle controle;
+	@JoinColumn(name = "ID_CENTRE", nullable = false)
+	private Alpha idCentre;
 
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "ID_MANUEL", nullable = false)
-	private Manuel manuel;
-
-	@NotNull
-	@Column(name = "NOMBRE_KIT", nullable = false)
-	private Integer nombreKit;
-
-	@Column(name = "PRECISION_AUTRE", length = 150)
-	private String precisionAutre;
+	@JoinColumn(name = "ID_NIVEAU_ALPHA", nullable = false)
+	private NiveauAlpha idNiveauAlpha;
 }

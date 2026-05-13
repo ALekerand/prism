@@ -3,6 +3,7 @@ package com.dcspa.prism.service;
 import com.dcspa.prism.dto.AlphaNiveauCreatePayload;
 import com.dcspa.prism.dto.CentreTypeNiveauCreatePayload;
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.AlphaNiveau;
 import com.dcspa.prism.entity.AnneScolaire;
 import com.dcspa.prism.entity.Cec;
 import com.dcspa.prism.entity.CecNiveau;
@@ -14,6 +15,7 @@ import com.dcspa.prism.entity.NiveauSieCec;
 import com.dcspa.prism.entity.Sie;
 import com.dcspa.prism.entity.SieNiveau;
 import com.dcspa.prism.repository.AnneScolaireRepository;
+import com.dcspa.prism.repository.AlphaNiveauRepository;
 import com.dcspa.prism.repository.CecNiveauRepository;
 import com.dcspa.prism.repository.CpNiveauRepository;
 import com.dcspa.prism.repository.NiveauAlphaRepository;
@@ -30,6 +32,7 @@ import java.util.List;
 public class CentreNiveauCreationService {
 
 	private final NiveauAlphaRepository niveauAlphaRepository;
+	private final AlphaNiveauRepository alphaNiveauRepository;
 	private final CpNiveauRepository cpNiveauRepository;
 	private final CecNiveauRepository cecNiveauRepository;
 	private final SieNiveauRepository sieNiveauRepository;
@@ -42,19 +45,22 @@ public class CentreNiveauCreationService {
 			return;
 		}
 		for (AlphaNiveauCreatePayload payload : niveaux) {
-			if (payload == null || isBlank(payload.getLibelleNiveauAlpha())) {
+			if (payload == null) {
 				continue;
 			}
-			NiveauAlpha niveau = new NiveauAlpha();
-			niveau.setIdCentre(alpha);
-			niveau.setCodeNiveauAlpha(trimToNull(payload.getCodeNiveauAlpha()));
-			niveau.setLibelleNiveauAlpha(payload.getLibelleNiveauAlpha().trim());
-			niveauAlphaRepository.save(niveau);
+			NiveauAlpha niveau = resolveNiveauAlpha(payload);
+			if (alphaNiveauRepository.existsByIdCentre_IdAndIdNiveauAlpha_Id(alpha.getId(), niveau.getId())) {
+				continue;
+			}
+			AlphaNiveau link = new AlphaNiveau();
+			link.setIdCentre(alpha);
+			link.setIdNiveauAlpha(niveau);
+			alphaNiveauRepository.save(link);
 		}
 	}
 
 	public void replaceAlphaNiveaux(Alpha alpha, List<AlphaNiveauCreatePayload> niveaux) {
-		niveauAlphaRepository.deleteAll(niveauAlphaRepository.findByIdCentre_Id(alpha.getId()));
+		alphaNiveauRepository.deleteAll(alphaNiveauRepository.findByIdCentre_Id(alpha.getId()));
 		createAlphaNiveaux(alpha, niveaux);
 	}
 
@@ -133,6 +139,19 @@ public class CentreNiveauCreationService {
 		Integer id = require(payload == null ? null : payload.getNiveauId(), "niveauId est obligatoire pour un niveau CEC/SIE");
 		return niveauSieCecRepository.findById(id.longValue())
 				.orElseThrow(() -> new IllegalArgumentException("Niveau CEC/SIE introuvable: " + id));
+	}
+
+	private NiveauAlpha resolveNiveauAlpha(AlphaNiveauCreatePayload payload) {
+		if (payload.getNiveauAlphaId() != null) {
+			return niveauAlphaRepository.findById(payload.getNiveauAlphaId())
+					.orElseThrow(() -> new IllegalArgumentException("Niveau Alpha introuvable: " + payload.getNiveauAlphaId()));
+		}
+		String libelle = trimToNull(payload.getLibelleNiveauAlpha());
+		if (libelle == null) {
+			throw new IllegalArgumentException("niveauAlphaId est obligatoire pour un niveau Alpha");
+		}
+		return niveauAlphaRepository.findByLibelleNiveauAlphaIgnoreCase(libelle)
+				.orElseThrow(() -> new IllegalArgumentException("Niveau Alpha introuvable: " + libelle));
 	}
 
 	private Integer require(Integer value, String message) {

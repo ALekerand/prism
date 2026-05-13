@@ -10,12 +10,14 @@ import com.dcspa.prism.dto.CentreWithPromoteurItem;
 import com.dcspa.prism.dto.UpdateCentreTypeInfosRequest;
 import com.dcspa.prism.dto.UpdateLibelleRequest;
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.AlphaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -39,21 +41,26 @@ public class AlphaController {
 	@GetMapping
 	public ResponseEntity<Page<CentreTypeListItem>> findAll(
 			@PageableDefault(size = 20, sort = "id") Pageable pageable,
-			@ModelAttribute AlphaListFilter filter) {
-		return ResponseEntity.ok(alphaService.findAllListItems(pageable, filter));
+			@ModelAttribute AlphaListFilter filter,
+			@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.ok(alphaService.findAllListItems(pageable, filter, user));
 	}
 
 	// Détail d’un enregistrement Alpha par identifiant.
 	@GetMapping("/{id}")
-	public ResponseEntity<CentreWithPromoteurItem> findById(@PathVariable Integer id) {
-		return alphaService.findDetailedById(id)
+	public ResponseEntity<CentreWithPromoteurItem> findById(
+			@PathVariable Integer id,
+			@AuthenticationPrincipal AuthUser user) {
+		return alphaService.findDetailedById(id, user)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping("/search")
-	public ResponseEntity<List<CentreWithPromoteurItem>> search(@RequestBody(required = false) CentreSearchRequest request) {
-		return ResponseEntity.ok(alphaService.searchDetailed(request));
+	public ResponseEntity<List<CentreWithPromoteurItem>> search(
+			@RequestBody(required = false) CentreSearchRequest request,
+			@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.ok(alphaService.searchDetailed(request, user));
 	}
 
 	// Création principale : promoteur, centre puis Alpha.

@@ -66,6 +66,10 @@ INSERT INTO fonctionnalite (code_fonctionnalite, module, libelle_fonctionnalite)
 SELECT 'ACTIVITES_CENTRE_INFOS', 'Activités centre', 'Informations centres activités centre'
 WHERE NOT EXISTS (SELECT 1 FROM fonctionnalite WHERE code_fonctionnalite = 'ACTIVITES_CENTRE_INFOS');
 
+INSERT INTO fonctionnalite (code_fonctionnalite, module, libelle_fonctionnalite)
+SELECT 'SAISIE_DONNEES', 'Workflow', 'Saisie des données'
+WHERE NOT EXISTS (SELECT 1 FROM fonctionnalite WHERE code_fonctionnalite = 'SAISIE_DONNEES');
+
 -- Rôles métier manquants.
 INSERT INTO app_role (code_role, libelle_role, description_role)
 SELECT 'CONSEILLER', 'Conseiller', 'Niveau 1'
@@ -124,7 +128,7 @@ SELECT f.id_fonctionnalite, p.id_permission, r.id_role
 FROM fonctionnalite f
 JOIN permission p ON p.code_permission IN ('LIRE', 'CREER', 'MODIFIER')
 JOIN app_role r ON r.code_role = 'CONSEILLER'
-WHERE f.code_fonctionnalite IN ('ACTIVITES_CENTRE_PARTENARIAT', 'ACTIVITES_CENTRE_PERFORMANCE', 'ACTIVITES_CENTRE_CONTROLE', 'ACTIVITES_CENTRE_EVALUATION')
+WHERE f.code_fonctionnalite IN ('ACTIVITES_CENTRE_PARTENARIAT', 'ACTIVITES_CENTRE_PERFORMANCE', 'ACTIVITES_CENTRE_CONTROLE', 'ACTIVITES_CENTRE_EVALUATION', 'SAISIE_DONNEES')
   AND NOT EXISTS (
     SELECT 1 FROM role_fonctionnalite_permission existing
     WHERE existing.id_fonctionnalite = f.id_fonctionnalite
@@ -159,13 +163,27 @@ WHERE f.code_fonctionnalite IN ('ACTIVITES_CENTRE_PARTENARIAT', 'ACTIVITES_CENTR
       AND existing.id_role = r.id_role
   );
 
+-- Lecture du workflow générique par les niveaux de validation.
+INSERT INTO role_fonctionnalite_permission (id_fonctionnalite, id_permission, id_role)
+SELECT f.id_fonctionnalite, p.id_permission, r.id_role
+FROM fonctionnalite f
+JOIN permission p ON p.code_permission = 'LIRE'
+JOIN app_role r ON r.code_role IN ('COORDONNATEUR', 'SUPERVISEUR', 'IEPP', 'SUPERVISEUR_AENF', 'DIRECTEUR')
+WHERE f.code_fonctionnalite = 'SAISIE_DONNEES'
+  AND NOT EXISTS (
+    SELECT 1 FROM role_fonctionnalite_permission existing
+    WHERE existing.id_fonctionnalite = f.id_fonctionnalite
+      AND existing.id_permission = p.id_permission
+      AND existing.id_role = r.id_role
+  );
+
 -- Validation hiérarchique uniquement pour performance, contrôle et évaluation.
 INSERT INTO role_fonctionnalite_permission (id_fonctionnalite, id_permission, id_role)
 SELECT f.id_fonctionnalite, p.id_permission, r.id_role
 FROM fonctionnalite f
 JOIN permission p ON p.code_permission = 'VALIDER'
 JOIN app_role r ON r.code_role IN ('COORDONNATEUR', 'SUPERVISEUR', 'SUPERVISEUR_AENF', 'DIRECTEUR')
-WHERE f.code_fonctionnalite IN ('ACTIVITES_CENTRE_PERFORMANCE', 'ACTIVITES_CENTRE_CONTROLE', 'ACTIVITES_CENTRE_EVALUATION')
+WHERE f.code_fonctionnalite IN ('ACTIVITES_CENTRE_PERFORMANCE', 'ACTIVITES_CENTRE_CONTROLE', 'ACTIVITES_CENTRE_EVALUATION', 'SAISIE_DONNEES')
   AND NOT EXISTS (
     SELECT 1 FROM role_fonctionnalite_permission existing
     WHERE existing.id_fonctionnalite = f.id_fonctionnalite
@@ -246,7 +264,8 @@ WHERE f.code_fonctionnalite IN (
   'ACTIVITES_CENTRE_PERFORMANCE',
   'ACTIVITES_CENTRE_CONTROLE',
   'ACTIVITES_CENTRE_EVALUATION',
-  'ACTIVITES_CENTRE_INFOS'
+  'ACTIVITES_CENTRE_INFOS',
+  'SAISIE_DONNEES'
 )
   AND NOT EXISTS (
     SELECT 1 FROM role_fonctionnalite_permission existing
