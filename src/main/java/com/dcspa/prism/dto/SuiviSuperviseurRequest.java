@@ -9,6 +9,7 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SuiviSuperviseurRequest {
 	private Integer idAlpha;
+	private Integer idPeriodeActivite;
 	private Integer nombreVisiteConseillerSuperviseurEffectue;
 	private Integer nombreReunionBilanConseillerSuperviseur;
 }

@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 public class ControleRequest {
 	private Integer idAlpha;
+	private Integer idPeriodeActivite;
 	private Integer idDiscipline;
 	private Integer idManuel;
 	private Integer idNiveauControle;

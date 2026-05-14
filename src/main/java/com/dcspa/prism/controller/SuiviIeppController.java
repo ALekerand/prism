@@ -3,8 +3,10 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.SuiviIeppRequest;
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.entity.SuiviIepp;
 import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.repository.SuiviIeppRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.util.LinkedHashMap;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SuiviIeppController {
 	private final SuiviIeppRepository repository;
 	private final AlphaRepository alphaRepository;
+	private final PeriodeActiviteRepository periodeActiviteRepository;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -136,6 +139,13 @@ public class SuiviIeppController {
 		if (r == null || r.getIdAlpha() == null) throw new IllegalArgumentException("idAlpha est obligatoire");
 		Alpha alpha = alphaRepository.findById(r.getIdAlpha()).orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdAlpha()));
 		e.setIdAlpha(alpha);
+		if (r.getIdPeriodeActivite() != null) {
+			PeriodeActivite periode = periodeActiviteRepository.findById(r.getIdPeriodeActivite().longValue())
+					.orElseThrow(() -> new IllegalArgumentException("Période d'activité introuvable: " + r.getIdPeriodeActivite()));
+			e.setIdPeriodeActivite(periode);
+		} else if (e.getId() == null) {
+			throw new IllegalArgumentException("idPeriodeActivite est obligatoire");
+		}
 		e.setNombreVisiteEffectueParIepp(r.getNombreVisiteEffectueParIepp());
 		e.setNombreReunionPointActiviteAlpha(r.getNombreReunionPointActiviteAlpha());
 	}
@@ -144,6 +154,7 @@ public class SuiviIeppController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		m.put("nombreVisiteEffectueParIepp", e.getNombreVisiteEffectueParIepp());
 		m.put("nombreReunionPointActiviteAlpha", e.getNombreReunionPointActiviteAlpha());
 		m.put("valideeIepp", Boolean.TRUE.equals(e.getValideeIepp()));

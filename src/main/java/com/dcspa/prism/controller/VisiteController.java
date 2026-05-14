@@ -4,8 +4,10 @@ import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.VisiteRequest;
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.entity.Visite;
 import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.repository.VisiteRepository;
 import com.dcspa.prism.service.SaisieWorkflowService;
 import com.dcspa.prism.service.VisiteWorkflowListRules;
@@ -30,6 +32,7 @@ public class VisiteController {
 
 	private final VisiteRepository repository;
 	private final AlphaRepository alphaRepository;
+	private final PeriodeActiviteRepository periodeActiviteRepository;
 	private final SaisieWorkflowService saisieWorkflowService;
 
 	@Transactional(readOnly = true)
@@ -91,11 +94,14 @@ public class VisiteController {
 	@Transactional(readOnly = true)
 	@GetMapping("/search")
 	public ResponseEntity<List<Map<String, Object>>> search(@RequestParam(required = false) Integer idAlpha,
+			@RequestParam(required = false) Integer idPeriodeActivite,
 			@RequestParam(required = false) String maitriseSeanceLecture,
 			@AuthenticationPrincipal AuthUser user) {
 		String m = maitriseSeanceLecture == null ? null : maitriseSeanceLecture.toLowerCase();
 		List<Visite> filtered = repository.findAll().stream()
 				.filter(x -> idAlpha == null || idAlpha.equals(JpaAssociationIds.intIdOrNull(x.getIdAlpha())))
+				.filter(x -> idPeriodeActivite == null
+						|| idPeriodeActivite.equals(JpaAssociationIds.intIdOrNull(x.getIdPeriodeActivite())))
 				.filter(x -> m == null || (x.getMaitriseSeanceLecture() != null && x.getMaitriseSeanceLecture().toLowerCase().contains(m)))
 				.toList();
 		Map<Integer, Map<String, Object>> workflowById = workflowStatusesFor(filtered, user);
@@ -143,6 +149,13 @@ public class VisiteController {
 		if (r == null || r.getIdAlpha() == null) throw new IllegalArgumentException("idAlpha est obligatoire");
 		Alpha alpha = alphaRepository.findById(r.getIdAlpha()).orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdAlpha()));
 		e.setIdAlpha(alpha);
+		if (r.getIdPeriodeActivite() != null) {
+			PeriodeActivite periode = periodeActiviteRepository.findById(r.getIdPeriodeActivite().longValue())
+					.orElseThrow(() -> new IllegalArgumentException("Période d'activité introuvable: " + r.getIdPeriodeActivite()));
+			e.setIdPeriodeActivite(periode);
+		} else if (e.getId() == null) {
+			throw new IllegalArgumentException("idPeriodeActivite est obligatoire");
+		}
 		e.setMaitriseSeanceLecture(r.getMaitriseSeanceLecture());
 		e.setMaitriseSeanceEcriture(r.getMaitriseSeanceEcriture());
 		e.setMaitriseSeanceCalcul(r.getMaitriseSeanceCalcul());
@@ -156,6 +169,7 @@ public class VisiteController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		int totalVisitesConseiller = Math.toIntExact(repository.countByIdAlpha_Id(JpaAssociationIds.intIdOrNull(e.getIdAlpha())));
 		m.put("maitriseSeanceLecture", e.getMaitriseSeanceLecture());
 		m.put("maitriseSeanceEcriture", e.getMaitriseSeanceEcriture());
@@ -173,6 +187,9 @@ public class VisiteController {
 
 	private void validatePointsCreation(VisiteRequest body) {
 		if (body == null || body.getIdAlpha() == null) throw new IllegalArgumentException("idAlpha est obligatoire");
+		if (body.getIdPeriodeActivite() == null) {
+			throw new IllegalArgumentException("idPeriodeActivite est obligatoire");
+		}
 		String mode = normalizeMode(body.getMode());
 		if (mode != null && !"points".equals(mode)) {
 			throw new IllegalArgumentException("Création impossible : utilisez la modification pour le suivi de visite.");

@@ -28,6 +28,10 @@ public class Visite {
 	@JoinColumn(name = "ID_ALPHA", nullable = false)
 	private Alpha idAlpha;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PERIODE_ACTIVITE")
+	private PeriodeActivite idPeriodeActivite;
+
 	@Column(name = "MAITRISE_SEANCE_LECTURE")
 	private String maitriseSeanceLecture;
 

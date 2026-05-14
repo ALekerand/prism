@@ -28,6 +28,10 @@ public class Performance implements ActivitesCentreWorkflowEntity {
 	@JoinColumn(name = "ID_ALPHA", nullable = false)
 	private Alpha idAlpha;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PERIODE_ACTIVITE")
+	private PeriodeActivite idPeriodeActivite;
+
 	@Column(name = "TAUX_FREQUENTATION_PAR_MOIS")
 	private String tauxFrequentationParMois;
 

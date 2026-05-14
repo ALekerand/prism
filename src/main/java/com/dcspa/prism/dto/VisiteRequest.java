@@ -8,6 +8,7 @@ import lombok.Setter;
 public class VisiteRequest {
 	private String mode;
 	private Integer idAlpha;
+	private Integer idPeriodeActivite;
 	private String maitriseSeanceLecture;
 	private String maitriseSeanceEcriture;
 	private String maitriseSeanceCalcul;

@@ -8,8 +8,10 @@ import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.PerformanceRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Performance;
+import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.repository.PerformanceRepository;
+import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,6 +31,7 @@ public class PerformanceController {
 	private final PerformanceRepository repository;
 	private final ActivitesCentreSaisieWorkflowGate saisieWorkflowGate;
 	private final AlphaRepository alphaRepository;
+	private final PeriodeActiviteRepository periodeActiviteRepository;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -64,6 +67,7 @@ public class PerformanceController {
 	@Transactional(readOnly = true)
 	@GetMapping("/search")
 	public ResponseEntity<?> search(@RequestParam(required = false) Integer idAlpha,
+			@RequestParam(required = false) Integer idPeriodeActivite,
 			@RequestParam(required = false) String tauxFrequentationParMois,
 			@AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
@@ -71,6 +75,8 @@ public class PerformanceController {
 		String t = tauxFrequentationParMois == null ? null : tauxFrequentationParMois.toLowerCase();
 		return ResponseEntity.ok(repository.findAll().stream()
 				.filter(x -> idAlpha == null || idAlpha.equals(JpaAssociationIds.intIdOrNull(x.getIdAlpha())))
+				.filter(x -> idPeriodeActivite == null
+						|| idPeriodeActivite.equals(JpaAssociationIds.intIdOrNull(x.getIdPeriodeActivite())))
 				.filter(x -> t == null || (x.getTauxFrequentationParMois() != null && x.getTauxFrequentationParMois().toLowerCase().contains(t)))
 				.map(this::toRow).toList());
 	}
@@ -153,6 +159,13 @@ public class PerformanceController {
 		if (r == null || r.getIdAlpha() == null) throw new IllegalArgumentException("idAlpha est obligatoire");
 		Alpha alpha = alphaRepository.findById(r.getIdAlpha()).orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdAlpha()));
 		e.setIdAlpha(alpha);
+		if (r.getIdPeriodeActivite() != null) {
+			PeriodeActivite periode = periodeActiviteRepository.findById(r.getIdPeriodeActivite().longValue())
+					.orElseThrow(() -> new IllegalArgumentException("Période d'activité introuvable: " + r.getIdPeriodeActivite()));
+			e.setIdPeriodeActivite(periode);
+		} else if (e.getId() == null) {
+			throw new IllegalArgumentException("idPeriodeActivite est obligatoire");
+		}
 		e.setTauxFrequentationParMois(r.getTauxFrequentationParMois());
 		e.setTauxProgressionApprentissageLecture(r.getTauxProgressionApprentissageLecture());
 		e.setTauxProgressionApprentissageEcriture(r.getTauxProgressionApprentissageEcriture());
@@ -164,6 +177,7 @@ public class PerformanceController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		m.put("tauxFrequentationParMois", e.getTauxFrequentationParMois());
 		m.put("tauxProgressionApprentissageLecture", e.getTauxProgressionApprentissageLecture());
 		m.put("tauxProgressionApprentissageEcriture", e.getTauxProgressionApprentissageEcriture());

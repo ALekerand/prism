@@ -3,8 +3,10 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.SuiviSuperviseurRequest;
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.entity.SuiviSuperviseur;
 import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.repository.SuiviSuperviseurRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.util.LinkedHashMap;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SuiviSuperviseurController {
 	private final SuiviSuperviseurRepository repository;
 	private final AlphaRepository alphaRepository;
+	private final PeriodeActiviteRepository periodeActiviteRepository;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -135,6 +138,13 @@ public class SuiviSuperviseurController {
 		if (r == null || r.getIdAlpha() == null) throw new IllegalArgumentException("idAlpha est obligatoire");
 		Alpha alpha = alphaRepository.findById(r.getIdAlpha()).orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdAlpha()));
 		e.setIdAlpha(alpha);
+		if (r.getIdPeriodeActivite() != null) {
+			PeriodeActivite periode = periodeActiviteRepository.findById(r.getIdPeriodeActivite().longValue())
+					.orElseThrow(() -> new IllegalArgumentException("Période d'activité introuvable: " + r.getIdPeriodeActivite()));
+			e.setIdPeriodeActivite(periode);
+		} else if (e.getId() == null) {
+			throw new IllegalArgumentException("idPeriodeActivite est obligatoire");
+		}
 		e.setNombreVisiteConseillerSuperviseurEffectue(r.getNombreVisiteConseillerSuperviseurEffectue());
 		e.setNombreReunionBilanConseillerSuperviseur(r.getNombreReunionBilanConseillerSuperviseur());
 	}
@@ -143,6 +153,7 @@ public class SuiviSuperviseurController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		m.put("nombreVisiteConseillerSuperviseurEffectue", e.getNombreVisiteConseillerSuperviseurEffectue());
 		m.put("nombreReunionBilanConseillerSuperviseur", e.getNombreReunionBilanConseillerSuperviseur());
 		m.put("valideeSuperviseur", Boolean.TRUE.equals(e.getValideeSuperviseur()));

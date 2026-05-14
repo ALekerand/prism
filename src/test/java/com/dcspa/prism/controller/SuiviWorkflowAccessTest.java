@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import com.dcspa.prism.entity.SuiviSuperviseur;
 import com.dcspa.prism.entity.SuiviIepp;
 import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.repository.SuiviIeppRepository;
 import com.dcspa.prism.repository.SuiviSuperviseurRepository;
 import com.dcspa.prism.security.AuthUser;
@@ -22,7 +23,8 @@ class SuiviWorkflowAccessTest {
 	@Test
 	void conseillerCannotReadIeppFollowupRows() {
 		SuiviIeppRepository repository = mock(SuiviIeppRepository.class);
-		SuiviIeppController controller = new SuiviIeppController(repository, mock(AlphaRepository.class));
+		SuiviIeppController controller = new SuiviIeppController(repository, mock(AlphaRepository.class),
+				mock(PeriodeActiviteRepository.class));
 
 		ResponseEntity<?> response = controller.findAll(user("POINTS_VISITES:LIRE", "VALIDATION_VISITES_CONSEILLER:VALIDER"));
 
@@ -40,7 +42,8 @@ class SuiviWorkflowAccessTest {
 		validated.setId(2);
 		validated.setValideeIepp(true);
 		when(repository.findAll()).thenReturn(List.of(draft, validated));
-		SuiviIeppController controller = new SuiviIeppController(repository, mock(AlphaRepository.class));
+		SuiviIeppController controller = new SuiviIeppController(repository, mock(AlphaRepository.class),
+				mock(PeriodeActiviteRepository.class));
 
 		ResponseEntity<?> response = controller.findAll(user("SUIVI_CENTRALE:LIRE"));
 
@@ -61,7 +64,8 @@ class SuiviWorkflowAccessTest {
 		validated.setId(2);
 		validated.setValideeSuperviseur(true);
 		when(repository.findAll()).thenReturn(List.of(draft, validated));
-		SuiviSuperviseurController controller = new SuiviSuperviseurController(repository, mock(AlphaRepository.class));
+		SuiviSuperviseurController controller = new SuiviSuperviseurController(repository, mock(AlphaRepository.class),
+				mock(PeriodeActiviteRepository.class));
 
 		ResponseEntity<?> response = controller.findAll(user("SUIVI_CENTRALE:LIRE"));
 

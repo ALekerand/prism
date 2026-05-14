@@ -14,12 +14,14 @@ import com.dcspa.prism.entity.Discipline;
 import com.dcspa.prism.entity.Manuel;
 import com.dcspa.prism.entity.NiveauAlpha;
 import com.dcspa.prism.entity.NiveauControle;
+import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.repository.ControleRepository;
 import com.dcspa.prism.repository.DisciplineRepository;
 import com.dcspa.prism.repository.ManuelRepository;
 import com.dcspa.prism.repository.NiveauAlphaRepository;
 import com.dcspa.prism.repository.NiveauControleRepository;
+import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.time.LocalTime;
 import java.util.LinkedHashMap;
@@ -44,6 +46,7 @@ public class ControleController {
 	private final ManuelRepository manuelRepository;
 	private final NiveauAlphaRepository niveauAlphaRepository;
 	private final NiveauControleRepository niveauControleRepository;
+	private final PeriodeActiviteRepository periodeActiviteRepository;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -68,6 +71,7 @@ public class ControleController {
 			@RequestParam(required = false) Integer idDiscipline,
 			@RequestParam(required = false) Integer idManuel,
 			@RequestParam(required = false) Integer idNiveauControle,
+			@RequestParam(required = false) Integer idPeriodeActivite,
 			@RequestParam(required = false) Boolean conformiteProgramme,
 			@AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
@@ -77,6 +81,8 @@ public class ControleController {
 				.filter(x -> idDiscipline == null || idDiscipline.equals(JpaAssociationIds.intIdOrNull(x.getIdDiscipline())))
 				.filter(x -> idManuel == null || idManuel.equals(JpaAssociationIds.intIdOrNull(x.getIdManuel())))
 				.filter(x -> idNiveauControle == null || idNiveauControle.equals(JpaAssociationIds.intIdOrNull(x.getIdNiveauControle())))
+				.filter(x -> idPeriodeActivite == null
+						|| idPeriodeActivite.equals(JpaAssociationIds.intIdOrNull(x.getIdPeriodeActivite())))
 				.filter(x -> conformiteProgramme == null || conformiteProgramme.equals(x.getConformiteProgramme()))
 				.map(this::toRow)
 				.toList());
@@ -179,6 +185,13 @@ public class ControleController {
 		NiveauControle n = r.getIdNiveauControle() == null ? null : niveauControleRepository.findById(r.getIdNiveauControle()).orElseThrow(() -> new IllegalArgumentException("Niveau controle introuvable: " + r.getIdNiveauControle()));
 		NiveauAlpha niveauAlpha = r.getIdNiveauAlpha() == null ? null : niveauAlphaRepository.findById(r.getIdNiveauAlpha()).orElseThrow(() -> new IllegalArgumentException("Niveau Alpha introuvable: " + r.getIdNiveauAlpha()));
 		e.setIdAlpha(alpha);
+		if (r.getIdPeriodeActivite() != null) {
+			PeriodeActivite periode = periodeActiviteRepository.findById(r.getIdPeriodeActivite().longValue())
+					.orElseThrow(() -> new IllegalArgumentException("Période d'activité introuvable: " + r.getIdPeriodeActivite()));
+			e.setIdPeriodeActivite(periode);
+		} else if (e.getId() == null) {
+			throw new IllegalArgumentException("idPeriodeActivite est obligatoire");
+		}
 		e.setIdDiscipline(d);
 		e.setIdManuel(m);
 		e.setIdNiveauControle(n);
@@ -239,6 +252,7 @@ public class ControleController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "Discipline", e.getIdDiscipline());
 		ReferentielEnricher.putRef(m, "Manuel", e.getIdManuel());
 		ReferentielEnricher.putRef(m, "NiveauControle", e.getIdNiveauControle());
