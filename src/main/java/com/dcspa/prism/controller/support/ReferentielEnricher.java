@@ -221,6 +221,12 @@ public final class ReferentielEnricher {
 		m.put("prenom", p.getPrenom());
 		m.put("contact", p.getContact());
 		m.put("fonction", p.getFonction());
+		m.put("sexe", p.getSexe());
+		m.put("dateNaissance", p.getDateNaissance());
+		m.put("anciennete", p.getAnciennete());
+		m.put("boitePostale", p.getBoitePostale());
+		m.put("niveauEtudes", p.getNiveauEtudes());
+		m.put("civilite", p.getCivilite());
 		return m;
 	}
 

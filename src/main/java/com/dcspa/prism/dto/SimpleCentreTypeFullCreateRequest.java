@@ -10,6 +10,12 @@ import java.util.List;
 public class SimpleCentreTypeFullCreateRequest {
     private String libelle;
 
+    /** Métadonnée réservée au type CEC (ignorée pour CP / SIE). */
+    private String ecoleTutrice;
+
+    /** Année civile de création du CEC (ignorée pour CP / SIE). */
+    private Integer anneeCreation;
+
     private PromoteurUpsertRequest promoteur;
     private CentreCreatePayload centre;
     private List<CentreTypeNiveauCreatePayload> niveaux;

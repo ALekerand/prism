@@ -44,6 +44,12 @@ public class UpdateCentreTypeInfosRequest {
     /** Si présent, met à jour le promoteur lié au centre sous-jacent. */
     private Integer idPromoteur;
 
+    /** Renseigné pour les fiches CEC uniquement. */
+    private String ecoleTutrice;
+
+    /** Année civile de création (CEC). */
+    private Integer anneeCreation;
+
     /** Remplacement complet des niveaux Alpha si le champ est présent. */
     private List<AlphaNiveauCreatePayload> niveauxAlpha;
 

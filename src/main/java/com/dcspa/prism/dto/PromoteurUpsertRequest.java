@@ -4,6 +4,8 @@ import com.dcspa.prism.entity.TypePromoteur;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 public class PromoteurUpsertRequest {
@@ -27,6 +29,12 @@ public class PromoteurUpsertRequest {
         private String prenom;
         private String contact;
         private String fonction;
+        private String sexe;
+        private LocalDate dateNaissance;
+        private String anciennete;
+        private String boitePostale;
+        private String niveauEtudes;
+        private String civilite;
     }
 
     @Getter

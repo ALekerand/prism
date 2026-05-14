@@ -5,8 +5,8 @@ import java.util.Objects;
 
 /**
  * Règles de visibilité des lignes de saisie (liste) pour le scénario commission :
- * conseiller : uniquement ses saisies ; coordonnateur : toutes les lignes de son IEP (tous statuts) ;
- * niveaux supérieurs : données hors brouillon dans le même IEP lorsque l’utilisateur a un {@code idIep}.
+ * conseiller : uniquement ses saisies ; coordonnateur / IEPP : lignes de son IEP (tous statuts) ;
+ * superviseur DRENA : lignes des IEP de sa DRENA (hors brouillon) ; niveau national : pas de filtre géographique.
  */
 public final class SaisieWorkflowVisibilityRules {
 
@@ -18,11 +18,12 @@ public final class SaisieWorkflowVisibilityRules {
 			String workflowStatut,
 			String proprietaire,
 			String soumisPar,
-			Integer rowIepId) {
+			Integer rowIepId,
+			Integer rowDrenaId) {
 		if (user == null) {
 			return false;
 		}
-		if (user.hasAnyRole("ADMIN", "SUPER_ADMIN", "SUPER_ROOT")) {
+		if (user.hasAnyRole("ADMIN", "SUPER_ADMIN", "SUPER_ROOT", "SUPERVISEUR_AENF", "DIRECTEUR")) {
 			return true;
 		}
 		String st = workflowStatut == null || workflowStatut.isBlank() ? "BROUILLON" : workflowStatut;
@@ -31,20 +32,32 @@ public final class SaisieWorkflowVisibilityRules {
 			if (Objects.equals(me, proprietaire) || Objects.equals(me, soumisPar)) {
 				return true;
 			}
-			// Brouillon sans propriétaire en base (données historiques) : visible pour permettre la revendication.
 			return "BROUILLON".equals(st) && proprietaire == null && soumisPar == null;
 		}
-		if (user.hasAnyRole("COORDONNATEUR", "SUPERVISEUR", "SUPERVISEUR_AENF", "DIRECTEUR", "IEPP")) {
+		if (user.hasRole("COORDONNATEUR") || user.hasRole("IEPP")) {
 			if (user.getIdIep() != null && rowIepId != null && !user.getIdIep().equals(rowIepId)) {
 				return false;
 			}
-			if (user.hasRole("COORDONNATEUR")) {
-				return true;
+			return true;
+		}
+		if (user.hasRole("SUPERVISEUR")) {
+			if (user.getIdDrena() != null && rowDrenaId != null) {
+				if (!user.getIdDrena().equals(rowDrenaId)) {
+					return false;
+				}
+			} else if (user.getIdIep() != null && rowIepId != null && !user.getIdIep().equals(rowIepId)) {
+				return false;
 			}
 			if ("BROUILLON".equals(st)) {
 				return false;
 			}
 			return true;
+		}
+		if (user.getIdIep() != null && rowIepId != null && !user.getIdIep().equals(rowIepId)) {
+			return false;
+		}
+		if ("BROUILLON".equals(st)) {
+			return false;
 		}
 		return true;
 	}

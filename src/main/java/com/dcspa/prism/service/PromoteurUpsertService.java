@@ -61,11 +61,17 @@ public class PromoteurUpsertService {
         physique.setPromoteur(promoteur);
         physique.setCodePromoteur(promoteur.getCodePromoteur());
         physique.setLibellePromoteur(promoteur.getLibellePromoteur());
-        physique.setLibellePersonnePhysique(payload.getLibellePersonnePhysique());
-        physique.setNom(payload.getNom());
-        physique.setPrenom(payload.getPrenom());
-        physique.setContact(payload.getContact());
-        physique.setFonction(payload.getFonction());
+        physique.setLibellePersonnePhysique(trim(payload.getLibellePersonnePhysique()));
+        physique.setNom(trim(payload.getNom()));
+        physique.setPrenom(trim(payload.getPrenom()));
+        physique.setContact(trim(payload.getContact()));
+        physique.setFonction(trim(payload.getFonction()));
+        physique.setSexe(trim(payload.getSexe()));
+        physique.setDateNaissance(payload.getDateNaissance());
+        physique.setAnciennete(trim(payload.getAnciennete()));
+        physique.setBoitePostale(trim(payload.getBoitePostale()));
+        physique.setNiveauEtudes(trim(payload.getNiveauEtudes()));
+        physique.setCivilite(trim(payload.getCivilite()));
         personnephysiqueRepository.save(physique);
     }
 
@@ -100,5 +106,9 @@ public class PromoteurUpsertService {
         }
         String trimmed = value.trim();
         return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private String trim(String value) {
+        return normalize(value);
     }
 }

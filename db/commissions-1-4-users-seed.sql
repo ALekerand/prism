@@ -55,7 +55,11 @@ SELECT b'1',
        @pwd,
        m.id_region,
        m.id_drena,
-       m.id_iep,
+       CASE
+         WHEN n.num BETWEEN 1 AND 3 THEN m.id_iep_1
+         WHEN n.num BETWEEN 4 AND 6 THEN m.id_iep_2
+         ELSE m.id_iep_3
+       END,
        NULL,
        NULL,
        NULL,
@@ -63,7 +67,9 @@ SELECT b'1',
 FROM (
          SELECT ROW_NUMBER() OVER (ORDER BY di.id_drena) AS com_ix,
                 di.id_drena,
-                di.id_iep,
+                di.id_iep_1,
+                di.id_iep_2,
+                di.id_iep_3,
                 COALESCE(
                         (SELECT u.id_region
                          FROM app_user u
@@ -74,7 +80,29 @@ FROM (
                         (SELECT MIN(r.id_region) FROM region r)
                 ) AS id_region
          FROM (
-                  SELECT d.id_drena, MIN(i.id_iep) AS id_iep
+                  SELECT d.id_drena,
+                         MIN(i.id_iep) AS id_iep_1,
+                         COALESCE(
+                           (SELECT i2.id_iep
+                            FROM iep i2
+                            WHERE i2.id_drena = d.id_drena
+                            ORDER BY i2.id_iep
+                            LIMIT 1 OFFSET 1),
+                           MIN(i.id_iep)
+                         ) AS id_iep_2,
+                         COALESCE(
+                           (SELECT i3.id_iep
+                            FROM iep i3
+                            WHERE i3.id_drena = d.id_drena
+                            ORDER BY i3.id_iep
+                            LIMIT 1 OFFSET 2),
+                           (SELECT i2.id_iep
+                            FROM iep i2
+                            WHERE i2.id_drena = d.id_drena
+                            ORDER BY i2.id_iep
+                            LIMIT 1 OFFSET 1),
+                           MIN(i.id_iep)
+                         ) AS id_iep_3
                   FROM drena d
                            INNER JOIN iep i ON i.id_drena = d.id_drena
                   GROUP BY d.id_drena
@@ -106,7 +134,11 @@ SELECT b'1',
        @pwd,
        m.id_region,
        m.id_drena,
-       m.id_iep,
+       CASE
+         WHEN n.num = 1 THEN m.id_iep_1
+         WHEN n.num = 2 THEN m.id_iep_2
+         ELSE m.id_iep_3
+       END,
        NULL,
        NULL,
        NULL,
@@ -114,7 +146,9 @@ SELECT b'1',
 FROM (
          SELECT ROW_NUMBER() OVER (ORDER BY di.id_drena) AS com_ix,
                 di.id_drena,
-                di.id_iep,
+                di.id_iep_1,
+                di.id_iep_2,
+                di.id_iep_3,
                 COALESCE(
                         (SELECT u.id_region
                          FROM app_user u
@@ -125,7 +159,29 @@ FROM (
                         (SELECT MIN(r.id_region) FROM region r)
                 ) AS id_region
          FROM (
-                  SELECT d.id_drena, MIN(i.id_iep) AS id_iep
+                  SELECT d.id_drena,
+                         MIN(i.id_iep) AS id_iep_1,
+                         COALESCE(
+                           (SELECT i2.id_iep
+                            FROM iep i2
+                            WHERE i2.id_drena = d.id_drena
+                            ORDER BY i2.id_iep
+                            LIMIT 1 OFFSET 1),
+                           MIN(i.id_iep)
+                         ) AS id_iep_2,
+                         COALESCE(
+                           (SELECT i3.id_iep
+                            FROM iep i3
+                            WHERE i3.id_drena = d.id_drena
+                            ORDER BY i3.id_iep
+                            LIMIT 1 OFFSET 2),
+                           (SELECT i2.id_iep
+                            FROM iep i2
+                            WHERE i2.id_drena = d.id_drena
+                            ORDER BY i2.id_iep
+                            LIMIT 1 OFFSET 1),
+                           MIN(i.id_iep)
+                         ) AS id_iep_3
                   FROM drena d
                            INNER JOIN iep i ON i.id_drena = d.id_drena
                   GROUP BY d.id_drena
@@ -269,7 +325,9 @@ UPDATE app_user u
 INNER JOIN (
   SELECT ROW_NUMBER() OVER (ORDER BY di.id_drena) AS com_ix,
          di.id_drena,
-         di.id_iep,
+         di.id_iep_1,
+         di.id_iep_2,
+         di.id_iep_3,
          COALESCE(
            (SELECT u2.id_region
             FROM app_user u2
@@ -280,7 +338,29 @@ INNER JOIN (
            (SELECT MIN(r.id_region) FROM region r)
          ) AS id_region
   FROM (
-    SELECT d.id_drena, MIN(i.id_iep) AS id_iep
+    SELECT d.id_drena,
+           MIN(i.id_iep) AS id_iep_1,
+           COALESCE(
+             (SELECT i2.id_iep
+              FROM iep i2
+              WHERE i2.id_drena = d.id_drena
+              ORDER BY i2.id_iep
+              LIMIT 1 OFFSET 1),
+             MIN(i.id_iep)
+           ) AS id_iep_2,
+           COALESCE(
+             (SELECT i3.id_iep
+              FROM iep i3
+              WHERE i3.id_drena = d.id_drena
+              ORDER BY i3.id_iep
+              LIMIT 1 OFFSET 2),
+             (SELECT i2.id_iep
+              FROM iep i2
+              WHERE i2.id_drena = d.id_drena
+              ORDER BY i2.id_iep
+              LIMIT 1 OFFSET 1),
+             MIN(i.id_iep)
+           ) AS id_iep_3
     FROM drena d
     INNER JOIN iep i ON i.id_drena = d.id_drena
     GROUP BY d.id_drena
@@ -288,7 +368,19 @@ INNER JOIN (
 ) m ON m.com_ix BETWEEN 1 AND 4
 SET u.id_region = m.id_region,
     u.id_drena  = m.id_drena,
-    u.id_iep    = m.id_iep
+    u.id_iep    = CASE
+                    WHEN u.username LIKE CONCAT('commission_', m.com_ix, '_coordonnateur_%')
+                      THEN CASE
+                             WHEN CAST(SUBSTRING_INDEX(u.username, '_', -1) AS UNSIGNED) = 1 THEN m.id_iep_1
+                             WHEN CAST(SUBSTRING_INDEX(u.username, '_', -1) AS UNSIGNED) = 2 THEN m.id_iep_2
+                             ELSE m.id_iep_3
+                           END
+                    ELSE CASE
+                           WHEN CAST(SUBSTRING_INDEX(u.username, '_', -1) AS UNSIGNED) BETWEEN 1 AND 3 THEN m.id_iep_1
+                           WHEN CAST(SUBSTRING_INDEX(u.username, '_', -1) AS UNSIGNED) BETWEEN 4 AND 6 THEN m.id_iep_2
+                           ELSE m.id_iep_3
+                         END
+                  END
 WHERE u.username LIKE CONCAT('commission_', m.com_ix, '_conseiller_%')
    OR u.username LIKE CONCAT('commission_', m.com_ix, '_coordonnateur_%');
 

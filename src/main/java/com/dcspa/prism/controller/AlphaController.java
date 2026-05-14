@@ -1,5 +1,4 @@
 package com.dcspa.prism.controller;
-import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
 import com.dcspa.prism.dto.AlphaCreateRequest;
 import com.dcspa.prism.dto.AlphaFullCreateRequest;
@@ -65,42 +64,59 @@ public class AlphaController {
 
 	// Création principale : promoteur, centre puis Alpha.
 	@PostMapping
-	public ResponseEntity<CentreTypeListItem> create(@RequestBody AlphaFullCreateRequest req) {
-		return ResponseEntity.status(201).body(alphaService.createFull(req));
+	public ResponseEntity<CentreTypeListItem> create(
+			@RequestBody AlphaFullCreateRequest req,
+			@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.status(201).body(alphaService.createFull(req, user));
 	}
 
 	// Ancien endpoint simple conservé avec préfixe old.
 	@PostMapping("/old")
-	public ResponseEntity<CentreTypeListItem> createOld(@RequestBody AlphaCreateRequest req) {
-		return ResponseEntity.status(201).body(alphaService.create(req));
+	public ResponseEntity<CentreTypeListItem> createOld(
+			@RequestBody AlphaCreateRequest req,
+			@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.status(201).body(alphaService.create(req, user));
 	}
 
 	// Mise à jour d’un Alpha en conservant les champs auto-générés.
 	@PutMapping("/{id}")
-	public ResponseEntity<Alpha> update(@PathVariable Integer id, @RequestBody Alpha alpha) {
-		return ReferentialPutHelper.putPreservingAutoCode(id, alpha, alphaService::findById, alphaService::save);
+	public ResponseEntity<Alpha> update(
+			@PathVariable Integer id,
+			@RequestBody Alpha alpha,
+			@AuthenticationPrincipal AuthUser user) {
+		return alphaService.putPreservingAutoCode(id, alpha, user)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	// Met à jour uniquement le libellé affiché.
 	@PutMapping("/{id}/libelle")
-	public ResponseEntity<CentreTypeListItem> updateLibelle(@PathVariable Integer id, @RequestBody UpdateLibelleRequest req) {
-		return alphaService.updateLibelle(id, req)
+	public ResponseEntity<CentreTypeListItem> updateLibelle(
+			@PathVariable Integer id,
+			@RequestBody UpdateLibelleRequest req,
+			@AuthenticationPrincipal AuthUser user) {
+		return alphaService.updateLibelle(id, req, user)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	// Met à jour les informations détaillées (localisation, équipements, etc.).
 	@PutMapping("/{id}/infos")
-	public ResponseEntity<CentreTypeListItem> updateInfos(@PathVariable Integer id, @RequestBody UpdateCentreTypeInfosRequest req) {
-		return alphaService.updateInfos(id, req)
+	public ResponseEntity<CentreTypeListItem> updateInfos(
+			@PathVariable Integer id,
+			@RequestBody UpdateCentreTypeInfosRequest req,
+			@AuthenticationPrincipal AuthUser user) {
+		return alphaService.updateInfos(id, req, user)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	// Supprime un centre Alpha.
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-		alphaService.deleteById(id);
+	public ResponseEntity<Void> delete(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		if (!alphaService.deleteById(id, user)) {
+			return ResponseEntity.notFound().build();
+		}
 		return ResponseEntity.noContent().build();
 	}
 }

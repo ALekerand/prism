@@ -40,8 +40,11 @@ import com.dcspa.prism.repository.PeriodiciteRepository;
 import com.dcspa.prism.repository.PersonnephysiqueRepository;
 import com.dcspa.prism.repository.PersonnemoraleRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
+import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
 import com.dcspa.prism.repository.spec.SimpleCentreTypeSpecifications;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.pagination.PageableUtils;
+import com.dcspa.prism.support.NumericSanitizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -73,6 +76,8 @@ public class CpService {
 	private final PersonnemoraleRepository personnemoraleRepository;
 	private final CentreNiveauCreationService centreNiveauCreationService;
 	private final CpNiveauRepository cpNiveauRepository;
+	private final CirconscriptionResolver circonscriptionResolver;
+	private final CirconscriptionWriteGuard circonscriptionWriteGuard;
 
 	// Charge tous les CP.
 	@Transactional(readOnly = true)
@@ -82,9 +87,9 @@ public class CpService {
 
 	// Liste paginée avec filtres optionnels sur chaque colonne.
 	@Transactional(readOnly = true)
-	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, CpListFilter filter) {
+	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, CpListFilter filter, AuthUser authUser) {
 		Pageable p = PageableUtils.cap(pageable);
-		Specification<Cp> spec = SimpleCentreTypeSpecifications.forCp(filter);
+		Specification<Cp> spec = combineCpScope(filter, authUser);
 		return cpRepository.findAll(spec, p).map(CentreTypeListItemMapper::fromCp);
 	}
 
@@ -95,14 +100,19 @@ public class CpService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<CentreWithPromoteurItem> findDetailedById(Integer id) {
+	public Optional<CentreWithPromoteurItem> findDetailedById(Integer id, AuthUser authUser) {
+		if (!isCpWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
 		return findById(id).map(this::toDetailedItem);
 	}
 
 	@Transactional(readOnly = true)
-	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request) {
+	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request, AuthUser authUser) {
 		Map<String, String> criteria = request == null ? null : request.getCriteria();
-		return cpRepository.findAll().stream()
+		Specification<Cp> scope = CentreCirconscriptionSpecifications.forCp(circonscriptionResolver.resolve(authUser));
+		List<Cp> source = scope == null ? cpRepository.findAll() : cpRepository.findAll(scope);
+		return source.stream()
 				.map(this::toDetailedItem)
 				.filter(item -> CentreDetailedSearchSupport.matchesCriteria(item, criteria))
 				.toList();
@@ -117,12 +127,13 @@ public class CpService {
 
 	// Crée un CP lié à un centre existant.
 	@Transactional
-	public CentreTypeListItem create(SimpleCentreCreateRequest req) {
+	public CentreTypeListItem create(SimpleCentreCreateRequest req, AuthUser authUser) {
 		if (req == null || req.getCentreId() == null) {
 			throw new IllegalArgumentException("centreId est obligatoire");
 		}
 		Centre centre = centreRepository.findById(req.getCentreId())
 				.orElseThrow(() -> new IllegalArgumentException("Centre introuvable: " + req.getCentreId()));
+		circonscriptionWriteGuard.assertCentreEntityMatchesUser(centre, authUser);
 		Cp cp = new Cp();
 		cp.setCentre(centre);
 		cp.setLibellleCp(req.getLibelle());
@@ -132,12 +143,13 @@ public class CpService {
 
 	// Crée promoteur, centre puis fiche CP.
 	@Transactional
-	public CentreTypeListItem createFull(SimpleCentreTypeFullCreateRequest req) {
+	public CentreTypeListItem createFull(SimpleCentreTypeFullCreateRequest req, AuthUser authUser) {
 		if (req == null) throw new IllegalArgumentException("Requête obligatoire");
 		if (req.getCentre() == null) throw new IllegalArgumentException("centre est obligatoire");
 		if (req.getPromoteur() == null) throw new IllegalArgumentException("promoteur est obligatoire");
 
 		CentreCreatePayload c = req.getCentre();
+		circonscriptionWriteGuard.prepareCentreCreatePayload(c, authUser);
 		Promoteur promoteur = promoteurUpsertService.resolveOrCreate(req.getPromoteur());
 
 		LocaliteDImplantation localite = localiteRepository.findById(Objects.requireNonNull(c.getLocaliteId(), "localiteId est obligatoire"))
@@ -171,7 +183,7 @@ public class CpService {
 		centre.setEncadrerParMena(c.getEncadrerParMena());
 		centre.setEstElectrifie(c.getEstElectrifie());
 		centre.setADeLeau(c.getADeLeau());
-		centre.setNombreVisite(c.getNombreVisite());
+		centre.setNombreVisite(NumericSanitizer.nonNegativeOrNull(c.getNombreVisite()));
 		centre.setLocalisationCentre(c.getLocalisationCentre());
 		centre.setNomMilieuImplentation(resolveNomMilieuImplentation(c.getIdMilieuImplentation(), localite));
 		CentreSupplementalFields.applyToCentre(centre, c);
@@ -188,7 +200,10 @@ public class CpService {
 
 	// Met à jour le libellé uniquement.
 	@Transactional
-	public Optional<CentreTypeListItem> updateLibelle(Integer id, UpdateLibelleRequest req) {
+	public Optional<CentreTypeListItem> updateLibelle(Integer id, UpdateLibelleRequest req, AuthUser authUser) {
+		if (!isCpWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
 		Optional<Cp> opt = findById(id);
 		if (opt.isEmpty()) return Optional.empty();
 		Cp existing = opt.get();
@@ -198,11 +213,15 @@ public class CpService {
 
 	// Met à jour les informations détaillées du CP.
 	@Transactional
-	public Optional<CentreTypeListItem> updateInfos(Integer id, UpdateCentreTypeInfosRequest req) {
+	public Optional<CentreTypeListItem> updateInfos(Integer id, UpdateCentreTypeInfosRequest req, AuthUser authUser) {
+		if (!isCpWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
 		Optional<Cp> opt = findById(id);
 		if (opt.isEmpty()) return Optional.empty();
 		Cp existing = opt.get();
 		if (req != null) {
+			circonscriptionWriteGuard.sanitizeUpdateCentreInfos(req, authUser, existing.getIdIep(), existing.getIdLocalite());
 			existing.setLibellleCp(req.getLibelle());
 			existing.setIdLocalite(req.getIdLocalite());
 			existing.setIdIep(req.getIdIep());
@@ -212,7 +231,7 @@ public class CpService {
 			existing.setAutorisation(req.getAutorisation());
 			existing.setEstElectrifie(req.getEstElectrifie());
 			existing.setADeLeau(req.getADeLeau());
-			existing.setNombreVisite(req.getNombreVisite());
+			existing.setNombreVisite(NumericSanitizer.nonNegativeOrNull(req.getNombreVisite()));
 			existing.setLocalisationCentre(req.getLocalisationCentre());
 			existing.setNomMilieuImplentation(resolveNomMilieuImplentationForUpdate(req, existing.getIdLocalite()));
 			existing.setEncadreurNonMena(req.getEncadreurNonMena());
@@ -228,8 +247,33 @@ public class CpService {
 
 	// Supprime un CP.
 	@Transactional
-	public void deleteById(Integer id) {
+	public boolean deleteById(Integer id, AuthUser authUser) {
+		if (!isCpWithinCirconscription(id, authUser)) {
+			return false;
+		}
 		cpRepository.deleteById(id);
+		return true;
+	}
+
+	private Specification<Cp> combineCpScope(CpListFilter filter, AuthUser authUser) {
+		Specification<Cp> base = SimpleCentreTypeSpecifications.forCp(filter);
+		Specification<Cp> scope = CentreCirconscriptionSpecifications.forCp(circonscriptionResolver.resolve(authUser));
+		if (scope == null) {
+			return base;
+		}
+		return Specification.where(scope).and(base);
+	}
+
+	private boolean isCpWithinCirconscription(Integer cpId, AuthUser user) {
+		if (cpId == null) {
+			return false;
+		}
+		Specification<Cp> scope = CentreCirconscriptionSpecifications.forCp(circonscriptionResolver.resolve(user));
+		if (scope == null) {
+			return true;
+		}
+		Specification<Cp> idEq = (root, query, cb) -> cb.equal(root.get("id"), cpId);
+		return cpRepository.count(Specification.where(scope).and(idEq)) > 0;
 	}
 
 	// Contrôle minimal : centre présent.
@@ -465,6 +509,12 @@ public class CpService {
 			p.setPrenom(pp.getPrenom());
 			p.setContact(pp.getContact());
 			p.setFonction(pp.getFonction());
+			p.setSexe(pp.getSexe());
+			p.setDateNaissance(pp.getDateNaissance());
+			p.setAnciennete(pp.getAnciennete());
+			p.setBoitePostale(pp.getBoitePostale());
+			p.setNiveauEtudes(pp.getNiveauEtudes());
+			p.setCivilite(pp.getCivilite());
 			details.setPersonnePhysique(p);
 		}
 

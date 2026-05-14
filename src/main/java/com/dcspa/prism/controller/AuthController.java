@@ -4,6 +4,7 @@ import com.dcspa.prism.dto.LoginRequest;
 import com.dcspa.prism.dto.LoginResponse;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.AuthService;
+import com.dcspa.prism.support.BlockingReactive;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class AuthController {
     // Authentifie l’utilisateur et renvoie le jeton JWT.
     @PostMapping("/login")
     public Mono<ResponseEntity<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
-        return Mono.fromCallable(() -> authService.login(request))
+        return BlockingReactive.mono(() -> authService.login(request))
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> e instanceof IllegalArgumentException || e instanceof UsernameNotFoundException,
                         e -> Mono.just(ResponseEntity.status(401).build()));
@@ -40,6 +41,7 @@ public class AuthController {
         if (user == null) {
             return Mono.just(ResponseEntity.status(401).build());
         }
-        return Mono.just(ResponseEntity.ok(authService.buildAuthenticatedUserPayload(user)));
+        return BlockingReactive.mono(() -> authService.buildAuthenticatedUserPayload(user))
+                .map(ResponseEntity::ok);
     }
 }

@@ -1,5 +1,6 @@
 package com.dcspa.prism.service;
 
+import com.dcspa.prism.codegen.AutoCodePutMerge;
 import com.dcspa.prism.dto.AlphaCreateRequest;
 import com.dcspa.prism.dto.AlphaFullCreateRequest;
 import com.dcspa.prism.dto.AlphaListFilter;
@@ -48,10 +49,11 @@ import com.dcspa.prism.repository.PersonnemoraleRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.repository.RegimealphabetisationRepository;
 import com.dcspa.prism.repository.TypeAlphaRepository;
-import com.dcspa.prism.repository.spec.AlphaCirconscriptionScope;
 import com.dcspa.prism.repository.spec.AlphaSpecifications;
+import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.pagination.PageableUtils;
+import com.dcspa.prism.support.NumericSanitizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -88,6 +90,8 @@ public class AlphaService {
 	private final PersonnemoraleRepository personnemoraleRepository;
 	private final CentreNiveauCreationService centreNiveauCreationService;
 	private final AlphaNiveauRepository alphaNiveauRepository;
+	private final CirconscriptionResolver circonscriptionResolver;
+	private final CirconscriptionWriteGuard circonscriptionWriteGuard;
 
 	// Charge toutes les entités Alpha depuis la base.
 	@Transactional(readOnly = true)
@@ -100,7 +104,7 @@ public class AlphaService {
 	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, AlphaListFilter filter, AuthUser authUser) {
 		Pageable p = PageableUtils.cap(pageable);
 		AlphaListFilter f = filter == null ? new AlphaListFilter() : filter;
-		Specification<Alpha> scope = AlphaCirconscriptionScope.specification(authUser);
+		Specification<Alpha> scope = CentreCirconscriptionSpecifications.forAlpha(circonscriptionResolver.resolve(authUser));
 		if (f.isEmpty() && scope == null) {
 			return alphaRepository.findAllAsListItems(p);
 		}
@@ -127,7 +131,7 @@ public class AlphaService {
 	@Transactional(readOnly = true)
 	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request, AuthUser authUser) {
 		Map<String, String> criteria = request == null ? null : request.getCriteria();
-		Specification<Alpha> scope = AlphaCirconscriptionScope.specification(authUser);
+		Specification<Alpha> scope = CentreCirconscriptionSpecifications.forAlpha(circonscriptionResolver.resolve(authUser));
 		List<Alpha> source = scope == null ? alphaRepository.findAll() : alphaRepository.findAll(scope);
 		return source.stream()
 				.map(this::toDetailedItem)
@@ -136,7 +140,7 @@ public class AlphaService {
 	}
 
 	private boolean isAlphaWithinCirconscription(Integer alphaId, AuthUser user) {
-		Specification<Alpha> scope = AlphaCirconscriptionScope.specification(user);
+		Specification<Alpha> scope = CentreCirconscriptionSpecifications.forAlpha(circonscriptionResolver.resolve(user));
 		if (scope == null) {
 			return true;
 		}
@@ -153,12 +157,13 @@ public class AlphaService {
 
 	// Crée un Alpha à partir d’un centre existant et des références (campagne, type, régime).
 	@Transactional
-	public CentreTypeListItem create(AlphaCreateRequest req) {
+	public CentreTypeListItem create(AlphaCreateRequest req, AuthUser authUser) {
 		if (req == null || req.getCentreId() == null) {
 			throw new IllegalArgumentException("centreId est obligatoire");
 		}
 		Centre centre = centreRepository.findById(req.getCentreId())
 				.orElseThrow(() -> new IllegalArgumentException("Centre introuvable: " + req.getCentreId()));
+		circonscriptionWriteGuard.assertCentreEntityMatchesUser(centre, authUser);
 
 		Campagne campagne = campagneRepository.findById(Objects.requireNonNull(req.getCampagneId(), "campagneId est obligatoire"))
 				.orElseThrow(() -> new IllegalArgumentException("Campagne introuvable: " + req.getCampagneId()));
@@ -182,12 +187,13 @@ public class AlphaService {
 
 	// Chaîne promoteur → centre → Alpha puis retourne le DTO liste.
 	@Transactional
-	public CentreTypeListItem createFull(AlphaFullCreateRequest req) {
+	public CentreTypeListItem createFull(AlphaFullCreateRequest req, AuthUser authUser) {
 		if (req == null) throw new IllegalArgumentException("Requête obligatoire");
 		if (req.getCentre() == null) throw new IllegalArgumentException("centre est obligatoire");
 		if (req.getPromoteur() == null) throw new IllegalArgumentException("promoteur est obligatoire");
 
 		CentreCreatePayload c = req.getCentre();
+		circonscriptionWriteGuard.prepareCentreCreatePayload(c, authUser);
 		Promoteur promoteur = promoteurUpsertService.resolveOrCreate(req.getPromoteur());
 
 		LocaliteDImplantation localite = localiteRepository.findById(Objects.requireNonNull(c.getLocaliteId(), "localiteId est obligatoire"))
@@ -221,7 +227,7 @@ public class AlphaService {
 		centre.setEncadrerParMena(c.getEncadrerParMena());
 		centre.setEstElectrifie(c.getEstElectrifie());
 		centre.setADeLeau(c.getADeLeau());
-		centre.setNombreVisite(c.getNombreVisite());
+		centre.setNombreVisite(NumericSanitizer.nonNegativeOrNull(c.getNombreVisite()));
 		centre.setLocalisationCentre(c.getLocalisationCentre());
 		centre.setNomMilieuImplentation(resolveNomMilieuImplentation(c.getIdMilieuImplentation(), localite));
 		CentreSupplementalFields.applyToCentre(centre, c);
@@ -251,7 +257,10 @@ public class AlphaService {
 
 	// Met à jour le libellé ; vide si l’identifiant n’existe pas.
 	@Transactional
-	public Optional<CentreTypeListItem> updateLibelle(Integer id, UpdateLibelleRequest req) {
+	public Optional<CentreTypeListItem> updateLibelle(Integer id, UpdateLibelleRequest req, AuthUser authUser) {
+		if (!isAlphaWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
 		Optional<Alpha> opt = findById(id);
 		if (opt.isEmpty()) return Optional.empty();
 		Alpha existing = opt.get();
@@ -261,11 +270,15 @@ public class AlphaService {
 
 	// Met à jour les champs détaillés ; vide si l’identifiant n’existe pas.
 	@Transactional
-	public Optional<CentreTypeListItem> updateInfos(Integer id, UpdateCentreTypeInfosRequest req) {
+	public Optional<CentreTypeListItem> updateInfos(Integer id, UpdateCentreTypeInfosRequest req, AuthUser authUser) {
+		if (!isAlphaWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
 		Optional<Alpha> opt = findById(id);
 		if (opt.isEmpty()) return Optional.empty();
 		Alpha existing = opt.get();
 		if (req != null) {
+			circonscriptionWriteGuard.sanitizeUpdateCentreInfos(req, authUser, existing.getIdIep(), existing.getIdLocalite());
 			existing.setLibelleAlpha(req.getLibelle());
 			existing.setIdLocalite(req.getIdLocalite());
 			existing.setIdIep(req.getIdIep());
@@ -275,7 +288,7 @@ public class AlphaService {
 			existing.setAutorisation(req.getAutorisation());
 			existing.setEstElectrifie(req.getEstElectrifie());
 			existing.setADeLeau(req.getADeLeau());
-			existing.setNombreVisite(req.getNombreVisite());
+			existing.setNombreVisite(NumericSanitizer.nonNegativeOrNull(req.getNombreVisite()));
 			existing.setLocalisationCentre(req.getLocalisationCentre());
 			existing.setNomMilieuImplentation(resolveNomMilieuImplentationForUpdate(req, existing.getIdLocalite()));
 			existing.setEncadreurNonMena(req.getEncadreurNonMena());
@@ -291,9 +304,31 @@ public class AlphaService {
 
 	// Supprime un Alpha par identifiant.
 	@Transactional
-	public void deleteById(Integer id) {
+	public boolean deleteById(Integer id, AuthUser authUser) {
+		if (!isAlphaWithinCirconscription(id, authUser)) {
+			return false;
+		}
 		alphaNiveauRepository.deleteByIdCentre_Id(id);
 		alphaRepository.deleteById(id);
+		return true;
+	}
+
+	/**
+	 * PUT référentiel : fusionne le code auto et refuse si l’Alpha est hors périmètre.
+	 */
+	@Transactional
+	public Optional<Alpha> putPreservingAutoCode(Integer id, Alpha incoming, AuthUser authUser) {
+		if (!isAlphaWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
+		Optional<Alpha> opt = findById(id);
+		if (opt.isEmpty() || incoming == null) {
+			return Optional.empty();
+		}
+		Alpha existing = opt.get();
+		AutoCodePutMerge.preserveAutoCodeFromExisting(existing, incoming);
+		incoming.setId(id);
+		return Optional.of(save(incoming));
 	}
 
 	// Vérifie les associations minimales avant persistance.
@@ -592,6 +627,12 @@ public class AlphaService {
 			p.setPrenom(pp.getPrenom());
 			p.setContact(pp.getContact());
 			p.setFonction(pp.getFonction());
+			p.setSexe(pp.getSexe());
+			p.setDateNaissance(pp.getDateNaissance());
+			p.setAnciennete(pp.getAnciennete());
+			p.setBoitePostale(pp.getBoitePostale());
+			p.setNiveauEtudes(pp.getNiveauEtudes());
+			p.setCivilite(pp.getCivilite());
 			details.setPersonnePhysique(p);
 		}
 

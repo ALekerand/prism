@@ -102,5 +102,11 @@ public class Cec {
     @Column(name = "LIBELLE_CEC", length = 100)
     private String libelleCec;
 
+    @Size(max = 200)
+    @Column(name = "ECOLE_TUTRICE", length = 200)
+    private String ecoleTutrice;
+
+    @Column(name = "ANNEE_CREATION")
+    private Integer anneeCreation;
 
 }

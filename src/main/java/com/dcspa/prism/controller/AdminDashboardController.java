@@ -1,11 +1,13 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.service.AdminDashboardService;
+import com.dcspa.prism.support.BlockingReactive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -18,8 +20,9 @@ public class AdminDashboardController {
 
     // Expose les compteurs agrégés (centres, effectifs, utilisateurs, etc.).
     @GetMapping
-    public ResponseEntity<Map<String, Object>> summary() {
-        return ResponseEntity.ok(adminDashboardService.buildSummary());
+    public Mono<ResponseEntity<Map<String, Object>>> summary() {
+        return BlockingReactive.mono(adminDashboardService::buildSummary)
+                .map(ResponseEntity::ok);
     }
 }
 

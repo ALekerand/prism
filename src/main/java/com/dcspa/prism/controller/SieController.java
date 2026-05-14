@@ -11,12 +11,14 @@ import com.dcspa.prism.dto.SimpleCentreTypeFullCreateRequest;
 import com.dcspa.prism.dto.UpdateCentreTypeInfosRequest;
 import com.dcspa.prism.dto.UpdateLibelleRequest;
 import com.dcspa.prism.entity.Sie;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.SieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -40,33 +42,42 @@ public class SieController {
 	@GetMapping
 	public ResponseEntity<Page<CentreTypeListItem>> findAll(
 			@PageableDefault(size = 20, sort = "id") Pageable pageable,
-			@ModelAttribute SieListFilter filter) {
-		return ResponseEntity.ok(sieService.findAllListItems(pageable, filter));
+			@ModelAttribute SieListFilter filter,
+			@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.ok(sieService.findAllListItems(pageable, filter, user));
 	}
 
 	// Détail d’un SIE par identifiant.
 	@GetMapping("/{id}")
-	public ResponseEntity<CentreWithPromoteurItem> findById(@PathVariable Integer id) {
-		return sieService.findDetailedById(id)
+	public ResponseEntity<CentreWithPromoteurItem> findById(
+			@PathVariable Integer id,
+			@AuthenticationPrincipal AuthUser user) {
+		return sieService.findDetailedById(id, user)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@PostMapping("/search")
-	public ResponseEntity<List<CentreWithPromoteurItem>> search(@RequestBody(required = false) CentreSearchRequest request) {
-		return ResponseEntity.ok(sieService.searchDetailed(request));
+	public ResponseEntity<List<CentreWithPromoteurItem>> search(
+			@RequestBody(required = false) CentreSearchRequest request,
+			@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.ok(sieService.searchDetailed(request, user));
 	}
 
 	// Création principale : promoteur, centre puis fiche SIE.
 	@PostMapping
-	public ResponseEntity<CentreTypeListItem> create(@RequestBody SimpleCentreTypeFullCreateRequest req) {
-		return ResponseEntity.status(201).body(sieService.createFull(req));
+	public ResponseEntity<CentreTypeListItem> create(
+			@RequestBody SimpleCentreTypeFullCreateRequest req,
+			@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.status(201).body(sieService.createFull(req, user));
 	}
 
 	// Ancien endpoint simple conservé avec préfixe old.
 	@PostMapping("/old")
-	public ResponseEntity<CentreTypeListItem> createOld(@RequestBody SimpleCentreCreateRequest req) {
-		return ResponseEntity.status(201).body(sieService.create(req));
+	public ResponseEntity<CentreTypeListItem> createOld(
+			@RequestBody SimpleCentreCreateRequest req,
+			@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.status(201).body(sieService.create(req, user));
 	}
 
 	// Mise à jour d’un SIE en conservant les champs auto-générés.
@@ -77,24 +88,32 @@ public class SieController {
 
 	// Met à jour uniquement le libellé affiché.
 	@PutMapping("/{id}/libelle")
-	public ResponseEntity<CentreTypeListItem> updateLibelle(@PathVariable Integer id, @RequestBody UpdateLibelleRequest req) {
-		return sieService.updateLibelle(id, req)
+	public ResponseEntity<CentreTypeListItem> updateLibelle(
+			@PathVariable Integer id,
+			@RequestBody UpdateLibelleRequest req,
+			@AuthenticationPrincipal AuthUser user) {
+		return sieService.updateLibelle(id, req, user)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	// Met à jour les informations détaillées (localisation, équipements, etc.).
 	@PutMapping("/{id}/infos")
-	public ResponseEntity<CentreTypeListItem> updateInfos(@PathVariable Integer id, @RequestBody UpdateCentreTypeInfosRequest req) {
-		return sieService.updateInfos(id, req)
+	public ResponseEntity<CentreTypeListItem> updateInfos(
+			@PathVariable Integer id,
+			@RequestBody UpdateCentreTypeInfosRequest req,
+			@AuthenticationPrincipal AuthUser user) {
+		return sieService.updateInfos(id, req, user)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	// Supprime un SIE.
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-		sieService.deleteById(id);
+	public ResponseEntity<Void> delete(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		if (!sieService.deleteById(id, user)) {
+			return ResponseEntity.notFound().build();
+		}
 		return ResponseEntity.noContent().build();
 	}
 }

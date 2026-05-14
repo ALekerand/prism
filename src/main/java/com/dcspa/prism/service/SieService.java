@@ -40,8 +40,11 @@ import com.dcspa.prism.repository.PersonnemoraleRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.repository.SieNiveauRepository;
 import com.dcspa.prism.repository.SieRepository;
+import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
 import com.dcspa.prism.repository.spec.SimpleCentreTypeSpecifications;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.pagination.PageableUtils;
+import com.dcspa.prism.support.NumericSanitizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -73,6 +76,8 @@ public class SieService {
 	private final PersonnemoraleRepository personnemoraleRepository;
 	private final CentreNiveauCreationService centreNiveauCreationService;
 	private final SieNiveauRepository sieNiveauRepository;
+	private final CirconscriptionResolver circonscriptionResolver;
+	private final CirconscriptionWriteGuard circonscriptionWriteGuard;
 
 	// Charge tous les SIE.
 	@Transactional(readOnly = true)
@@ -82,9 +87,9 @@ public class SieService {
 
 	// Liste paginée avec filtres optionnels sur chaque colonne.
 	@Transactional(readOnly = true)
-	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, SieListFilter filter) {
+	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, SieListFilter filter, AuthUser authUser) {
 		Pageable p = PageableUtils.cap(pageable);
-		Specification<Sie> spec = SimpleCentreTypeSpecifications.forSie(filter);
+		Specification<Sie> spec = combineSieScope(filter, authUser);
 		return sieRepository.findAll(spec, p).map(CentreTypeListItemMapper::fromSie);
 	}
 
@@ -95,14 +100,19 @@ public class SieService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<CentreWithPromoteurItem> findDetailedById(Integer id) {
+	public Optional<CentreWithPromoteurItem> findDetailedById(Integer id, AuthUser authUser) {
+		if (!isSieWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
 		return findById(id).map(this::toDetailedItem);
 	}
 
 	@Transactional(readOnly = true)
-	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request) {
+	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request, AuthUser authUser) {
 		Map<String, String> criteria = request == null ? null : request.getCriteria();
-		return sieRepository.findAll().stream()
+		Specification<Sie> scope = CentreCirconscriptionSpecifications.forSie(circonscriptionResolver.resolve(authUser));
+		List<Sie> source = scope == null ? sieRepository.findAll() : sieRepository.findAll(scope);
+		return source.stream()
 				.map(this::toDetailedItem)
 				.filter(item -> CentreDetailedSearchSupport.matchesCriteria(item, criteria))
 				.toList();
@@ -117,12 +127,13 @@ public class SieService {
 
 	// Crée un SIE lié à un centre existant.
 	@Transactional
-	public CentreTypeListItem create(SimpleCentreCreateRequest req) {
+	public CentreTypeListItem create(SimpleCentreCreateRequest req, AuthUser authUser) {
 		if (req == null || req.getCentreId() == null) {
 			throw new IllegalArgumentException("centreId est obligatoire");
 		}
 		Centre centre = centreRepository.findById(req.getCentreId())
 				.orElseThrow(() -> new IllegalArgumentException("Centre introuvable: " + req.getCentreId()));
+		circonscriptionWriteGuard.assertCentreEntityMatchesUser(centre, authUser);
 		Sie s = new Sie();
 		s.setCentre(centre);
 		s.setLibelleSie(req.getLibelle());
@@ -132,12 +143,13 @@ public class SieService {
 
 	// Crée promoteur, centre puis fiche SIE.
 	@Transactional
-	public CentreTypeListItem createFull(SimpleCentreTypeFullCreateRequest req) {
+	public CentreTypeListItem createFull(SimpleCentreTypeFullCreateRequest req, AuthUser authUser) {
 		if (req == null) throw new IllegalArgumentException("Requête obligatoire");
 		if (req.getCentre() == null) throw new IllegalArgumentException("centre est obligatoire");
 		if (req.getPromoteur() == null) throw new IllegalArgumentException("promoteur est obligatoire");
 
 		CentreCreatePayload c = req.getCentre();
+		circonscriptionWriteGuard.prepareCentreCreatePayload(c, authUser);
 		Promoteur promoteur = promoteurUpsertService.resolveOrCreate(req.getPromoteur());
 
 		LocaliteDImplantation localite = localiteRepository.findById(Objects.requireNonNull(c.getLocaliteId(), "localiteId est obligatoire"))
@@ -171,7 +183,7 @@ public class SieService {
 		centre.setEncadrerParMena(c.getEncadrerParMena());
 		centre.setEstElectrifie(c.getEstElectrifie());
 		centre.setADeLeau(c.getADeLeau());
-		centre.setNombreVisite(c.getNombreVisite());
+		centre.setNombreVisite(NumericSanitizer.nonNegativeOrNull(c.getNombreVisite()));
 		centre.setLocalisationCentre(c.getLocalisationCentre());
 		centre.setNomMilieuImplentation(resolveNomMilieuImplentation(c.getIdMilieuImplentation(), localite));
 		CentreSupplementalFields.applyToCentre(centre, c);
@@ -188,7 +200,10 @@ public class SieService {
 
 	// Met à jour le libellé uniquement.
 	@Transactional
-	public Optional<CentreTypeListItem> updateLibelle(Integer id, UpdateLibelleRequest req) {
+	public Optional<CentreTypeListItem> updateLibelle(Integer id, UpdateLibelleRequest req, AuthUser authUser) {
+		if (!isSieWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
 		Optional<Sie> opt = findById(id);
 		if (opt.isEmpty()) return Optional.empty();
 		Sie existing = opt.get();
@@ -198,11 +213,15 @@ public class SieService {
 
 	// Met à jour les informations détaillées du SIE.
 	@Transactional
-	public Optional<CentreTypeListItem> updateInfos(Integer id, UpdateCentreTypeInfosRequest req) {
+	public Optional<CentreTypeListItem> updateInfos(Integer id, UpdateCentreTypeInfosRequest req, AuthUser authUser) {
+		if (!isSieWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
 		Optional<Sie> opt = findById(id);
 		if (opt.isEmpty()) return Optional.empty();
 		Sie existing = opt.get();
 		if (req != null) {
+			circonscriptionWriteGuard.sanitizeUpdateCentreInfos(req, authUser, existing.getIdIep(), existing.getIdLocalite());
 			existing.setLibelleSie(req.getLibelle());
 			existing.setIdLocalite(req.getIdLocalite());
 			existing.setIdIep(req.getIdIep());
@@ -212,7 +231,7 @@ public class SieService {
 			existing.setAutorisation(req.getAutorisation());
 			existing.setEstElectrifie(req.getEstElectrifie());
 			existing.setADeLeau(req.getADeLeau());
-			existing.setNombreVisite(req.getNombreVisite());
+			existing.setNombreVisite(NumericSanitizer.nonNegativeOrNull(req.getNombreVisite()));
 			existing.setLocalisationCentre(req.getLocalisationCentre());
 			existing.setNomMilieuImplentation(resolveNomMilieuImplentationForUpdate(req, existing.getIdLocalite()));
 			existing.setEncadreurNonMena(req.getEncadreurNonMena());
@@ -228,8 +247,33 @@ public class SieService {
 
 	// Supprime un SIE.
 	@Transactional
-	public void deleteById(Integer id) {
+	public boolean deleteById(Integer id, AuthUser authUser) {
+		if (!isSieWithinCirconscription(id, authUser)) {
+			return false;
+		}
 		sieRepository.deleteById(id);
+		return true;
+	}
+
+	private Specification<Sie> combineSieScope(SieListFilter filter, AuthUser authUser) {
+		Specification<Sie> base = SimpleCentreTypeSpecifications.forSie(filter);
+		Specification<Sie> scope = CentreCirconscriptionSpecifications.forSie(circonscriptionResolver.resolve(authUser));
+		if (scope == null) {
+			return base;
+		}
+		return Specification.where(scope).and(base);
+	}
+
+	private boolean isSieWithinCirconscription(Integer sieId, AuthUser user) {
+		if (sieId == null) {
+			return false;
+		}
+		Specification<Sie> scope = CentreCirconscriptionSpecifications.forSie(circonscriptionResolver.resolve(user));
+		if (scope == null) {
+			return true;
+		}
+		Specification<Sie> idEq = (root, query, cb) -> cb.equal(root.get("id"), sieId);
+		return sieRepository.count(Specification.where(scope).and(idEq)) > 0;
 	}
 
 	// Contrôle minimal : centre présent.
@@ -469,6 +513,12 @@ public class SieService {
 			p.setPrenom(pp.getPrenom());
 			p.setContact(pp.getContact());
 			p.setFonction(pp.getFonction());
+			p.setSexe(pp.getSexe());
+			p.setDateNaissance(pp.getDateNaissance());
+			p.setAnciennete(pp.getAnciennete());
+			p.setBoitePostale(pp.getBoitePostale());
+			p.setNiveauEtudes(pp.getNiveauEtudes());
+			p.setCivilite(pp.getCivilite());
 			details.setPersonnePhysique(p);
 		}
 

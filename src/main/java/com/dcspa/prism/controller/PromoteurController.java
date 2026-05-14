@@ -102,6 +102,12 @@ public class PromoteurController {
 		m.put("prenom", pp.getPrenom());
 		m.put("contact", pp.getContact());
 		m.put("fonction", pp.getFonction());
+		m.put("sexe", pp.getSexe());
+		m.put("dateNaissance", pp.getDateNaissance());
+		m.put("anciennete", pp.getAnciennete());
+		m.put("boitePostale", pp.getBoitePostale());
+		m.put("niveauEtudes", pp.getNiveauEtudes());
+		m.put("civilite", pp.getCivilite());
 		return m;
 	}
 

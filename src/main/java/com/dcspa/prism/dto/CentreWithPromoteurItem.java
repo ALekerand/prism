@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -40,6 +41,13 @@ public class CentreWithPromoteurItem {
     private String nomMilieuImplentation;
     private String encadreurNonMena;
     private Boolean encadrerParMena;
+
+    /** Détail CEC : école tutrice (autres types : {@code null}). */
+    private String ecoleTutrice;
+
+    /** Détail CEC : année de création (autres types : {@code null}). */
+    private Integer anneeCreation;
+
     private ReferenceDetails localite;
     private ReferenceDetails iep;
     private ReferenceDetails drena;
@@ -102,6 +110,12 @@ public class CentreWithPromoteurItem {
         private String prenom;
         private String contact;
         private String fonction;
+        private String sexe;
+        private LocalDate dateNaissance;
+        private String anciennete;
+        private String boitePostale;
+        private String niveauEtudes;
+        private String civilite;
     }
 
     @Getter

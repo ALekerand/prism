@@ -56,17 +56,19 @@ public class AuthService implements UserDetailsService {
     }
 
     // Vérifie mot de passe et compte actif, puis émet la réponse avec JWT et rôles.
+    /** Un seul chargement utilisateur (graphe rôles/permissions) dans la même transaction lecture. */
+    @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
-        UserDetails userDetails = loadUserByUsername(request.getUsername());
-        if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
+        AppUser user = appUserRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé: " + request.getUsername()));
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new IllegalArgumentException("Identifiants incorrects");
         }
-        AuthUser authUser = (AuthUser) userDetails;
+        AuthUser authUser = toAuthUser(user);
         if (!authUser.isEnabled()) {
             throw new IllegalArgumentException("Compte désactivé");
         }
         String token = jwtUtil.generateToken(authUser.getUsername());
-        AppUser user = appUserRepository.findByUsername(authUser.getUsername()).orElseThrow();
         List<String> roleCodes = user.getRoles().stream()
                 .map(AppRole::getCodeRole)
                 .collect(Collectors.toList());

@@ -4,6 +4,7 @@ import com.dcspa.prism.dto.CentreCreatePayload;
 import com.dcspa.prism.dto.CentreWithPromoteurItem;
 import com.dcspa.prism.dto.UpdateCentreTypeInfosRequest;
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.support.NumericSanitizer;
 import com.dcspa.prism.entity.Cec;
 import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.Cp;
@@ -18,9 +19,11 @@ final class CentreSupplementalFields {
     }
 
     static void applyToCentre(Centre centre, CentreCreatePayload payload) {
-        centre.setTotalApprenants(payload.getTotalApprenants());
-        centre.setTotalHommes(payload.getTotalHommes());
-        centre.setTotalFemmes(payload.getTotalFemmes());
+        Integer hommes = NumericSanitizer.nonNegativeOrNull(payload.getTotalHommes());
+        Integer femmes = NumericSanitizer.nonNegativeOrNull(payload.getTotalFemmes());
+        centre.setTotalHommes(hommes);
+        centre.setTotalFemmes(femmes);
+        centre.setTotalApprenants(NumericSanitizer.totalApprenantsFromGenres(hommes, femmes));
         centre.setLatitudeGps(trimToNull(payload.getLatitudeGps()));
         centre.setLongitudeGps(trimToNull(payload.getLongitudeGps()));
         centre.setGpsValide(payload.getGpsValide());
@@ -73,9 +76,11 @@ final class CentreSupplementalFields {
     }
 
     static void applyUpdate(Alpha alpha, UpdateCentreTypeInfosRequest req) {
-        alpha.setTotalApprenants(req.getTotalApprenants());
-        alpha.setTotalHommes(req.getTotalHommes());
-        alpha.setTotalFemmes(req.getTotalFemmes());
+        Integer hommes = NumericSanitizer.nonNegativeOrNull(req.getTotalHommes());
+        Integer femmes = NumericSanitizer.nonNegativeOrNull(req.getTotalFemmes());
+        alpha.setTotalHommes(hommes);
+        alpha.setTotalFemmes(femmes);
+        alpha.setTotalApprenants(NumericSanitizer.totalApprenantsFromGenres(hommes, femmes));
         alpha.setLatitudeGps(trimToNull(req.getLatitudeGps()));
         alpha.setLongitudeGps(trimToNull(req.getLongitudeGps()));
         alpha.setGpsValide(req.getGpsValide());
@@ -84,9 +89,11 @@ final class CentreSupplementalFields {
     }
 
     static void applyUpdate(Cp cp, UpdateCentreTypeInfosRequest req) {
-        cp.setTotalApprenants(req.getTotalApprenants());
-        cp.setTotalHommes(req.getTotalHommes());
-        cp.setTotalFemmes(req.getTotalFemmes());
+        Integer hommes = NumericSanitizer.nonNegativeOrNull(req.getTotalHommes());
+        Integer femmes = NumericSanitizer.nonNegativeOrNull(req.getTotalFemmes());
+        cp.setTotalHommes(hommes);
+        cp.setTotalFemmes(femmes);
+        cp.setTotalApprenants(NumericSanitizer.totalApprenantsFromGenres(hommes, femmes));
         cp.setLatitudeGps(trimToNull(req.getLatitudeGps()));
         cp.setLongitudeGps(trimToNull(req.getLongitudeGps()));
         cp.setGpsValide(req.getGpsValide());
@@ -95,9 +102,11 @@ final class CentreSupplementalFields {
     }
 
     static void applyUpdate(Cec cec, UpdateCentreTypeInfosRequest req) {
-        cec.setTotalApprenants(req.getTotalApprenants());
-        cec.setTotalHommes(req.getTotalHommes());
-        cec.setTotalFemmes(req.getTotalFemmes());
+        Integer hommes = NumericSanitizer.nonNegativeOrNull(req.getTotalHommes());
+        Integer femmes = NumericSanitizer.nonNegativeOrNull(req.getTotalFemmes());
+        cec.setTotalHommes(hommes);
+        cec.setTotalFemmes(femmes);
+        cec.setTotalApprenants(NumericSanitizer.totalApprenantsFromGenres(hommes, femmes));
         cec.setLatitudeGps(trimToNull(req.getLatitudeGps()));
         cec.setLongitudeGps(trimToNull(req.getLongitudeGps()));
         cec.setGpsValide(req.getGpsValide());
@@ -106,9 +115,11 @@ final class CentreSupplementalFields {
     }
 
     static void applyUpdate(Sie sie, UpdateCentreTypeInfosRequest req) {
-        sie.setTotalApprenants(req.getTotalApprenants());
-        sie.setTotalHommes(req.getTotalHommes());
-        sie.setTotalFemmes(req.getTotalFemmes());
+        Integer hommes = NumericSanitizer.nonNegativeOrNull(req.getTotalHommes());
+        Integer femmes = NumericSanitizer.nonNegativeOrNull(req.getTotalFemmes());
+        sie.setTotalHommes(hommes);
+        sie.setTotalFemmes(femmes);
+        sie.setTotalApprenants(NumericSanitizer.totalApprenantsFromGenres(hommes, femmes));
         sie.setLatitudeGps(trimToNull(req.getLatitudeGps()));
         sie.setLongitudeGps(trimToNull(req.getLongitudeGps()));
         sie.setGpsValide(req.getGpsValide());

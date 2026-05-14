@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Entity
@@ -47,5 +49,27 @@ public class Personnephysique {
     @Column(name = "FONCTION", length = 100)
     private String fonction;
 
+    @Size(max = 30)
+    @Column(name = "SEXE", length = 30)
+    private String sexe;
+
+    @Column(name = "DATE_NAISSANCE")
+    private LocalDate dateNaissance;
+
+    @Size(max = 100)
+    @Column(name = "ANCIENNETE", length = 100)
+    private String anciennete;
+
+    @Size(max = 100)
+    @Column(name = "BOITE_POSTALE", length = 100)
+    private String boitePostale;
+
+    @Size(max = 150)
+    @Column(name = "NIVEAU_ETUDES", length = 150)
+    private String niveauEtudes;
+
+    @Size(max = 30)
+    @Column(name = "CIVILITE", length = 30)
+    private String civilite;
 
 }
