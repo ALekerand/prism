@@ -35,6 +35,10 @@ public class Controle implements ActivitesCentreWorkflowEntity {
 	private Alpha idAlpha;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_PERIODE_ACTIVITE")
+	private PeriodeActivite idPeriodeActivite;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_DISCIPLINE")
 	private Discipline idDiscipline;
 
