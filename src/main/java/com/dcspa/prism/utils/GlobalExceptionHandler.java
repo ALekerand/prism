@@ -16,17 +16,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.codec.DecodingException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ServerWebInputException;
-
 /**
- * Réponses d'erreur uniformes et "user-friendly" pour MVC <em>et</em> WebFlux.
+ * Réponses d'erreur uniformes et lisibles pour l'API MVC.
  * <p>
  * Principes :
  * <ul>
@@ -48,20 +45,6 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
 		String errorId = newErrorId();
 		LOGGER.warn("[{}] Body invalide (MVC): {}", errorId, ex.getMessage(), ex);
-		return badRequest(friendlyDeserializationMessage(ex.getCause()), errorId);
-	}
-
-	@ExceptionHandler(ServerWebInputException.class)
-	public ResponseEntity<Map<String, Object>> handleServerWebInput(ServerWebInputException ex) {
-		String errorId = newErrorId();
-		LOGGER.warn("[{}] Body invalide (WebFlux): reason='{}'", errorId, ex.getReason(), ex);
-		return badRequest(friendlyDeserializationMessage(ex.getCause()), errorId);
-	}
-
-	@ExceptionHandler(DecodingException.class)
-	public ResponseEntity<Map<String, Object>> handleDecoding(DecodingException ex) {
-		String errorId = newErrorId();
-		LOGGER.warn("[{}] Erreur de décodage: {}", errorId, ex.getMessage(), ex);
 		return badRequest(friendlyDeserializationMessage(ex.getCause()), errorId);
 	}
 

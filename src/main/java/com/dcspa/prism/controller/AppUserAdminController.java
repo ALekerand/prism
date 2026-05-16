@@ -12,9 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-
 
 @RestController
 @RequestMapping("/api/app-users")
@@ -40,29 +37,23 @@ public class AppUserAdminController {
     @PutMapping("/{id}")
     public ResponseEntity<AppUserAdminResponse> update(
             @PathVariable Integer id,
-            @RequestBody AppUserAdminUpsertRequest request
-    ) {
+            @RequestBody AppUserAdminUpsertRequest request) {
         return ResponseEntity.ok(appUserAdminService.updateUser(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<Void>> delete(@PathVariable Integer id) {
-        return Mono.fromRunnable(() -> {
-                    if (!appUserAdminService.deleteUserIfExists(id)) {
-                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable.");
-                    }
-                })
-                .subscribeOn(Schedulers.boundedElastic())
-                .thenReturn(ResponseEntity.noContent().build());
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        if (!appUserAdminService.deleteUserIfExists(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable.");
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/roles")
     public ResponseEntity<Void> updateRoles(
             @PathVariable Integer id,
-            @RequestBody AppUserUpdateRolesRequest request
-    ) {
+            @RequestBody AppUserUpdateRolesRequest request) {
         appUserAdminService.updateUserRoles(id, request);
         return ResponseEntity.noContent().build();
     }
 }
-

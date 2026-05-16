@@ -1,57 +1,60 @@
 package com.dcspa.prism.security;
 
 import com.dcspa.prism.service.SaisieWorkflowService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
-public class SaisieWorkflowEditGuardFilter implements WebFilter {
+public class SaisieWorkflowEditGuardFilter extends OncePerRequestFilter {
+
 	private final SaisieWorkflowService workflowService;
 
 	@Override
-	public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-		ServerHttpRequest request = exchange.getRequest();
+	protected void doFilterInternal(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain) throws ServletException, IOException {
 		RecordRef ref = editableRecordRef(request);
 		if (ref == null) {
-			return chain.filter(exchange);
+			filterChain.doFilter(request, response);
+			return;
 		}
-		return ReactiveSecurityContextHolder.getContext()
-				.flatMap(ctx -> {
-					Authentication auth = ctx.getAuthentication();
-					AuthUser user = auth != null && auth.getPrincipal() instanceof AuthUser au ? au : null;
-					if (workflowService.isEditable(ref.resourcePath(), ref.recordId(), user)) {
-						return chain.filter(exchange);
-					}
-					return writeBlocked(exchange);
-				})
-				.switchIfEmpty(Mono.defer(() -> {
-					if (workflowService.isEditable(ref.resourcePath(), ref.recordId(), null)) {
-						return chain.filter(exchange);
-					}
-					return writeBlocked(exchange);
-				}));
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		AuthUser user = auth != null && auth.getPrincipal() instanceof AuthUser au ? au : null;
+		if (!workflowService.isEditable(ref.resourcePath(), ref.recordId(), user)) {
+			writeBlocked(response);
+			return;
+		}
+		filterChain.doFilter(request, response);
 	}
 
-	private static Mono<Void> writeBlocked(ServerWebExchange exchange) {
-		exchange.getResponse().setRawStatusCode(400);
-		exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-		byte[] bytes = "{\"message\":\"Modification impossible : la donnée est soumise ou validée.\"}".getBytes();
-		return exchange.getResponse().writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap(bytes)));
+	private static void writeBlocked(HttpServletResponse response) throws IOException {
+		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+		response.getWriter()
+				.write("{\"message\":\"Modification impossible : la donnée est soumise ou validée.\"}");
 	}
 
-	private RecordRef editableRecordRef(ServerHttpRequest request) {
-		String method = request.getMethod().name();
+	private RecordRef editableRecordRef(HttpServletRequest request) {
+		String method = request.getMethod();
 		if (!"PUT".equalsIgnoreCase(method) && !"DELETE".equalsIgnoreCase(method)) {
 			return null;
 		}
-		String path = request.getPath().pathWithinApplication().value();
+		String path = request.getRequestURI();
+		String contextPath = request.getContextPath();
+		if (contextPath != null && !contextPath.isEmpty() && path.startsWith(contextPath)) {
+			path = path.substring(contextPath.length());
+		}
 		if (!path.startsWith("/api/")
 				|| path.startsWith("/api/saisie-workflows/")
 				|| path.startsWith("/api/app-users/")) {

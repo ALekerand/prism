@@ -1,18 +1,18 @@
 package com.dcspa.prism.security;
 
 import com.dcspa.prism.service.AuthService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-public class JwtAuthFilter implements WebFilter {
+public class JwtAuthFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -25,27 +25,22 @@ public class JwtAuthFilter implements WebFilter {
     }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        String token = extractToken(exchange.getRequest());
-        if (!StringUtils.hasText(token)) {
-            return chain.filter(exchange);
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
+        String token = extractToken(request);
+        if (StringUtils.hasText(token) && jwtUtil.validateToken(token)) {
+            String username = jwtUtil.getUsernameFromToken(token);
+            AuthUser authUser = authService.loadUserWithPermissions(username);
+            Authentication auth = new JwtAuthenticationToken(authUser, authUser.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
-        if (!jwtUtil.validateToken(token)) {
-            return chain.filter(exchange);
-        }
-        String username = jwtUtil.getUsernameFromToken(token);
-        // chain.filter → Mono<Void>: no onNext, so switchIfEmpty after flatMap would run the chain twice (204 then UOE).
-        return Mono.fromCallable(() -> authService.loadUserWithPermissions(username))
-                .subscribeOn(Schedulers.boundedElastic())
-                .flatMap(authUser -> {
-                    Authentication auth = new JwtAuthenticationToken(authUser, authUser.getAuthorities());
-                    return chain.filter(exchange)
-                            .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth));
-                });
+        filterChain.doFilter(request, response);
     }
 
-    private String extractToken(ServerHttpRequest request) {
-        String header = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+    private String extractToken(HttpServletRequest request) {
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasText(header) && header.startsWith(BEARER_PREFIX)) {
             return header.substring(BEARER_PREFIX.length()).trim();
         }

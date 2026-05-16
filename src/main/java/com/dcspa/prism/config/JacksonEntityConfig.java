@@ -27,9 +27,9 @@ import jakarta.persistence.Id;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  * Sérialise toute classe annotée {@code @Entity} via {@link ReferentielEnricher#toMap(Object)}
@@ -67,12 +67,8 @@ public class JacksonEntityConfig {
 		return module;
 	}
 
-	/**
-	 * Spring Boot 4 + WebFlux seul : l'auto-configuration peut ne pas exposer de bean
-	 * {@link ObjectMapper}, alors que {@link WebFluxJacksonUnifiedConfig} en a besoin.
-	 */
 	@Bean
-	@ConditionalOnMissingBean(ObjectMapper.class)
+	@Primary
 	public ObjectMapper prismObjectMapper(SimpleModule entityFormatBModule) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.registerModule(entityFormatBModule);
