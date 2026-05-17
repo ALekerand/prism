@@ -9,6 +9,7 @@ public class VisiteRequest {
 	private String mode;
 	private Integer idAlpha;
 	private Integer idPeriodeActivite;
+	private Integer idNiveauAlpha;
 	private String maitriseSeanceLecture;
 	private String maitriseSeanceEcriture;
 	private String maitriseSeanceCalcul;

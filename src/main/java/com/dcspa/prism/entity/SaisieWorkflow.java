@@ -55,6 +55,15 @@ public class SaisieWorkflow {
 	@Column(name = "DECIDE_PAR", length = 100)
 	private String decidePar;
 
+	@Column(name = "VALIDE_COORD_PAR", length = 100)
+	private String valideCoordPar;
+
+	@Column(name = "VALIDE_SUP_PAR", length = 100)
+	private String valideSupPar;
+
+	@Column(name = "VALIDE_CENTRAL_PAR", length = 100)
+	private String valideCentralPar;
+
 	@Column(name = "DATE_SOUMISSION")
 	private Instant dateSoumission;
 

@@ -3,6 +3,7 @@ package com.dcspa.prism.service;
 import com.dcspa.prism.repository.IeppRepository;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
+import com.dcspa.prism.service.circonscription.CirconscriptionLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +12,7 @@ import org.springframework.stereotype.Component;
  * <p>
  * Règle : les rôles « nationaux » priment ; sinon le coordonnateur / conseiller / IEPP est borné à
  * l’IEP ; le superviseur territorial (hors AENF centrale) est borné à la DRENA (éventuellement
- * dérivée de l’IEP utilisateur) ; en dernier recours une région seule reste appliquée sur la
- * géographie des centres.
+ * dérivée de l’IEP utilisateur). Sans IEP ni DRENA (selon le rôle), périmètre national.
  */
 @Component
 @RequiredArgsConstructor
@@ -61,9 +61,14 @@ public class CirconscriptionResolver {
 		if (user.getIdIep() != null) {
 			return CirconscriptionAttachement.iep(user.getIdIep());
 		}
-		if (user.getIdRegion() != null) {
-			return CirconscriptionAttachement.region(user.getIdRegion());
+		if (user.getIdDrena() != null) {
+			return CirconscriptionAttachement.drena(user.getIdDrena());
 		}
 		return CirconscriptionAttachement.none();
+	}
+
+	/** {@code true} si l’utilisateur voit les données sur tout le territoire (pas de circonscription opérationnelle). */
+	public boolean isNationalView(AuthUser user) {
+		return resolve(user).level() == CirconscriptionLevel.NONE;
 	}
 }

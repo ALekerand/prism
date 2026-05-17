@@ -30,7 +30,7 @@ public class SaisieWorkflowService {
 		Map<Integer, Map<String, Object>> out = new LinkedHashMap<>();
 		for (Integer id : recordIds) {
 			if (id != null) {
-				out.put(id, draftRow(resourcePath, id));
+				out.put(id, draftRow(resourcePath, id, user));
 			}
 		}
 		List<SaisieWorkflow> workflows = repository.findByResourcePathAndRecordIdIn(normalizeResource(resourcePath), out.keySet());
@@ -110,12 +110,14 @@ public class SaisieWorkflowService {
 		}
 		ResponseEntity<?> denied = requireValidator(user, feature, decision.roles);
 		if (denied != null) return denied;
+		String me = username(user);
 		workflow.setStatut(decision.nextStatus);
 		workflow.setMotifRejet(null);
 		workflow.setCommentaireRetour(null);
-		workflow.setDecidePar(username(user));
+		workflow.setDecidePar(me);
 		workflow.setDateDecision(Instant.now());
-		return ResponseEntity.ok(toRow(repository.save(workflow)));
+		recordValidatorStep(workflow, decision.nextStatus, me);
+		return ResponseEntity.ok(toRow(repository.save(workflow), user));
 	}
 
 	@Transactional
@@ -132,7 +134,7 @@ public class SaisieWorkflowService {
 		workflow.setCommentaireRetour(null);
 		workflow.setDecidePar(username(user));
 		workflow.setDateDecision(Instant.now());
-		return ResponseEntity.ok(toRow(repository.save(workflow)));
+		return ResponseEntity.ok(toRow(repository.save(workflow), user));
 	}
 
 	@Transactional
@@ -145,7 +147,7 @@ public class SaisieWorkflowService {
 		workflow.setCommentaireRetour(clean(commentaire));
 		workflow.setDecidePar(username(user));
 		workflow.setDateDecision(Instant.now());
-		return ResponseEntity.ok(toRow(repository.save(workflow)));
+		return ResponseEntity.ok(toRow(repository.save(workflow), user));
 	}
 
 	public Map<String, Object> toRow(SaisieWorkflow workflow) {
@@ -153,7 +155,7 @@ public class SaisieWorkflowService {
 	}
 
 	public Map<String, Object> toRow(SaisieWorkflow workflow, AuthUser user) {
-		Map<String, Object> row = draftRow(workflow.getResourcePath(), workflow.getRecordId());
+		Map<String, Object> row = draftRow(workflow.getResourcePath(), workflow.getRecordId(), user);
 		row.put("workflowStatut", workflow.getStatut().name());
 		row.put("workflowStatutLibelle", label(workflow.getStatut()));
 		row.put("workflowEditable", isEditable(workflow, user));
@@ -162,9 +164,29 @@ public class SaisieWorkflowService {
 		row.put("workflowSoumisPar", workflow.getSoumisPar());
 		row.put("workflowProprietaire", workflow.getProprietaire());
 		row.put("workflowDecidePar", workflow.getDecidePar());
+		row.put("workflowValideCoordPar", workflow.getValideCoordPar());
+		row.put("workflowValideSupPar", workflow.getValideSupPar());
+		row.put("workflowValideCentralPar", workflow.getValideCentralPar());
 		row.put("workflowDateSoumission", workflow.getDateSoumission());
 		row.put("workflowDateDecision", workflow.getDateDecision());
+		if (user != null) {
+			SaisieWorkflowListTab tab = SaisieWorkflowQueueTabResolver.resolve(workflow, user);
+			row.put("workflowOnglet", tab.name());
+			row.put("workflowOngletLibelle", SaisieWorkflowQueueTabResolver.tabLabel(tab, user));
+		}
 		return row;
+	}
+
+	private void recordValidatorStep(SaisieWorkflow workflow, SaisieWorkflowStatus nextStatus, String username) {
+		if (username == null) {
+			return;
+		}
+		switch (nextStatus) {
+			case VALIDEE_COORDONNATEUR -> workflow.setValideCoordPar(username);
+			case VALIDEE_SUPERVISEUR -> workflow.setValideSupPar(username);
+			case VALIDEE_CENTRALE -> workflow.setValideCentralPar(username);
+			default -> { /* rien */ }
+		}
 	}
 
 	private SaisieWorkflow getOrCreate(String resourcePath, Integer recordId) {
@@ -183,7 +205,7 @@ public class SaisieWorkflowService {
 				.orElseThrow(() -> new IllegalArgumentException("Cette donnée n'a pas encore été soumise."));
 	}
 
-	private Map<String, Object> draftRow(String resourcePath, Integer recordId) {
+	private Map<String, Object> draftRow(String resourcePath, Integer recordId, AuthUser user) {
 		Map<String, Object> row = new LinkedHashMap<>();
 		row.put("resourcePath", normalizeResource(resourcePath));
 		row.put("recordId", recordId);
@@ -194,6 +216,15 @@ public class SaisieWorkflowService {
 		row.put("workflowCommentaireRetour", null);
 		row.put("workflowProprietaire", null);
 		row.put("workflowSoumisPar", null);
+		if (user != null) {
+			SaisieWorkflow draft = new SaisieWorkflow();
+			draft.setResourcePath(normalizeResource(resourcePath));
+			draft.setRecordId(recordId);
+			draft.setStatut(SaisieWorkflowStatus.BROUILLON);
+			SaisieWorkflowListTab tab = SaisieWorkflowQueueTabResolver.resolve(draft, user);
+			row.put("workflowOnglet", tab.name());
+			row.put("workflowOngletLibelle", SaisieWorkflowQueueTabResolver.tabLabel(tab, user));
+		}
 		return row;
 	}
 

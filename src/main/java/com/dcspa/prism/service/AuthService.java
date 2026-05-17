@@ -37,6 +37,7 @@ public class AuthService implements UserDetailsService {
     private final AppUserRepository appUserRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final AdminDashboardService adminDashboardService;
 
     // Charge l’utilisateur Spring Security à partir du nom de connexion.
     @Override
@@ -72,6 +73,7 @@ public class AuthService implements UserDetailsService {
         List<String> roleCodes = user.getRoles().stream()
                 .map(AppRole::getCodeRole)
                 .collect(Collectors.toList());
+        Map<String, Object> scope = adminDashboardService.buildSummary(authUser);
         return LoginResponse.builder()
                 .token(token)
                 .type("Bearer")
@@ -94,6 +96,9 @@ public class AuthService implements UserDetailsService {
                 .sousPrefecture(ReferentielEnricher.toRef(user.getIdSousPrefecture()))
                 .commune(ReferentielEnricher.toRef(user.getIdCommune()))
                 .localite(ReferentielEnricher.toRef(user.getIdLocalite()))
+                .nationalView(Boolean.TRUE.equals(scope.get("nationalView")))
+                .scopeMode(String.valueOf(scope.getOrDefault("scopeMode", "NATIONAL")))
+                .scopeLabel(String.valueOf(scope.getOrDefault("scopeLabel", "Vue nationale")))
                 .build();
     }
 
@@ -121,6 +126,10 @@ public class AuthService implements UserDetailsService {
         payload.put("sousPrefecture", appUser != null ? ReferentielEnricher.toRef(appUser.getIdSousPrefecture()) : null);
         payload.put("commune", appUser != null ? ReferentielEnricher.toRef(appUser.getIdCommune()) : null);
         payload.put("localite", appUser != null ? ReferentielEnricher.toRef(appUser.getIdLocalite()) : null);
+        Map<String, Object> scope = adminDashboardService.buildSummary(user);
+        payload.put("nationalView", scope.get("nationalView"));
+        payload.put("scopeMode", scope.get("scopeMode"));
+        payload.put("scopeLabel", scope.get("scopeLabel"));
         return payload;
     }
 

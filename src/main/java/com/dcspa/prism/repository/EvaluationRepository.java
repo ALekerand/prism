@@ -4,10 +4,11 @@ import com.dcspa.prism.entity.Evaluation;
 import com.dcspa.prism.repositorybase.BaseRepository;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface EvaluationRepository extends BaseRepository<Evaluation, Integer> {
+public interface EvaluationRepository extends BaseRepository<Evaluation, Integer>, JpaSpecificationExecutor<Evaluation> {
 	@Query("""
 			select distinct e from Evaluation e
 			left join fetch e.idAlpha

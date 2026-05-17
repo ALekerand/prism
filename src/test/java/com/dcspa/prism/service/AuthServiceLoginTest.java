@@ -11,6 +11,8 @@ import com.dcspa.prism.entity.AppRole;
 import com.dcspa.prism.entity.AppUser;
 import com.dcspa.prism.repository.AppUserRepository;
 import com.dcspa.prism.security.JwtUtil;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,9 @@ class AuthServiceLoginTest {
 	@Mock
 	private PasswordEncoder passwordEncoder;
 
+	@Mock
+	private AdminDashboardService adminDashboardService;
+
 	@InjectMocks
 	private AuthService authService;
 
@@ -50,6 +55,11 @@ class AuthServiceLoginTest {
 		when(appUserRepository.findByUsername("admin")).thenReturn(Optional.of(user));
 		when(passwordEncoder.matches("secret", "{bcrypt}enc")).thenReturn(true);
 		when(jwtUtil.generateToken("admin")).thenReturn("jwt-token");
+		Map<String, Object> scope = new LinkedHashMap<>();
+		scope.put("nationalView", true);
+		scope.put("scopeMode", "NATIONAL");
+		scope.put("scopeLabel", "Vue nationale");
+		when(adminDashboardService.buildSummary(org.mockito.ArgumentMatchers.any())).thenReturn(scope);
 
 		LoginRequest req = new LoginRequest();
 		req.setUsername("admin");

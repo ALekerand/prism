@@ -31,5 +31,8 @@ public class LoginResponse {
     private final Map<String, Object> sousPrefecture;
     private final Map<String, Object> commune;
     private final Map<String, Object> localite;
+    private final Boolean nationalView;
+    private final String scopeMode;
+    private final String scopeLabel;
 }
 

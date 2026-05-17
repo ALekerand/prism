@@ -4,9 +4,11 @@ import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.VisiteRequest;
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.NiveauAlpha;
 import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.entity.Visite;
 import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.repository.NiveauAlphaRepository;
 import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.repository.VisiteRepository;
 import com.dcspa.prism.service.SaisieWorkflowService;
@@ -33,6 +35,7 @@ public class VisiteController {
 	private final VisiteRepository repository;
 	private final AlphaRepository alphaRepository;
 	private final PeriodeActiviteRepository periodeActiviteRepository;
+	private final NiveauAlphaRepository niveauAlphaRepository;
 	private final SaisieWorkflowService saisieWorkflowService;
 
 	@Transactional(readOnly = true)
@@ -156,6 +159,13 @@ public class VisiteController {
 		} else if (e.getId() == null) {
 			throw new IllegalArgumentException("idPeriodeActivite est obligatoire");
 		}
+		if (r.getIdNiveauAlpha() != null) {
+			NiveauAlpha niveauAlpha = niveauAlphaRepository.findById(r.getIdNiveauAlpha())
+					.orElseThrow(() -> new IllegalArgumentException("Niveau Alpha introuvable: " + r.getIdNiveauAlpha()));
+			e.setIdNiveauAlpha(niveauAlpha);
+		} else if (e.getId() == null) {
+			throw new IllegalArgumentException("idNiveauAlpha est obligatoire");
+		}
 		e.setMaitriseSeanceLecture(r.getMaitriseSeanceLecture());
 		e.setMaitriseSeanceEcriture(r.getMaitriseSeanceEcriture());
 		e.setMaitriseSeanceCalcul(r.getMaitriseSeanceCalcul());
@@ -170,6 +180,7 @@ public class VisiteController {
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
 		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
+		ReferentielEnricher.putRef(m, "NiveauAlpha", e.getIdNiveauAlpha());
 		int totalVisitesConseiller = Math.toIntExact(repository.countByIdAlpha_Id(JpaAssociationIds.intIdOrNull(e.getIdAlpha())));
 		m.put("maitriseSeanceLecture", e.getMaitriseSeanceLecture());
 		m.put("maitriseSeanceEcriture", e.getMaitriseSeanceEcriture());
@@ -189,6 +200,9 @@ public class VisiteController {
 		if (body == null || body.getIdAlpha() == null) throw new IllegalArgumentException("idAlpha est obligatoire");
 		if (body.getIdPeriodeActivite() == null) {
 			throw new IllegalArgumentException("idPeriodeActivite est obligatoire");
+		}
+		if (body.getIdNiveauAlpha() == null) {
+			throw new IllegalArgumentException("idNiveauAlpha est obligatoire");
 		}
 		String mode = normalizeMode(body.getMode());
 		if (mode != null && !"points".equals(mode)) {

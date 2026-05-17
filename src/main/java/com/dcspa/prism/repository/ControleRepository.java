@@ -5,10 +5,11 @@ import com.dcspa.prism.repositorybase.BaseRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ControleRepository extends BaseRepository<Controle, Integer> {
+public interface ControleRepository extends BaseRepository<Controle, Integer>, JpaSpecificationExecutor<Controle> {
 	@EntityGraph(attributePaths = {"idAlpha", "idDiscipline", "idManuel", "idNiveauControle", "idNiveauAlpha"})
 	@Query("select c from Controle c")
 	List<Controle> findAllWithRefs();

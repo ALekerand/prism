@@ -5,6 +5,8 @@ import com.dcspa.prism.dto.PersonnelAdminResponse;
 import com.dcspa.prism.dto.PersonnelListFilter;
 import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.Civilite;
+import com.dcspa.prism.entity.Diplome;
+import com.dcspa.prism.entity.DiplomePersonnel;
 import com.dcspa.prism.entity.Fonction;
 import com.dcspa.prism.entity.NiveauPersonnel;
 import com.dcspa.prism.entity.Personnel;
@@ -12,12 +14,16 @@ import com.dcspa.prism.entity.StatutPersonnel;
 import com.dcspa.prism.entity.StructureFormationCertification;
 import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.repository.CiviliteRepository;
+import com.dcspa.prism.repository.DiplomePersonnelRepository;
+import com.dcspa.prism.repository.DiplomeRepository;
 import com.dcspa.prism.repository.FonctionRepository;
 import com.dcspa.prism.repository.NiveauPersonnelRepository;
 import com.dcspa.prism.repository.PersonnelRepository;
 import com.dcspa.prism.repository.StatutPersonnelRepository;
 import com.dcspa.prism.repository.StructureFormationCertificationRepository;
+import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
 import com.dcspa.prism.repository.spec.PersonnelSpecifications;
+import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
 import com.dcspa.prism.service.pagination.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +31,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +46,8 @@ public class PersonnelAdminService {
     private final CiviliteRepository civiliteRepository;
     private final CentreRepository centreRepository;
     private final StructureFormationCertificationRepository structureFormationCertificationRepository;
+    private final DiplomePersonnelRepository diplomePersonnelRepository;
+    private final DiplomeRepository diplomeRepository;
     private final StatutPersonnelRepository statutPersonnelRepository;
 
     @Transactional(readOnly = true)
@@ -49,11 +62,120 @@ public class PersonnelAdminService {
         return personnelRepository.countByIdCentre_Id(centreId);
     }
 
+    @Transactional(readOnly = true)
+    public Map<String, Object> buildCentreDashboard(Integer centreId) {
+        Centre centre = centreRepository.findById(centreId)
+                .orElseThrow(() -> new IllegalArgumentException("Centre introuvable: " + centreId));
+        List<Personnel> personnel = personnelRepository.findByIdCentre_Id(centreId);
+
+        long certified = personnel.stream().filter(p -> Boolean.TRUE.equals(p.getCertifierPersonnel())).count();
+        long hommes = personnel.stream().filter(p -> "M".equalsIgnoreCase(String.valueOf(p.getSexePersonnel()).trim())).count();
+        long femmes = personnel.stream()
+                .filter(p -> "F".equalsIgnoreCase(String.valueOf(p.getSexePersonnel()).trim()))
+                .count();
+
+        Map<String, Long> parFonction = personnel.stream()
+                .collect(Collectors.groupingBy(
+                        p -> p.getIdFonction() != null && p.getIdFonction().getLibelleFonction() != null
+                                ? p.getIdFonction().getLibelleFonction().trim()
+                                : (p.getIdFonction() != null ? "Fonction #" + p.getIdFonction().getId() : "—"),
+                        Collectors.counting()));
+
+        String topFonction = parFonction.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("—");
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("scope", "CENTRE");
+        payload.put("centreId", centreId);
+        payload.put("centreCode", centre.getCodeCentre());
+        payload.put("centreType", centreTypeFromCode(centre.getCodeCentre()));
+        payload.put("total", personnel.size());
+        payload.put("certifiedTotal", certified);
+        payload.put("hommesTotal", hommes);
+        payload.put("femmesTotal", femmes);
+        payload.put("fonctionsDistinctes", parFonction.size());
+        payload.put("topFonctionLabel", topFonction);
+        payload.put("topFonctionCount", parFonction.getOrDefault(topFonction, 0L));
+        return payload;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> buildTypeSummary(String centreType) {
+        return buildTypeSummary(centreType, null);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> buildTypeSummary(String centreType, CirconscriptionAttachement att) {
+        String normalized = centreType == null ? "" : centreType.trim().toUpperCase();
+        Specification<Centre> scope = CentreCirconscriptionSpecifications.forCentre(att);
+        List<Centre> centres = scope == null
+                ? centreRepository.findAll()
+                : centreRepository.findAll(scope);
+        List<Integer> centreIds = centres.stream()
+                .filter(c -> matchesCentreType(c.getCodeCentre(), normalized))
+                .map(Centre::getId)
+                .toList();
+
+        long personnelTotal = 0L;
+        if (!centreIds.isEmpty()) {
+            personnelTotal = personnelRepository.count((root, query, cb) -> root.get("idCentre").get("id").in(centreIds));
+        }
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("scope", "TYPE");
+        payload.put("centreType", normalized);
+        payload.put("centreTypeLabel", centreTypeLabel(normalized));
+        payload.put("centresCount", centreIds.size());
+        payload.put("personnelTotal", personnelTotal);
+        return payload;
+    }
+
+    private static boolean matchesCentreType(String codeCentre, String centreType) {
+        if (centreType == null || centreType.isBlank()) {
+            return true;
+        }
+        return centreTypeFromCode(codeCentre).equals(centreType);
+    }
+
+    private static String centreTypeFromCode(String code) {
+        if (code == null || code.isBlank()) {
+            return "AUTRE";
+        }
+        String c = code.toUpperCase();
+        if (c.contains("ALP") || c.contains("ALPHA")) {
+            return "ALPHA";
+        }
+        if (c.contains("CEC")) {
+            return "CEC";
+        }
+        if (c.contains("SIE")) {
+            return "SIE";
+        }
+        if (c.contains("CP")) {
+            return "CP";
+        }
+        return "AUTRE";
+    }
+
+    private static String centreTypeLabel(String centreType) {
+        return switch (centreType) {
+            case "ALPHA" -> "Centre Alpha";
+            case "CEC" -> "Centre CEC";
+            case "CP" -> "Centre CP";
+            case "SIE" -> "Centre SIE";
+            default -> "Tous les types";
+        };
+    }
+
     @Transactional
     public PersonnelAdminResponse create(PersonnelAdminRequest r) {
         Personnel p = new Personnel();
         applyRequestToEntity(p, r);
-        return toDto(personnelRepository.save(p));
+        Personnel saved = personnelRepository.save(p);
+        syncDiplome(saved, r.getIdDiplomeId());
+        return toDto(saved);
     }
 
     @Transactional
@@ -61,7 +183,9 @@ public class PersonnelAdminService {
         Personnel p = personnelRepository.findById(id.longValue())
                 .orElseThrow(() -> new IllegalArgumentException("Personnel introuvable: " + id));
         applyRequestToEntity(p, r);
-        return toDto(personnelRepository.save(p));
+        Personnel saved = personnelRepository.save(p);
+        syncDiplome(saved, r.getIdDiplomeId());
+        return toDto(saved);
     }
 
     @Transactional
@@ -113,9 +237,36 @@ public class PersonnelAdminService {
         p.setNomRepresentantLegalSturcture(r.getNomRepresentantLegalSturcture());
     }
 
+    private void syncDiplome(Personnel personnel, Integer idDiplomeId) {
+        if (personnel == null || personnel.getId() == null) {
+            return;
+        }
+        diplomePersonnelRepository.deleteByIdPersonnel_Id(personnel.getId());
+        if (idDiplomeId == null) {
+            return;
+        }
+        Diplome diplome = diplomeRepository.findById(idDiplomeId)
+                .orElseThrow(() -> new IllegalArgumentException("Diplome introuvable: " + idDiplomeId));
+        DiplomePersonnel link = new DiplomePersonnel();
+        link.setIdPersonnel(personnel);
+        link.setIdDiplome(diplome);
+        diplomePersonnelRepository.save(link);
+    }
+
+    private Integer resolveDiplomeId(Personnel p) {
+        if (p == null || p.getId() == null) {
+            return null;
+        }
+        return diplomePersonnelRepository.findByIdPersonnel_Id(p.getId()).stream()
+                .findFirst()
+                .map(dp -> dp.getIdDiplome() != null ? dp.getIdDiplome().getId() : null)
+                .orElse(null);
+    }
+
     private PersonnelAdminResponse toDto(Personnel p) {
         return PersonnelAdminResponse.builder()
                 .id(p.getId())
+                .diplomeId(resolveDiplomeId(p))
                 .niveauPersonnelId(p.getIdNiveauPersonnel() != null ? p.getIdNiveauPersonnel().getId() : null)
                 .fonctionId(p.getIdFonction() != null ? p.getIdFonction().getId() : null)
                 .civiliteId(p.getIdCivilite() != null ? p.getIdCivilite().getId() : null)

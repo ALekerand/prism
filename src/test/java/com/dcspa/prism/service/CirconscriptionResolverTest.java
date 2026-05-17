@@ -77,6 +77,49 @@ class CirconscriptionResolverTest {
 	}
 
 	@Test
+	void coordinateurSansIepEstNational() {
+		AuthUser u = new AuthUser(
+				1,
+				"c",
+				"x",
+				true,
+				List.of(),
+				List.of("COORDONNATEUR"),
+				5,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null);
+
+		var att = resolver.resolve(u);
+		Assertions.assertEquals(CirconscriptionLevel.NONE, att.level());
+		Assertions.assertTrue(resolver.isNationalView(u));
+	}
+
+	@Test
+	void regionSeuleSansIepNiDrenaEstNational() {
+		AuthUser u = new AuthUser(
+				1,
+				"r",
+				"x",
+				true,
+				List.of(),
+				List.of("AUTRE"),
+				5,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null);
+
+		var att = resolver.resolve(u);
+		Assertions.assertEquals(CirconscriptionLevel.NONE, att.level());
+	}
+
+	@Test
 	void nationalSansFiltre() {
 		AuthUser u = new AuthUser(
 				1,

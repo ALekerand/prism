@@ -37,12 +37,17 @@ public class PersonnelAdminController {
     }
 
     @GetMapping("/dashboard")
-    public ResponseEntity<Map<String, Object>> dashboard(@RequestParam Integer centreId) {
-        long total = personnelAdminService.countByCentre(centreId);
-        return ResponseEntity.ok(Map.of(
-                "centreId", centreId,
-                "total", total
-        ));
+    public ResponseEntity<Map<String, Object>> dashboard(
+            @RequestParam(required = false) Integer centreId,
+            @RequestParam(required = false) String centreType) {
+        if (centreId != null) {
+            return ResponseEntity.ok(personnelAdminService.buildCentreDashboard(centreId));
+        }
+        if (centreType != null && !centreType.isBlank()) {
+            return ResponseEntity.ok(personnelAdminService.buildTypeSummary(centreType));
+        }
+        return ResponseEntity.badRequest().body(Map.of(
+                "message", "Indiquer centreId ou centreType (ALPHA, CEC, CP, SIE)."));
     }
 
     @PostMapping
