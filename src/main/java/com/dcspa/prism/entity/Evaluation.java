@@ -33,8 +33,8 @@ public class Evaluation implements ActivitesCentreWorkflowEntity {
 	private Alpha idAlpha;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ID_PERIODE_EVALUATION")
-	private PeriodeEvaluation idPeriodeEvaluation;
+	@JoinColumn(name = "ID_PERIODE_ACTIVITE")
+	private PeriodeActivite idPeriodeActivite;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ID_NIVEAU_EVALUATION")

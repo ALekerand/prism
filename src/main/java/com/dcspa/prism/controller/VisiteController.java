@@ -166,10 +166,10 @@ public class VisiteController {
 		} else if (e.getId() == null) {
 			throw new IllegalArgumentException("idNiveauAlpha est obligatoire");
 		}
-		e.setMaitriseSeanceLecture(r.getMaitriseSeanceLecture());
-		e.setMaitriseSeanceEcriture(r.getMaitriseSeanceEcriture());
-		e.setMaitriseSeanceCalcul(r.getMaitriseSeanceCalcul());
-		e.setMaitriseSeanceCvc(r.getMaitriseSeanceCvc());
+		e.setMaitriseSeanceLecture(normalizeMaitrise(r.getMaitriseSeanceLecture()));
+		e.setMaitriseSeanceEcriture(normalizeMaitrise(r.getMaitriseSeanceEcriture()));
+		e.setMaitriseSeanceCalcul(normalizeMaitrise(r.getMaitriseSeanceCalcul()));
+		e.setMaitriseSeanceCvc(normalizeMaitrise(r.getMaitriseSeanceCvc()));
 		if (e.getValideeCoordonnateur() == null) {
 			e.setValideeCoordonnateur(false);
 		}
@@ -272,5 +272,19 @@ public class VisiteController {
 		Integer id = e.getId();
 		Map<String, Object> w = id == null ? null : workflowById.get(id);
 		return VisiteWorkflowListRules.isRowVisible(e, w, user);
+	}
+
+	private static String normalizeMaitrise(String value) {
+		if (value == null || value.isBlank()) {
+			return null;
+		}
+		String normalized = value.trim().toUpperCase();
+		if ("MAUVAISE".equals(normalized) || "NON".equals(normalized)) {
+			return "INSUFFISANT";
+		}
+		if ("OUI".equals(normalized)) {
+			return "BONNE";
+		}
+		return normalized;
 	}
 }

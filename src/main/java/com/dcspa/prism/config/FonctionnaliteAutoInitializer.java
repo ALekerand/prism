@@ -3,6 +3,7 @@ package com.dcspa.prism.config;
 import com.dcspa.prism.entity.Fonctionnalite;
 import com.dcspa.prism.repository.FonctionnaliteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
@@ -11,16 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-
 import java.util.Locale;
-import java.util.Set;
 
 /**
- * Option B: génère automatiquement les fonctionnalités à partir des routes exposées par les Controllers.
- * Convention: on prend le 1er segment après /api (ou /api/v1) comme code de fonctionnalité.
- * Exemple: /api/campagnes -> CAMPAGNES, /api/v1/centres -> CENTRES.
+ * Génération automatique des fonctionnalités à partir des routes API (désactivée par défaut).
+ * Le catalogue officiel est {@link MenuRbacInitializer} + {@link ActivitesCentreRbacInitializer}.
  */
 @Component
+@ConditionalOnProperty(name = "prism.rbac.auto-api-fonctionnalites", havingValue = "true")
 @RequiredArgsConstructor
 public class FonctionnaliteAutoInitializer {
 

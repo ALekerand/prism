@@ -12,7 +12,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, Integer
 	@Query("""
 			select distinct e from Evaluation e
 			left join fetch e.idAlpha
-			left join fetch e.idPeriodeEvaluation
+			left join fetch e.idPeriodeActivite
 			left join fetch e.idNiveauEvaluation
 			left join fetch e.idThemeEvaluation
 			left join fetch e.idTauxEvaluation
@@ -24,7 +24,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, Integer
 	@Query("""
 			select distinct e from Evaluation e
 			left join fetch e.idAlpha
-			left join fetch e.idPeriodeEvaluation
+			left join fetch e.idPeriodeActivite
 			left join fetch e.idNiveauEvaluation
 			left join fetch e.idThemeEvaluation
 			left join fetch e.idTauxEvaluation

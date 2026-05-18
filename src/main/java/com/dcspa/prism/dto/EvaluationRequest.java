@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class EvaluationRequest {
 	private Integer idAlpha;
-	private Integer idPeriodeEvaluation;
+	private Integer idPeriodeActivite;
 	private Integer idNiveauEvaluation;
 	private Integer idThemeEvaluation;
 	private Integer idTauxEvaluation;

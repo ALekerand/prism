@@ -9,13 +9,13 @@ import com.dcspa.prism.dto.EvaluationRequest;
 import com.dcspa.prism.entity.Evaluation;
 import com.dcspa.prism.entity.EvaluationThemeTaux;
 import com.dcspa.prism.entity.NiveauEvaluation;
-import com.dcspa.prism.entity.PeriodeEvaluation;
+import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.entity.TauxEvaluation;
 import com.dcspa.prism.entity.ThemeEvaluation;
 import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.repository.EvaluationRepository;
 import com.dcspa.prism.repository.NiveauEvaluationRepository;
-import com.dcspa.prism.repository.PeriodeEvaluationRepository;
+import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.repository.TauxEvaluationRepository;
 import com.dcspa.prism.repository.ThemeEvaluationRepository;
 import com.dcspa.prism.security.AuthUser;
@@ -37,7 +37,7 @@ public class EvaluationController {
 	private final EvaluationRepository repository;
 	private final ActivitesCentreSaisieWorkflowGate saisieWorkflowGate;
 	private final AlphaRepository alphaRepository;
-	private final PeriodeEvaluationRepository periodeRepository;
+	private final PeriodeActiviteRepository periodeRepository;
 	private final NiveauEvaluationRepository niveauRepository;
 	private final ThemeEvaluationRepository themeRepository;
 	private final TauxEvaluationRepository tauxRepository;
@@ -77,7 +77,7 @@ public class EvaluationController {
 	@GetMapping("/search")
 	public ResponseEntity<?> search(
 			@RequestParam(required = false) Integer idAlpha,
-			@RequestParam(required = false) Integer idPeriodeEvaluation,
+			@RequestParam(required = false) Integer idPeriodeActivite,
 			@RequestParam(required = false) Integer idNiveauEvaluation,
 			@RequestParam(required = false) Integer idThemeEvaluation,
 			@RequestParam(required = false) Integer idTauxEvaluation,
@@ -86,7 +86,7 @@ public class EvaluationController {
 		if (denied != null) return denied;
 		return ResponseEntity.ok(repository.findAllWithRefs().stream()
 				.filter(x -> idAlpha == null || idAlpha.equals(JpaAssociationIds.intIdOrNull(x.getIdAlpha())))
-				.filter(x -> idPeriodeEvaluation == null || idPeriodeEvaluation.equals(JpaAssociationIds.intIdOrNull(x.getIdPeriodeEvaluation())))
+				.filter(x -> idPeriodeActivite == null || idPeriodeActivite.equals(JpaAssociationIds.intIdOrNull(x.getIdPeriodeActivite())))
 				.filter(x -> idNiveauEvaluation == null || idNiveauEvaluation.equals(JpaAssociationIds.intIdOrNull(x.getIdNiveauEvaluation())))
 				.filter(x -> idThemeEvaluation == null || idThemeEvaluation.equals(JpaAssociationIds.intIdOrNull(x.getIdThemeEvaluation())))
 				.filter(x -> idTauxEvaluation == null || idTauxEvaluation.equals(JpaAssociationIds.intIdOrNull(x.getIdTauxEvaluation())))
@@ -176,7 +176,7 @@ public class EvaluationController {
 		NiveauEvaluation niveau = resolveNiveau(r.getIdNiveauEvaluation());
 		String typeEvaluation = normalizeTypeEvaluation(r.getTypeEvaluation());
 		validateTypeForNiveau(niveau, typeEvaluation);
-		e.setIdPeriodeEvaluation(resolvePeriode(r.getIdPeriodeEvaluation()));
+		e.setIdPeriodeActivite(resolvePeriode(r.getIdPeriodeActivite()));
 		e.setIdNiveauEvaluation(niveau);
 		e.setTypeEvaluation(typeEvaluation);
 		e.setIdTauxEvaluation(resolveTaux(r.getIdTauxEvaluation()));
@@ -217,10 +217,10 @@ public class EvaluationController {
 		e.setIdTauxEvaluation(null);
 	}
 
-	private PeriodeEvaluation resolvePeriode(Integer id) {
+	private PeriodeActivite resolvePeriode(Integer id) {
 		if (id == null) return null;
-		return periodeRepository.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("PeriodeEvaluation introuvable: " + id));
+		return periodeRepository.findById(id.longValue())
+				.orElseThrow(() -> new IllegalArgumentException("Période d'activité introuvable: " + id));
 	}
 
 	private NiveauEvaluation resolveNiveau(Integer id) {
@@ -312,7 +312,7 @@ public class EvaluationController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
-		ReferentielEnricher.putRef(m, "PeriodeEvaluation", e.getIdPeriodeEvaluation());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "NiveauEvaluation", e.getIdNiveauEvaluation());
 		ReferentielEnricher.putRef(m, "ThemeEvaluation", e.getIdThemeEvaluation());
 		ReferentielEnricher.putRef(m, "TauxEvaluation", e.getIdTauxEvaluation());

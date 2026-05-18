@@ -77,8 +77,10 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import jakarta.persistence.EntityNotFoundException;
 import org.hibernate.Hibernate;
 import org.hibernate.LazyInitializationException;
+import org.hibernate.ObjectNotFoundException;
 
 /**
  * Réponses API format B : références sous forme d'objets {@code { id, code, libelle, ... }} au lieu de simples id.
@@ -103,9 +105,8 @@ public final class ReferentielEnricher {
 		Object entity;
 		try {
 			entity = Hibernate.unproxy(association);
-		} catch (LazyInitializationException ex) {
-			// Fallback global: si le proxy lazy ne peut pas etre initialise hors session,
-			// on renvoie au moins l'identifiant pour eviter une 500.
+		} catch (LazyInitializationException | EntityNotFoundException | ObjectNotFoundException ex) {
+			// FK orpheline ou proxy hors session : renvoyer au moins l'id pour eviter une 500.
 			return refIdOnly(association);
 		}
 		return switch (entity) {
