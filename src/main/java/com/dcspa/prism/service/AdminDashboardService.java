@@ -1,5 +1,7 @@
 package com.dcspa.prism.service;
 
+import com.dcspa.prism.entity.AppRole;
+import com.dcspa.prism.entity.AppUser;
 import com.dcspa.prism.entity.Drena;
 import com.dcspa.prism.entity.Iep;
 import com.dcspa.prism.entity.Region;
@@ -21,7 +23,11 @@ import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
 import com.dcspa.prism.service.circonscription.CirconscriptionLevel;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -89,6 +95,29 @@ public class AdminDashboardService {
 		}
 
 		return payload;
+	}
+
+	@Transactional(readOnly = true)
+	public long countUsersInScopeWithRoles(CirconscriptionAttachement att, String... roleCodes) {
+		if (roleCodes == null || roleCodes.length == 0) {
+			return 0L;
+		}
+		List<String> codes = Arrays.stream(roleCodes).filter(c -> c != null && !c.isBlank()).toList();
+		if (codes.isEmpty()) {
+			return 0L;
+		}
+		Specification<AppUser> roleSpec = (root, query, cb) -> {
+			if (query != null) {
+				query.distinct(true);
+			}
+			Join<AppUser, AppRole> roles = root.join("roles", JoinType.INNER);
+			return roles.get("codeRole").in(codes);
+		};
+		Specification<AppUser> scope = CentreCirconscriptionSpecifications.forAppUser(att);
+		if (scope == null) {
+			return appUserRepository.count(roleSpec);
+		}
+		return appUserRepository.count(scope.and(roleSpec));
 	}
 
 	private String resolveScopeLabel(CirconscriptionAttachement att, boolean national) {

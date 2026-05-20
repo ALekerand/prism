@@ -4,7 +4,9 @@ import com.dcspa.prism.codegen.AutoCodePutMerge;
 
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
+import com.dcspa.prism.dto.LiaisonCatalogSyncRequest;
 import com.dcspa.prism.entity.CompetenceCentre;
+import com.dcspa.prism.service.CentreLiaisonSyncService;
 import com.dcspa.prism.service.CompetenceCentreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 public class CompetenceCentreController {
 
 	private final CompetenceCentreService competenceCentreService;
+	private final CentreLiaisonSyncService centreLiaisonSyncService;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -51,6 +54,13 @@ public class CompetenceCentreController {
 	public ResponseEntity<Map<String, Object>> create(@RequestBody CompetenceCentre body) {
 		CompetenceCentre saved = competenceCentreService.save(body);
 		return ResponseEntity.status(201).body(toRow(saved));
+	}
+
+	@Transactional
+	@PostMapping("/sync")
+	public ResponseEntity<Void> sync(@RequestBody LiaisonCatalogSyncRequest request) {
+		centreLiaisonSyncService.syncCompetenceCentre(request);
+		return ResponseEntity.noContent().build();
 	}
 
 	@Transactional

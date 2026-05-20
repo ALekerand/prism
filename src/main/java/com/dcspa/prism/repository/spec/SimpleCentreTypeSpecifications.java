@@ -8,6 +8,7 @@ import com.dcspa.prism.entity.Cec;
 import com.dcspa.prism.entity.Cp;
 import com.dcspa.prism.entity.Sie;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,7 +27,7 @@ public final class SimpleCentreTypeSpecifications {
 			if (f == null) {
 				return cb.conjunction();
 			}
-			List<Predicate> predicates = basePredicates(root, cb, f);
+			List<Predicate> predicates = basePredicates(root, cb, query, f);
 			predicates.add(SpecificationSupport.containsIgnoreCase(cb, root.get("libelleCec"), f.getLibelleCec()));
 			predicates.add(globalQ(cb, root, f.getQ(), "libelleCec"));
 			return cb.and(predicates.toArray(Predicate[]::new));
@@ -38,7 +39,7 @@ public final class SimpleCentreTypeSpecifications {
 			if (f == null) {
 				return cb.conjunction();
 			}
-			List<Predicate> predicates = basePredicates(root, cb, f);
+			List<Predicate> predicates = basePredicates(root, cb, query, f);
 			predicates.add(SpecificationSupport.containsIgnoreCase(cb, root.get("libellleCp"), f.getLibellleCp()));
 			predicates.add(globalQ(cb, root, f.getQ(), "libellleCp"));
 			return cb.and(predicates.toArray(Predicate[]::new));
@@ -50,7 +51,7 @@ public final class SimpleCentreTypeSpecifications {
 			if (f == null) {
 				return cb.conjunction();
 			}
-			List<Predicate> predicates = basePredicates(root, cb, f);
+			List<Predicate> predicates = basePredicates(root, cb, query, f);
 			predicates.add(SpecificationSupport.containsIgnoreCase(cb, root.get("libelleSie"), f.getLibelleSie()));
 			predicates.add(globalQ(cb, root, f.getQ(), "libelleSie"));
 			return cb.and(predicates.toArray(Predicate[]::new));
@@ -62,12 +63,16 @@ public final class SimpleCentreTypeSpecifications {
 				libelleAttr, "codeCentre", "encadreurNonMena", "localisationCentre", "nomMilieuImplentation");
 	}
 
-	private static <T> List<Predicate> basePredicates(Root<T> root, CriteriaBuilder cb, SimpleCentreListFilterBase f) {
+	private static <T> List<Predicate> basePredicates(
+			Root<T> root, CriteriaBuilder cb, CriteriaQuery<?> query, SimpleCentreListFilterBase f) {
 		List<Predicate> predicates = new ArrayList<>();
 		predicates.add(SpecificationSupport.eq(cb, root.get("id"), f.getId()));
 		predicates.add(SpecificationSupport.eq(cb, root.get("idLocalite"), f.getIdLocalite()));
 		predicates.add(SpecificationSupport.eq(cb, root.get("idPeriodicite"), f.getIdPeriodicite()));
 		predicates.add(SpecificationSupport.eq(cb, root.get("idIep"), f.getIdIep()));
+		if (f.getIdIep() == null) {
+			predicates.add(SpecificationSupport.idIepInDrena(cb, query, root.get("idIep"), f.getIdDrena()));
+		}
 		predicates.add(SpecificationSupport.eq(cb, root.get("idAutoriteAutorisation"), f.getIdAutoriteAutorisation()));
 		predicates.add(SpecificationSupport.eq(cb, root.get("idNaturecentre"), f.getIdNaturecentre()));
 		predicates.add(SpecificationSupport.eq(cb, root.get("idPromoteur"), f.getIdPromoteur()));

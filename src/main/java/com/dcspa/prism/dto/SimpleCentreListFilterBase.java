@@ -12,6 +12,8 @@ public abstract class SimpleCentreListFilterBase {
 	private Integer id;
 	private Integer idLocalite;
 	private Integer idPeriodicite;
+	/** Filtre par circonscription (tous les IEP de la DRENA) si {@code idIep} est absent. */
+	private Integer idDrena;
 	private Integer idIep;
 	private Integer idAutoriteAutorisation;
 	private Integer idNaturecentre;

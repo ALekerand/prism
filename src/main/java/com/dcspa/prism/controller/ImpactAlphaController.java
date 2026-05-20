@@ -1,7 +1,9 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.controller.support.ReferentielEnricher;
+import com.dcspa.prism.dto.LiaisonCatalogSyncRequest;
 import com.dcspa.prism.entity.ImpactAlpha;
+import com.dcspa.prism.service.CentreLiaisonSyncService;
 import com.dcspa.prism.service.ImpactAlphaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ import java.util.Optional;
 public class ImpactAlphaController {
 
 	private final ImpactAlphaService impactAlphaService;
+	private final CentreLiaisonSyncService centreLiaisonSyncService;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -46,6 +49,13 @@ public class ImpactAlphaController {
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody ImpactAlpha body) {
 		return ResponseEntity.status(201).body(toRow(impactAlphaService.save(body)));
+	}
+
+	@Transactional
+	@PostMapping("/sync")
+	public ResponseEntity<Void> sync(@RequestBody LiaisonCatalogSyncRequest request) {
+		centreLiaisonSyncService.syncImpactAlpha(request);
+		return ResponseEntity.noContent().build();
 	}
 
 	@Transactional

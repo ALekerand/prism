@@ -26,6 +26,9 @@ public final class AlphaSpecifications {
 			predicates.add(SpecificationSupport.eq(cb, root.get("idLocalite"), f.getIdLocalite()));
 			predicates.add(SpecificationSupport.eq(cb, root.get("idPeriodicite"), f.getIdPeriodicite()));
 			predicates.add(SpecificationSupport.eq(cb, root.get("idIep"), f.getIdIep()));
+			if (f.getIdIep() == null) {
+				predicates.add(SpecificationSupport.idIepInDrena(cb, query, root.get("idIep"), f.getIdDrena()));
+			}
 			predicates.add(SpecificationSupport.eq(cb, root.get("idAutoriteAutorisation"), f.getIdAutoriteAutorisation()));
 			predicates.add(SpecificationSupport.eq(cb, root.get("idNaturecentre"), f.getIdNaturecentre()));
 			predicates.add(SpecificationSupport.eq(cb, root.get("idPromoteur"), f.getIdPromoteur()));

@@ -1,7 +1,9 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.controller.support.ReferentielEnricher;
+import com.dcspa.prism.dto.LiaisonCatalogSyncRequest;
 import com.dcspa.prism.entity.RessourceFinanciereMateriel;
+import com.dcspa.prism.service.CentreLiaisonSyncService;
 import com.dcspa.prism.service.RessourceFinanciereMaterielService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ import java.util.Optional;
 public class RessourceFinanciereMaterielController {
 
 	private final RessourceFinanciereMaterielService ressourceFinanciereMaterielService;
+	private final CentreLiaisonSyncService centreLiaisonSyncService;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -47,6 +50,13 @@ public class RessourceFinanciereMaterielController {
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody RessourceFinanciereMateriel body) {
 		return ResponseEntity.status(201).body(toRow(ressourceFinanciereMaterielService.save(body)));
+	}
+
+	@Transactional
+	@PostMapping("/sync")
+	public ResponseEntity<Void> sync(@RequestBody LiaisonCatalogSyncRequest request) {
+		centreLiaisonSyncService.syncRessourceFinanciereMateriel(request);
+		return ResponseEntity.noContent().build();
 	}
 
 	@Transactional

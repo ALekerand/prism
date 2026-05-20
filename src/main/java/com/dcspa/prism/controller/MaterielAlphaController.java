@@ -1,12 +1,14 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.controller.support.ReferentielEnricher;
+import com.dcspa.prism.dto.LiaisonCatalogSyncRequest;
 import com.dcspa.prism.dto.MaterielAlphaRequest;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.MaterielAlpha;
 import com.dcspa.prism.entity.MaterielsPedagogique;
 import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.repository.MaterielsPedagogiqueRepository;
+import com.dcspa.prism.service.CentreLiaisonSyncService;
 import com.dcspa.prism.service.MaterielAlphaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,7 @@ import java.util.Map;
 public class MaterielAlphaController {
 
 	private final MaterielAlphaService materielalphaService;
+	private final CentreLiaisonSyncService centreLiaisonSyncService;
 	private final AlphaRepository alphaRepository;
 	private final MaterielsPedagogiqueRepository materielsPedagogiqueRepository;
 
@@ -52,6 +55,13 @@ public class MaterielAlphaController {
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody MaterielAlphaRequest request) {
 		return ResponseEntity.status(201).body(toRow(materielalphaService.save(toEntity(null, request))));
+	}
+
+	@Transactional
+	@PostMapping("/sync")
+	public ResponseEntity<Void> sync(@RequestBody LiaisonCatalogSyncRequest request) {
+		centreLiaisonSyncService.syncMaterielAlpha(request);
+		return ResponseEntity.noContent().build();
 	}
 
 	@Transactional

@@ -12,10 +12,16 @@ import com.dcspa.prism.entity.Personnel;
 import com.dcspa.prism.entity.Sie;
 import com.dcspa.prism.entity.Visite;
 import com.dcspa.prism.entity.AppUser;
+import com.dcspa.prism.entity.DrenaDepartement;
 import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
 import com.dcspa.prism.service.circonscription.CirconscriptionLevel;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Filtre JPA commun pour les entités « fiche centre » (Alpha, CEC, CP, SIE) via leur {@code centre}.
@@ -133,6 +139,12 @@ public final class CentreCirconscriptionSpecifications {
 		};
 	}
 
+	/**
+	 * Utilisateurs visibles sous la « coupole » du profil connecté.
+	 * <p>
+	 * DRENA : rattachement direct à la DRENA ou à une IEPP de cette DRENA.
+	 * Région : rattachement direct ou chaîne département → région (y compris via DRENA / IEPP).
+	 */
 	public static Specification<AppUser> forAppUser(CirconscriptionAttachement att) {
 		if (att == null || att.level() == CirconscriptionLevel.NONE || att.scopeId() == null) {
 			return null;
@@ -142,13 +154,79 @@ public final class CentreCirconscriptionSpecifications {
 			case IEP -> (root, query, cb) -> cb.equal(
 					root.join("idIep", JoinType.INNER).get("id"),
 					att.scopeId());
-			case DRENA -> (root, query, cb) -> cb.equal(
-					root.join("idDrena", JoinType.INNER).get("id"),
-					att.scopeId());
-			case REGION -> (root, query, cb) -> cb.equal(
-					root.join("idRegion", JoinType.INNER).get("id"),
-					att.scopeId());
+			case DRENA -> (root, query, cb) -> {
+				distinctIfRootQuery(query, AppUser.class);
+				var drenaDirect = cb.equal(
+						root.join("idDrena", JoinType.INNER).get("id"),
+						att.scopeId());
+				var iepUnderDrena = cb.equal(
+						root.join("idIep", JoinType.INNER).join("idDrena", JoinType.INNER).get("id"),
+						att.scopeId());
+				return cb.or(drenaDirect, iepUnderDrena);
+			};
+			case REGION -> (root, query, cb) -> {
+				distinctIfRootQuery(query, AppUser.class);
+				int regionId = att.scopeId();
+				List<Predicate> ors = new ArrayList<>();
+				ors.add(cb.equal(root.join("idRegion", JoinType.INNER).get("id"), regionId));
+				ors.add(cb.equal(
+						root.join("idDepartement", JoinType.INNER).join("idRegion", JoinType.INNER).get("id"),
+						regionId));
+				ors.add(cb.equal(
+						root.join("idSousPrefecture", JoinType.INNER)
+								.join("idDepartement", JoinType.INNER)
+								.join("idRegion", JoinType.INNER)
+								.get("id"),
+						regionId));
+				ors.add(cb.equal(
+						root.join("idLocalite", JoinType.INNER)
+								.join("idSousPrefecture", JoinType.INNER)
+								.join("idDepartement", JoinType.INNER)
+								.join("idRegion", JoinType.INNER)
+								.get("id"),
+						regionId));
+				ors.add(userDrenaInRegion(root, query, cb, regionId));
+				ors.add(userIepDrenaInRegion(root, query, cb, regionId));
+				return cb.or(ors.toArray(Predicate[]::new));
+			};
 		};
+	}
+
+	private static Predicate userDrenaInRegion(
+			jakarta.persistence.criteria.Root<AppUser> root,
+			jakarta.persistence.criteria.CriteriaQuery<?> query,
+			jakarta.persistence.criteria.CriteriaBuilder cb,
+			int regionId) {
+		Subquery<Integer> sq = query.subquery(Integer.class);
+		var ddRoot = sq.from(DrenaDepartement.class);
+		sq.select(cb.literal(1)).where(
+				cb.and(
+						cb.equal(ddRoot.get("idDrena").get("id"), root.get("idDrena").get("id")),
+						cb.equal(
+								ddRoot.join("idDepartement", JoinType.INNER)
+										.join("idRegion", JoinType.INNER)
+										.get("id"),
+								regionId)));
+		return cb.and(cb.isNotNull(root.get("idDrena")), cb.exists(sq));
+	}
+
+	private static Predicate userIepDrenaInRegion(
+			jakarta.persistence.criteria.Root<AppUser> root,
+			jakarta.persistence.criteria.CriteriaQuery<?> query,
+			jakarta.persistence.criteria.CriteriaBuilder cb,
+			int regionId) {
+		Subquery<Integer> sq = query.subquery(Integer.class);
+		var ddRoot = sq.from(DrenaDepartement.class);
+		var iepDrena = root.join("idIep", JoinType.INNER).join("idDrena", JoinType.INNER);
+		sq.select(cb.literal(1)).where(
+				cb.and(
+						cb.equal(ddRoot.get("idDrena").get("id"), iepDrena.get("id")),
+						cb.equal(
+								ddRoot.join("idDepartement", JoinType.INNER)
+										.join("idRegion", JoinType.INNER)
+										.get("id"),
+								regionId)));
+		return cb.and(cb.isNotNull(root.get("idIep")), cb.exists(sq));
 	}
 
 	private static <T> Specification<T> forAlphaLinked(

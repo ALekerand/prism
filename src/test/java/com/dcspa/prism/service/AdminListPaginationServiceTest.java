@@ -13,7 +13,16 @@ import com.dcspa.prism.repository.NiveauPersonnelRepository;
 import com.dcspa.prism.repository.PersonnelRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.repository.StatutPersonnelRepository;
+import com.dcspa.prism.repository.DepartementRepository;
+import com.dcspa.prism.repository.DrenaDepartementRepository;
+import com.dcspa.prism.repository.DrenaRepository;
+import com.dcspa.prism.repository.IeppRepository;
+import com.dcspa.prism.repository.LocaliteDImplantationRepository;
+import com.dcspa.prism.repository.RegionRepository;
+import com.dcspa.prism.repository.SousPrefectureRepository;
+import com.dcspa.prism.repository.CommuneRepository;
 import com.dcspa.prism.repository.StructureFormationCertificationRepository;
+import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -50,6 +59,33 @@ class AdminListPaginationServiceTest {
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
+
+	@Mock
+	private CirconscriptionResolver circonscriptionResolver;
+
+	@Mock
+	private RegionRepository regionRepository;
+
+	@Mock
+	private DrenaRepository drenaRepository;
+
+	@Mock
+	private IeppRepository ieppRepository;
+
+	@Mock
+	private DepartementRepository departementRepository;
+
+	@Mock
+	private SousPrefectureRepository sousPrefectureRepository;
+
+	@Mock
+	private CommuneRepository communeRepository;
+
+	@Mock
+	private LocaliteDImplantationRepository localiteDImplantationRepository;
+
+	@Mock
+	private DrenaDepartementRepository drenaDepartementRepository;
 
 	@InjectMocks
 	private AppUserAdminService appUserAdminService;
@@ -91,11 +127,12 @@ class AdminListPaginationServiceTest {
 		u.setUsername("alice");
 		u.setActif(true);
 		u.setRoles(Collections.emptySet());
-		when(appUserRepository.searchForAdmin(isNull(), isNull(), isNull(), any(Pageable.class)))
+		when(circonscriptionResolver.resolve(any())).thenReturn(CirconscriptionAttachement.none());
+		when(appUserRepository.findAll(any(Specification.class), any(Pageable.class)))
 				.thenReturn(new PageImpl<>(List.of(u)));
 
 		Page<AppUserAdminResponse> page =
-				appUserAdminService.findAllWithRoles(PageRequest.of(0, 10), null, null, null);
+				appUserAdminService.findAllWithRoles(PageRequest.of(0, 10), null, null, null, null);
 
 		assertThat(page.getTotalElements()).isEqualTo(1);
 		assertThat(page.getContent().get(0).getUsername()).isEqualTo("alice");
@@ -104,7 +141,7 @@ class AdminListPaginationServiceTest {
 	@Test
 	void deleteUserIfExists_whenAbsent_returnsFalse() {
 		when(appUserRepository.findById(999)).thenReturn(Optional.empty());
-		assertThat(appUserAdminService.deleteUserIfExists(999)).isFalse();
+		assertThat(appUserAdminService.deleteUserIfExists(999, null)).isFalse();
 		verify(appUserRepository, never()).delete(any(AppUser.class));
 	}
 
@@ -118,7 +155,8 @@ class AdminListPaginationServiceTest {
 		roles.add(role);
 		u.setRoles(roles);
 		when(appUserRepository.findById(3)).thenReturn(Optional.of(u));
-		assertThat(appUserAdminService.deleteUserIfExists(3)).isTrue();
+		when(circonscriptionResolver.isNationalView(any())).thenReturn(true);
+		assertThat(appUserAdminService.deleteUserIfExists(3, null)).isTrue();
 		assertThat(u.getRoles()).isEmpty();
 		verify(appUserRepository).delete(u);
 	}

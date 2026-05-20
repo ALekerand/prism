@@ -2,6 +2,7 @@ package com.dcspa.prism.controller;
 
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
+import com.dcspa.prism.dto.PromoteurListFilter;
 import com.dcspa.prism.entity.Personnemorale;
 import com.dcspa.prism.entity.Personnephysique;
 import com.dcspa.prism.entity.Promoteur;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -46,8 +48,9 @@ public class PromoteurController {
 	@Transactional(readOnly = true)
 	@GetMapping("/paged")
 	public ResponseEntity<Page<Map<String, Object>>> findAllPaged(
-			@PageableDefault(size = 20, sort = "id") Pageable pageable) {
-		return ResponseEntity.ok(promoteurService.findAll(pageable).map(this::toRow));
+			@PageableDefault(size = 20, sort = "id") Pageable pageable,
+			@ModelAttribute PromoteurListFilter filter) {
+		return ResponseEntity.ok(promoteurService.findAll(filter, pageable).map(this::toRow));
 	}
 
 	@Transactional(readOnly = true)

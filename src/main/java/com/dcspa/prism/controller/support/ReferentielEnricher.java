@@ -16,6 +16,7 @@ import com.dcspa.prism.entity.Competence;
 import com.dcspa.prism.entity.Cp;
 import com.dcspa.prism.entity.Departement;
 import com.dcspa.prism.entity.Designation;
+import com.dcspa.prism.entity.SourceFinancement;
 import com.dcspa.prism.entity.Difficulte;
 import com.dcspa.prism.entity.Diplome;
 import com.dcspa.prism.entity.Discipline;
@@ -161,6 +162,7 @@ public final class ReferentielEnricher {
 			case MilieuImplantation mil -> ref3(mil.getId(), mil.getCodeMilieuImplentation(), mil.getLibelleTypeImplentation());
 			case Commune com -> ref3(com.getId(), com.getCodeCommune(), com.getNomCommune());
 			case Designation des -> ref3(des.getId(), des.getCodeDesignation(), des.getLibelleDesignation());
+			case SourceFinancement sf -> ref3(sf.getId(), sf.getCodeSourceFinancement(), sf.getLibelleSourceFinancement());
 			case Difficulte diff -> ref3(diff.getId(), diff.getCodeDifficulte(), diff.getLibelleDifficulte());
 			case DomaineActivite da -> ref3(da.getId(), da.getCodeDomaineActivite(), da.getLibelleDomaineActivite());
 			case Civilite civi -> ref3(civi.getId(), civi.getCodeCivilite(), civi.getLibelleCivilite());

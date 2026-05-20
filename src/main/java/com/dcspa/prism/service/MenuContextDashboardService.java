@@ -194,7 +194,7 @@ public class MenuContextDashboardService {
 			}
 			case "ADMIN" -> {
 				subtitle = adminSubtitle(subModule);
-				cards.addAll(adminCards(att, subModule, summary));
+				cards.addAll(adminCards(user, att, subModule, summary, nationalView));
 			}
 			default -> throw new IllegalArgumentException("Module inconnu: " + module);
 		}
@@ -285,25 +285,103 @@ public class MenuContextDashboardService {
 	}
 
 	private List<Map<String, Object>> adminCards(
-			CirconscriptionAttachement att, String subModule, Map<String, Object> summary) {
+			AuthUser user,
+			CirconscriptionAttachement att,
+			String subModule,
+			Map<String, Object> summary,
+			boolean nationalView) {
 		String sub = subModule == null ? "" : subModule.trim().toLowerCase(Locale.ROOT);
 		List<Map<String, Object>> cards = new ArrayList<>();
+		String scopeLabel = String.valueOf(summary.getOrDefault("scopeLabel", "Vue nationale"));
 		switch (sub) {
 			case "acteurs", "roles", "role-permissions" -> {
-				long roles = appRoleRepository.count();
-				cards.add(card("Rôles", roles, "Profils et acteurs configurés", "user-tag", null));
+				if (nationalView) {
+					cards.add(card("Utilisateurs", summary.get("usersTotal"), scopeLabel, "user-shield", null));
+					cards.add(card("Rôles", appRoleRepository.count(), "Profils configurés", "user-tag", "mint"));
+				} else if (user != null && (user.hasRole("COORDONNATEUR") || user.hasRole("IEPP"))) {
+					long conseillers = adminDashboardService.countUsersInScopeWithRoles(att, "CONSEILLER");
+					cards.add(card("Conseillers", conseillers, scopeLabel, "user", null));
+				} else if (user != null && user.hasRole("SUPERVISEUR") && att.level() == CirconscriptionLevel.DRENA) {
+					long superviseurs = adminDashboardService.countUsersInScopeWithRoles(att, "SUPERVISEUR");
+					long coords = adminDashboardService.countUsersInScopeWithRoles(att, "COORDONNATEUR", "IEPP");
+					long conseillers = adminDashboardService.countUsersInScopeWithRoles(att, "CONSEILLER");
+					cards.add(card("Superviseurs", superviseurs, scopeLabel, "user-shield", null));
+					cards.add(card("Coordonnateurs", coords, null, "user-tie", "mint"));
+					cards.add(card("Conseillers", conseillers, null, "user", null));
+				} else if (user != null && user.hasRole("SUPERVISEUR")) {
+					long coords = adminDashboardService.countUsersInScopeWithRoles(att, "COORDONNATEUR", "IEPP");
+					long conseillers = adminDashboardService.countUsersInScopeWithRoles(att, "CONSEILLER");
+					cards.add(card("Coordonnateurs", coords, scopeLabel, "user-tie", null));
+					cards.add(card("Conseillers", conseillers, null, "user", "mint"));
+				} else {
+					cards.add(card("Utilisateurs", summary.get("usersTotal"), scopeLabel, "user-shield", null));
+				}
 			}
 			case "utilisateurs" -> {
 				Object users = summary.get("usersTotal");
-				cards.add(card("Utilisateurs", users, String.valueOf(summary.get("scopeLabel")), "user-shield", null));
+				cards.add(card("Utilisateurs", users, scopeLabel, "user-shield", null));
+				if (!nationalView) {
+					cards.addAll(actorScopeCards(user, att, scopeLabel));
+				}
 			}
 			default -> {
 				Object users = summary.get("usersTotal");
 				cards.add(card("Utilisateurs", users, null, "user-shield", null));
 				if (summary.get("rolesTotal") != null) {
 					cards.add(card("Rôles", summary.get("rolesTotal"), null, "user-tag", "mint"));
+				} else if (!nationalView) {
+					cards.addAll(actorScopeCards(user, att, scopeLabel));
 				}
 			}
+		}
+		return cards;
+	}
+
+	private List<Map<String, Object>> actorScopeCards(
+			AuthUser user, CirconscriptionAttachement att, String scopeLabel) {
+		List<Map<String, Object>> cards = new ArrayList<>();
+		if (user == null) {
+			return cards;
+		}
+		if (user.hasRole("COORDONNATEUR") || user.hasRole("IEPP")) {
+			cards.add(card(
+					"Conseillers",
+					adminDashboardService.countUsersInScopeWithRoles(att, "CONSEILLER"),
+					scopeLabel,
+					"user",
+					null));
+		} else if (user.hasRole("SUPERVISEUR") && att.level() == CirconscriptionLevel.DRENA) {
+			cards.add(card(
+					"Superviseurs",
+					adminDashboardService.countUsersInScopeWithRoles(att, "SUPERVISEUR"),
+					scopeLabel,
+					"user-shield",
+					null));
+			cards.add(card(
+					"Coordonnateurs",
+					adminDashboardService.countUsersInScopeWithRoles(att, "COORDONNATEUR", "IEPP"),
+					null,
+					"user-tie",
+					"mint"));
+			cards.add(card(
+					"Conseillers",
+					adminDashboardService.countUsersInScopeWithRoles(att, "CONSEILLER"),
+					null,
+					"user",
+					null));
+		} else if (user.hasRole("SUPERVISEUR")) {
+			cards.add(card(
+					"Coordonnateurs",
+					adminDashboardService.countUsersInScopeWithRoles(att, "COORDONNATEUR", "IEPP"),
+					scopeLabel,
+					"user-tie",
+					null));
+			cards.add(card(
+					"Conseillers",
+					adminDashboardService.countUsersInScopeWithRoles(att, "CONSEILLER"),
+					null,
+					"user",
+					"mint"));
 		}
 		return cards;
 	}

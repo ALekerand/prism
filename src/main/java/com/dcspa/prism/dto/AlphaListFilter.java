@@ -16,6 +16,8 @@ public class AlphaListFilter {
 	private Integer idRegimeAlpha;
 	private Integer idLocalite;
 	private Integer idPeriodicite;
+	/** Filtre par circonscription (tous les IEP de la DRENA) si {@code idIep} est absent. */
+	private Integer idDrena;
 	private Integer idIep;
 	private Integer idAutoriteAutorisation;
 	private Integer idNaturecentre;
@@ -44,6 +46,7 @@ public class AlphaListFilter {
 				&& idRegimeAlpha == null
 				&& idLocalite == null
 				&& idPeriodicite == null
+				&& idDrena == null
 				&& idIep == null
 				&& idAutoriteAutorisation == null
 				&& idNaturecentre == null

@@ -10,15 +10,24 @@ import com.dcspa.prism.repository.AppRoleRepository;
 import com.dcspa.prism.repository.AppUserRepository;
 import com.dcspa.prism.repository.CommuneRepository;
 import com.dcspa.prism.repository.DepartementRepository;
+import com.dcspa.prism.repository.DrenaDepartementRepository;
 import com.dcspa.prism.repository.DrenaRepository;
 import com.dcspa.prism.repository.IeppRepository;
 import com.dcspa.prism.repository.LocaliteDImplantationRepository;
 import com.dcspa.prism.repository.RegionRepository;
 import com.dcspa.prism.repository.SousPrefectureRepository;
+import com.dcspa.prism.repository.spec.AppUserSpecifications;
+import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
+import com.dcspa.prism.security.AuthUser;
+import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
+import com.dcspa.prism.service.circonscription.CirconscriptionLevel;
 import com.dcspa.prism.service.pagination.PageableUtils;
+import com.dcspa.prism.entity.Iep;
+import com.dcspa.prism.entity.LocaliteDImplantation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,6 +55,8 @@ public class AppUserAdminService {
     private final CommuneRepository communeRepository;
     private final LocaliteDImplantationRepository localiteDImplantationRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CirconscriptionResolver circonscriptionResolver;
+    private final DrenaDepartementRepository drenaDepartementRepository;
 
     private static final Set<String> SCOPED_ROLE_CODES = Set.of(
             "CONSEILLER",
@@ -59,10 +70,17 @@ public class AppUserAdminService {
             Pageable pageable,
             String q,
             Integer roleId,
-            Boolean actif) {
+            Boolean actif,
+            AuthUser authUser) {
         Pageable p = PageableUtils.cap(pageable);
         String qNorm = normalizeSearchText(q);
-        return appUserRepository.searchForAdmin(qNorm, roleId, actif, p).map(this::toDto);
+        Specification<AppUser> filter = AppUserSpecifications.forAdminSearch(qNorm, roleId, actif);
+        Specification<AppUser> scope = CentreCirconscriptionSpecifications.forAppUser(
+                circonscriptionResolver.resolve(authUser));
+        Specification<AppUser> combined = scope == null
+                ? filter
+                : Specification.where(scope).and(filter);
+        return appUserRepository.findAll(combined, p).map(this::toDto);
     }
 
     private static String normalizeSearchText(String q) {
@@ -74,9 +92,10 @@ public class AppUserAdminService {
     }
 
     @Transactional
-    public void updateUserRoles(Integer userId, AppUserUpdateRolesRequest request) {
+    public void updateUserRoles(Integer userId, AppUserUpdateRolesRequest request, AuthUser authUser) {
         AppUser user = appUserRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable: " + userId));
+        assertUserVisible(user, authUser);
 
         List<Integer> roleIds = normalizeSingleRoleIds(request.getRoleIds());
 
@@ -96,7 +115,7 @@ public class AppUserAdminService {
     }
 
     @Transactional
-    public AppUserAdminResponse createUser(AppUserAdminUpsertRequest request) {
+    public AppUserAdminResponse createUser(AppUserAdminUpsertRequest request, AuthUser authUser) {
         if (request == null) throw new IllegalArgumentException("Requête obligatoire");
         String username = String.valueOf(request.getUsername() == null ? "" : request.getUsername()).trim();
         if (username.isBlank()) throw new IllegalArgumentException("username est obligatoire");
@@ -113,14 +132,16 @@ public class AppUserAdminService {
         u.setRoles(roles);
         applyScope(u, request);
         validateScopeForRoles(roles, u);
+        assertUpsertWithinViewerScope(u, authUser);
         return toDto(appUserRepository.save(u));
     }
 
     @Transactional
-    public AppUserAdminResponse updateUser(Integer id, AppUserAdminUpsertRequest request) {
+    public AppUserAdminResponse updateUser(Integer id, AppUserAdminUpsertRequest request, AuthUser authUser) {
         if (request == null) throw new IllegalArgumentException("Requête obligatoire");
         AppUser u = appUserRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable: " + id));
+        assertUserVisible(u, authUser);
 
         String username = String.valueOf(request.getUsername() == null ? "" : request.getUsername()).trim();
         if (username.isBlank()) throw new IllegalArgumentException("username est obligatoire");
@@ -142,6 +163,7 @@ public class AppUserAdminService {
 
         applyScope(u, request);
         validateScopeForRoles(u.getRoles(), u);
+        assertUpsertWithinViewerScope(u, authUser);
 
         return toDto(appUserRepository.save(u));
     }
@@ -152,12 +174,13 @@ public class AppUserAdminService {
      * @return {@code true} si une ligne a été supprimée, {@code false} si aucun utilisateur avec cet id.
      */
     @Transactional
-    public boolean deleteUserIfExists(Integer id) {
+    public boolean deleteUserIfExists(Integer id, AuthUser authUser) {
         Optional<AppUser> existing = appUserRepository.findById(id);
         if (existing.isEmpty()) {
             return false;
         }
         AppUser user = existing.get();
+        assertUserVisible(user, authUser);
         // Charger puis vider le côté propriétaire du ManyToMany pour supprimer les lignes de user_role
         // avant DELETE sur app_user (deleteById seul peut laisser le join et violer la FK MySQL).
         user.getRoles().clear();
@@ -230,6 +253,101 @@ public class AppUserAdminService {
                 || user.getIdSousPrefecture() != null
                 || user.getIdCommune() != null
                 || user.getIdLocalite() != null;
+    }
+
+    private void assertUserVisible(AppUser target, AuthUser viewer) {
+        if (target == null || circonscriptionResolver.isNationalView(viewer)) {
+            return;
+        }
+        Specification<AppUser> scope = CentreCirconscriptionSpecifications.forAppUser(
+                circonscriptionResolver.resolve(viewer));
+        if (scope == null) {
+            return;
+        }
+        Specification<AppUser> byId = (root, query, cb) -> cb.equal(root.get("id"), target.getId());
+        if (!appUserRepository.exists(scope.and(byId))) {
+            throw new IllegalArgumentException("Utilisateur hors de votre circonscription.");
+        }
+    }
+
+    private void assertUpsertWithinViewerScope(AppUser target, AuthUser viewer) {
+        if (target == null || circonscriptionResolver.isNationalView(viewer)) {
+            return;
+        }
+        CirconscriptionAttachement att = circonscriptionResolver.resolve(viewer);
+        if (att.level() == CirconscriptionLevel.NONE) {
+            return;
+        }
+        if (!userMatchesCirconscription(target, att)) {
+            throw new IllegalArgumentException(
+                    "La circonscription de l'utilisateur doit rester dans votre périmètre.");
+        }
+    }
+
+    private boolean userMatchesCirconscription(AppUser user, CirconscriptionAttachement att) {
+        return switch (att.level()) {
+            case NONE -> true;
+            case IEP -> user.getIdIep() != null && att.scopeId().equals(user.getIdIep().getId());
+            case DRENA -> {
+                if (user.getIdDrena() != null && att.scopeId().equals(user.getIdDrena().getId())) {
+                    yield true;
+                }
+                if (user.getIdIep() == null) {
+                    yield false;
+                }
+                yield ieppRepository.findById(user.getIdIep().getId())
+                        .map(Iep::getIdDrena)
+                        .filter(d -> d != null && att.scopeId().equals(d.getId()))
+                        .isPresent();
+            }
+            case REGION -> userInRegion(user, att.scopeId());
+        };
+    }
+
+    private boolean userInRegion(AppUser user, Integer regionId) {
+        Integer direct = regionIdOfUser(user);
+        if (direct != null) {
+            return direct.equals(regionId);
+        }
+        if (user.getIdDrena() != null) {
+            return drenaDepartementRepository.existsByIdDrena_IdAndIdDepartement_IdRegion_Id(
+                    user.getIdDrena().getId(), regionId);
+        }
+        if (user.getIdIep() != null) {
+            return ieppRepository.findById(user.getIdIep().getId())
+                    .map(Iep::getIdDrena)
+                    .filter(d -> d != null)
+                    .map(d -> drenaDepartementRepository.existsByIdDrena_IdAndIdDepartement_IdRegion_Id(
+                            d.getId(), regionId))
+                    .orElse(false);
+        }
+        return false;
+    }
+
+    private Integer regionIdOfUser(AppUser user) {
+        if (user.getIdRegion() != null) {
+            return user.getIdRegion().getId();
+        }
+        if (user.getIdDepartement() != null && user.getIdDepartement().getIdRegion() != null) {
+            return user.getIdDepartement().getIdRegion().getId();
+        }
+        if (user.getIdSousPrefecture() != null
+                && user.getIdSousPrefecture().getIdDepartement() != null
+                && user.getIdSousPrefecture().getIdDepartement().getIdRegion() != null) {
+            return user.getIdSousPrefecture().getIdDepartement().getIdRegion().getId();
+        }
+        if (user.getIdLocalite() != null) {
+            return regionIdOfLocalite(user.getIdLocalite());
+        }
+        return null;
+    }
+
+    private static Integer regionIdOfLocalite(LocaliteDImplantation loc) {
+        if (loc.getIdSousPrefecture() == null || loc.getIdSousPrefecture().getIdDepartement() == null) {
+            return null;
+        }
+        var dep = loc.getIdSousPrefecture().getIdDepartement();
+        return dep.getIdRegion() != null ? dep.getIdRegion().getId() : null;
     }
 
     private Integer idOf(Map<String, Object> ref) {

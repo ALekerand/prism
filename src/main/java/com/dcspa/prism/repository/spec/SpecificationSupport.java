@@ -1,9 +1,12 @@
 package com.dcspa.prism.repository.spec;
 
+import com.dcspa.prism.entity.Iep;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +46,21 @@ public final class SpecificationSupport {
 	 * ou à l’identifiant numérique si {@code q} est un entier valide.
 	 * Si {@code q} est vide, ne restreint pas (conjunction).
 	 */
+	/**
+	 * Centres rattachés à un IEP de la DRENA (si {@code idIep} est renseigné, ne pas appeler — utiliser {@link #eq} sur idIep).
+	 */
+	public static Predicate idIepInDrena(
+			CriteriaBuilder cb, CriteriaQuery<?> query, Expression<Integer> idIepPath, Integer idDrena) {
+		if (idDrena == null) {
+			return cb.conjunction();
+		}
+		Subquery<Integer> sq = query.subquery(Integer.class);
+		Root<Iep> iepRoot = sq.from(Iep.class);
+		sq.select(iepRoot.get("id"));
+		sq.where(cb.equal(iepRoot.get("idDrena").get("id"), idDrena));
+		return idIepPath.in(sq);
+	}
+
 	public static Predicate globalTextOrId(CriteriaBuilder cb, Root<?> root, String q, String... stringAttributes) {
 		if (q == null || q.isBlank()) {
 			return cb.conjunction();

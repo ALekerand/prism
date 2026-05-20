@@ -1,11 +1,14 @@
 package com.dcspa.prism.service;
 
+import com.dcspa.prism.dto.PromoteurListFilter;
 import com.dcspa.prism.entity.Promoteur;
 import com.dcspa.prism.repository.PromoteurRepository;
+import com.dcspa.prism.repository.spec.PromoteurSpecifications;
 import com.dcspa.prism.service.pagination.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,12 @@ public class PromoteurService {
 	@Transactional(readOnly = true)
 	public Page<Promoteur> findAll(Pageable pageable) {
 		return repository.findAll(PageableUtils.cap(pageable));
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Promoteur> findAll(PromoteurListFilter filter, Pageable pageable) {
+		Specification<Promoteur> spec = PromoteurSpecifications.byFilter(filter);
+		return repository.findAll(spec, PageableUtils.cap(pageable));
 	}
 
 	@Transactional(readOnly = true)

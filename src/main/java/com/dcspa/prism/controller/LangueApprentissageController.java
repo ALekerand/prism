@@ -2,9 +2,13 @@ package com.dcspa.prism.controller;
 
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.LangueApprentissageRequest;
+import com.dcspa.prism.dto.LangueCatalogueRequest;
+import com.dcspa.prism.dto.LangueLiaisonSyncRequest;
 import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.LangueApprentissage;
 import com.dcspa.prism.repository.CentreRepository;
+import com.dcspa.prism.service.CentreLiaisonSyncService;
+import com.dcspa.prism.service.LangueApprentissageCatalogService;
 import com.dcspa.prism.service.LangueApprentissageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +32,38 @@ import java.util.Map;
 public class LangueApprentissageController {
 
 	private final LangueApprentissageService langueApprentissageService;
+	private final LangueApprentissageCatalogService langueApprentissageCatalogService;
+	private final CentreLiaisonSyncService centreLiaisonSyncService;
 	private final CentreRepository centreRepository;
+
+	@Transactional(readOnly = true)
+	@GetMapping("/catalog")
+	public ResponseEntity<List<Map<String, Object>>> findCatalog() {
+		return ResponseEntity.ok(
+				langueApprentissageCatalogService.findCatalog().stream().map(this::toCatalogRow).toList());
+	}
+
+	@Transactional
+	@PostMapping("/catalog")
+	public ResponseEntity<Map<String, Object>> createCatalog(@RequestBody LangueCatalogueRequest request) {
+		return ResponseEntity.status(201).body(toCatalogRow(
+				langueApprentissageCatalogService.saveCatalog(null, request.getLibelleLangue())));
+	}
+
+	@Transactional
+	@PutMapping("/catalog/{id}")
+	public ResponseEntity<Map<String, Object>> updateCatalog(
+			@PathVariable Integer id, @RequestBody LangueCatalogueRequest request) {
+		return ResponseEntity.ok(toCatalogRow(
+				langueApprentissageCatalogService.saveCatalog(id, request.getLibelleLangue())));
+	}
+
+	@Transactional
+	@DeleteMapping("/catalog/{id}")
+	public ResponseEntity<Void> deleteCatalog(@PathVariable Integer id) {
+		langueApprentissageCatalogService.deleteCatalogById(id);
+		return ResponseEntity.noContent().build();
+	}
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -52,6 +87,13 @@ public class LangueApprentissageController {
 	}
 
 	@Transactional
+	@PostMapping("/sync")
+	public ResponseEntity<Void> sync(@RequestBody LangueLiaisonSyncRequest request) {
+		centreLiaisonSyncService.syncLangueApprentissage(request);
+		return ResponseEntity.noContent().build();
+	}
+
+	@Transactional
 	@PutMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> update(
 			@PathVariable Integer id, @RequestBody LangueApprentissageRequest request) {
@@ -66,6 +108,13 @@ public class LangueApprentissageController {
 
 	private Map<String, Object> toRow(LangueApprentissage e) {
 		return new LinkedHashMap<>(ReferentielEnricher.toRef(e));
+	}
+
+	private Map<String, Object> toCatalogRow(LangueApprentissage e) {
+		Map<String, Object> m = new LinkedHashMap<>();
+		m.put("id", e.getId());
+		m.put("libelleLangue", e.getLibelleLangue());
+		return m;
 	}
 
 	private LangueApprentissage toEntity(Integer id, LangueApprentissageRequest r) {
