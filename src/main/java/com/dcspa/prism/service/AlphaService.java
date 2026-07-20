@@ -268,6 +268,25 @@ public class AlphaService {
 		return Optional.of(CentreTypeListItemMapper.fromAlpha(save(existing)));
 	}
 
+	@Transactional
+	public Optional<CentreTypeListItem> updateActif(Integer id, boolean actif, AuthUser authUser) {
+		if (!isAlphaWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
+		if (!alphaRepository.existsById(id)) {
+			return Optional.empty();
+		}
+		int updated = centreRepository.updateActifById(id, actif);
+		if (updated == 0) {
+			throw new IllegalArgumentException("Centre introuvable pour Alpha #" + id);
+		}
+		Alpha existing = alphaRepository.findById(id).orElse(null);
+		if (existing == null) {
+			return Optional.empty();
+		}
+		return Optional.of(CentreTypeListItemMapper.fromAlpha(existing, actif));
+	}
+
 	// Met à jour les champs détaillés ; vide si l’identifiant n’existe pas.
 	@Transactional
 	public Optional<CentreTypeListItem> updateInfos(Integer id, UpdateCentreTypeInfosRequest req, AuthUser authUser) {
@@ -298,8 +317,11 @@ public class AlphaService {
 			if (req.getNiveauxAlpha() != null) {
 				centreNiveauCreationService.replaceAlphaNiveaux(existing, req.getNiveauxAlpha());
 			}
+			syncCentreActif(existing.getId(), req);
 		}
-		return Optional.of(CentreTypeListItemMapper.fromAlpha(save(existing)));
+		Alpha saved = save(existing);
+		centreRepository.findById(saved.getId()).ifPresent(saved::setCentre);
+		return Optional.of(CentreTypeListItemMapper.fromAlpha(saved));
 	}
 
 	// Supprime un Alpha par identifiant.
@@ -390,6 +412,7 @@ public class AlphaService {
 		attachReferences(item, alpha);
 		attachPromoteur(item, alpha.getIdPromoteur());
 		attachAlphaSpecificRefs(item, alpha);
+		centreRepository.findById(alpha.getId()).ifPresent(c -> item.setActif(CentreSupplementalFields.actifForApi(c)));
 		item.setNiveaux(alphaNiveauRepository.findByIdCentre_Id(alpha.getId()).stream()
 				.map(this::toNiveauDetails)
 				.toList());
@@ -657,6 +680,16 @@ public class AlphaService {
 			}
 		}
 		item.setPromoteur(details);
+	}
+
+	private void syncCentreActif(Integer centreId, UpdateCentreTypeInfosRequest req) {
+		if (req == null || req.getActif() == null || centreId == null) {
+			return;
+		}
+		centreRepository.findById(centreId).ifPresent(c -> {
+			CentreSupplementalFields.applyActifToCentre(c, req.getActif());
+			centreRepository.save(c);
+		});
 	}
 
 }

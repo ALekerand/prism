@@ -61,15 +61,15 @@ public class AdminDashboardService {
 		CirconscriptionAttachement att = circonscriptionResolver.resolve(user);
 		boolean national = att.level() == CirconscriptionLevel.NONE;
 
-		long alphaTotal = count(alphaRepository, CentreCirconscriptionSpecifications.forAlpha(att));
-		long cecTotal = count(cecRepository, CentreCirconscriptionSpecifications.forCec(att));
-		long cpTotal = count(cpRepository, CentreCirconscriptionSpecifications.forCp(att));
-		long sieTotal = count(sieRepository, CentreCirconscriptionSpecifications.forSie(att));
-		long centresTotal = count(centreRepository, CentreCirconscriptionSpecifications.forCentre(att));
-		long personnelTotal = count(personnelRepository, CentreCirconscriptionSpecifications.forPersonnel(att));
-		long visitesTotal = count(visiteRepository, CentreCirconscriptionSpecifications.forVisite(att));
-		long controlesTotal = count(controleRepository, CentreCirconscriptionSpecifications.forControle(att));
-		long evaluationsTotal = count(evaluationRepository, CentreCirconscriptionSpecifications.forEvaluation(att));
+		long alphaTotal = count(alphaRepository, CentreCirconscriptionSpecifications.forAlphaStats(att));
+		long cecTotal = count(cecRepository, CentreCirconscriptionSpecifications.forCecStats(att));
+		long cpTotal = count(cpRepository, CentreCirconscriptionSpecifications.forCpStats(att));
+		long sieTotal = count(sieRepository, CentreCirconscriptionSpecifications.forSieStats(att));
+		long centresTotal = count(centreRepository, CentreCirconscriptionSpecifications.forCentreStats(att));
+		long personnelTotal = count(personnelRepository, CentreCirconscriptionSpecifications.forPersonnelStats(att));
+		long visitesTotal = count(visiteRepository, CentreCirconscriptionSpecifications.forVisiteStats(att));
+		long controlesTotal = count(controleRepository, CentreCirconscriptionSpecifications.forControleStats(att));
+		long evaluationsTotal = count(evaluationRepository, CentreCirconscriptionSpecifications.forEvaluationStats(att));
 
 		Map<String, Object> payload = new LinkedHashMap<>();
 		payload.put("scopeMode", national ? "NATIONAL" : att.level().name());

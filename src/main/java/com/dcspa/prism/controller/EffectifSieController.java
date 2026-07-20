@@ -72,6 +72,7 @@ public class EffectifSieController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
 		m.put("codeEffectifSie", e.getCodeEffectifSie());
 		m.put("effectifSie3IvoirienH", e.getEffectifSie3IvoirienH());
@@ -102,6 +103,8 @@ public class EffectifSieController {
 		m.put("effectifSie1314EtPlusHandicapF", e.getEffectifSie1314EtPlusHandicapF());
 		m.put("effectifSie1314EtPlusHandicapH", e.getEffectifSie1314EtPlusHandicapH());
 		m.put("effectifSieNiveauSie", e.getEffectifSieNiveauSie());
+		m.put("effectifSieNiveauH", e.getEffectifSieNiveauH());
+		m.put("effectifSieNiveauF", e.getEffectifSieNiveauF());
 		m.put("effectifSie46NonIvoiriienF", e.getEffectifSie46NonIvoiriienF());
 		return m;
 	}

@@ -74,9 +74,12 @@ public class EffectifCepeCecController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("cecIdCentre", JpaAssociationIds.intIdOrNull(e.getCecIdCentre()));
 		m.put("codeEffectifCepeCec", e.getCodeEffectifCepeCec());
+		m.put("effectifCepeCecNiveauH", e.getEffectifCepeCecNiveauH());
+		m.put("effectifCepeCecNiveauF", e.getEffectifCepeCecNiveauF());
 		m.put("effectifCepeCandidatFilleCec", e.getEffectifCepeCandidatFilleCec());
 		m.put("effectifCepeCandidatGarconCec", e.getEffectifCepeCandidatGarconCec());
 		m.put("effectifCepeCandidatIvoirienCec", e.getEffectifCepeCandidatIvoirienCec());

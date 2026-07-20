@@ -75,6 +75,7 @@ public class EffectifAbandonCecController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
 		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifAbandonCec", e.getCodeEffectifAbandonCec());
@@ -109,6 +110,8 @@ public class EffectifAbandonCecController {
 		m.put("effectifAbandonCec1216HandicapH", e.getEffectifAbandonCec1216HandicapH());
 		m.put("effectifAbandonCec1216HandicapF", e.getEffectifAbandonCec1216HandicapF());
 		m.put("effectifAbandonCecNiveauCec", e.getEffectifAbandonCecNiveauCec());
+		m.put("effectifAbandonCecNiveauH", e.getEffectifAbandonCecNiveauH());
+		m.put("effectifAbandonCecNiveauF", e.getEffectifAbandonCecNiveauF());
 		m.put("causeAbandonCec", e.getCauseAbandonCec());
 		return m;
 	}

@@ -24,7 +24,7 @@ public class MaterielAlpha {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CENTRE", nullable = false)
-    private Alpha idCentre;
+    private Centre idCentre;
 
     @Size(max = 100)
     @Column(name = "LIBELLE_AUTRE_MATERIEL", length = 100)

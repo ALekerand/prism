@@ -25,6 +25,12 @@ public class AppUserAdminResponse {
     private Integer idSousPrefecture;
     private Integer idCommune;
     private Integer idLocalite;
+    private String nom;
+    private String prenoms;
+    private java.time.LocalDate dateNaissance;
+    private String lieuNaissance;
+    private java.time.LocalDate datePriseService;
+    private java.time.LocalDate dateDepartRetraite;
     private Map<String, Object> region;
     private Map<String, Object> drena;
     private Map<String, Object> iep;

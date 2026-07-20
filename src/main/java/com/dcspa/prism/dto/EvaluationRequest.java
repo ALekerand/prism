@@ -19,6 +19,9 @@ public class EvaluationRequest {
 	@Setter
 	public static class ThemeTauxRequest {
 		private Integer idThemeEvaluation;
+		/** Conservé pour compatibilité ; recalculé si total/obtenu fournis. */
 		private Integer taux;
+		private Integer nombreTotalEvalue;
+		private Integer nombreResultatObtenu;
 	}
 }

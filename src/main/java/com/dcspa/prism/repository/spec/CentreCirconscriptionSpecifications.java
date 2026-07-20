@@ -2,6 +2,7 @@ package com.dcspa.prism.repository.spec;
 
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.AppuiPartenaire;
+import com.dcspa.prism.entity.Document;
 import com.dcspa.prism.entity.Cec;
 import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.Controle;
@@ -112,6 +113,31 @@ public final class CentreCirconscriptionSpecifications {
 
 	public static Specification<Performance> forPerformance(CirconscriptionAttachement att) {
 		return forAlphaLinked(Performance.class, att, "idAlpha");
+	}
+
+	public static Specification<Document> forDocument(CirconscriptionAttachement att) {
+		if (att == null || att.level() == CirconscriptionLevel.NONE || att.scopeId() == null) {
+			return null;
+		}
+		return switch (att.level()) {
+			case NONE -> null;
+			case IEP -> (root, query, cb) -> cb.equal(
+					root.join("idCentre", JoinType.INNER).join("idIep", JoinType.INNER).get("id"),
+					att.scopeId());
+			case DRENA -> (root, query, cb) -> {
+				distinctIfRootQuery(query, Document.class);
+				var iepJoin = root.join("idCentre", JoinType.INNER).join("idIep", JoinType.INNER);
+				return cb.equal(iepJoin.join("idDrena", JoinType.INNER).get("id"), att.scopeId());
+			};
+			case REGION -> (root, query, cb) -> {
+				distinctIfRootQuery(query, Document.class);
+				var centreJoin = root.join("idCentre", JoinType.INNER);
+				var locJoin = centreJoin.join("idLocalite", JoinType.INNER);
+				var spJoin = locJoin.join("idSousPrefecture", JoinType.INNER);
+				var depJoin = spJoin.join("idDepartement", JoinType.INNER);
+				return cb.equal(depJoin.join("idRegion", JoinType.INNER).get("id"), att.scopeId());
+			};
+		};
 	}
 
 	public static Specification<AppuiPartenaire> forAppuiPartenaire(CirconscriptionAttachement att) {
@@ -286,5 +312,104 @@ public final class CentreCirconscriptionSpecifications {
 		if (query != null && entityClass.equals(query.getResultType())) {
 			query.distinct(true);
 		}
+	}
+
+	/** {@code null} ou {@code true} = actif (inclus dans les statistiques). */
+	public static boolean isActif(Centre centre) {
+		if (centre == null) {
+			return false;
+		}
+		Boolean actif = centre.getActif();
+		return actif == null || Boolean.TRUE.equals(actif);
+	}
+
+	public static Specification<Centre> centreActifOnly() {
+		return (root, query, cb) -> cb.or(cb.isNull(root.get("actif")), cb.isTrue(root.get("actif")));
+	}
+
+	public static <T> Specification<T> centreBackedActifOnly() {
+		return (root, query, cb) -> {
+			var centre = root.join("centre", JoinType.INNER);
+			return cb.or(cb.isNull(centre.get("actif")), cb.isTrue(centre.get("actif")));
+		};
+	}
+
+	public static <T> Specification<T> idCentreActifOnly() {
+		return (root, query, cb) -> {
+			var centre = root.join("idCentre", JoinType.INNER);
+			return cb.or(cb.isNull(centre.get("actif")), cb.isTrue(centre.get("actif")));
+		};
+	}
+
+	public static <T> Specification<T> alphaLinkedCentreActifOnly(String alphaField) {
+		return (root, query, cb) -> {
+			var centre = root.join(alphaField, JoinType.INNER).join("centre", JoinType.INNER);
+			return cb.or(cb.isNull(centre.get("actif")), cb.isTrue(centre.get("actif")));
+		};
+	}
+
+	public static <T> Specification<T> andNullable(Specification<T> first, Specification<T> second) {
+		if (first == null && second == null) {
+			return null;
+		}
+		if (first == null) {
+			return second;
+		}
+		if (second == null) {
+			return first;
+		}
+		return first.and(second);
+	}
+
+	public static Specification<Centre> forCentreStats(CirconscriptionAttachement att) {
+		return andNullable(forCentre(att), centreActifOnly());
+	}
+
+	public static Specification<Alpha> forAlphaStats(CirconscriptionAttachement att) {
+		return andNullable(forAlpha(att), centreBackedActifOnly());
+	}
+
+	public static Specification<Cec> forCecStats(CirconscriptionAttachement att) {
+		return andNullable(forCec(att), centreBackedActifOnly());
+	}
+
+	public static Specification<Cp> forCpStats(CirconscriptionAttachement att) {
+		return andNullable(forCp(att), centreBackedActifOnly());
+	}
+
+	public static Specification<Sie> forSieStats(CirconscriptionAttachement att) {
+		return andNullable(forSie(att), centreBackedActifOnly());
+	}
+
+	public static Specification<Personnel> forPersonnelStats(CirconscriptionAttachement att) {
+		return andNullable(forPersonnel(att), idCentreActifOnly());
+	}
+
+	public static Specification<Visite> forVisiteStats(CirconscriptionAttachement att) {
+		return andNullable(forVisite(att), alphaLinkedCentreActifOnly("idAlpha"));
+	}
+
+	public static Specification<Controle> forControleStats(CirconscriptionAttachement att) {
+		return andNullable(forControle(att), alphaLinkedCentreActifOnly("idAlpha"));
+	}
+
+	public static Specification<Evaluation> forEvaluationStats(CirconscriptionAttachement att) {
+		return andNullable(forEvaluation(att), alphaLinkedCentreActifOnly("idAlpha"));
+	}
+
+	public static Specification<Performance> forPerformanceStats(CirconscriptionAttachement att) {
+		return andNullable(forPerformance(att), alphaLinkedCentreActifOnly("idAlpha"));
+	}
+
+	public static Specification<Document> forDocumentStats(CirconscriptionAttachement att) {
+		return andNullable(forDocument(att), idCentreActifOnly());
+	}
+
+	public static Specification<AppuiPartenaire> forAppuiPartenaireStats(CirconscriptionAttachement att) {
+		return andNullable(forAppuiPartenaire(att), idCentreActifOnly());
+	}
+
+	public static <T> Specification<T> forCentreBackedStats(Class<T> entityClass, CirconscriptionAttachement att) {
+		return andNullable(forCentreBacked(entityClass, att), centreBackedActifOnly());
 	}
 }

@@ -28,7 +28,8 @@ public interface AlphaRepository extends BaseRepository<Alpha, Integer>, JpaSpec
 			  a.autorisation, a.estElectrifie, a.aDeLeau, a.nombreVisite,
 			  a.totalApprenants, a.totalHommes, a.totalFemmes, a.latitudeGps, a.longitudeGps,
 			  a.gpsValide, a.structurePartenaire, a.nomPartenaire,
-			  a.localisationCentre, a.nomMilieuImplentation, a.encadreurNonMena, a.encadrerParMena, a.idPromoteur)
+			  a.localisationCentre, a.nomMilieuImplentation, a.encadreurNonMena, a.encadrerParMena, a.idPromoteur,
+			  coalesce(a.centre.actif, true))
 			from Alpha a
 			""")
 	Page<CentreTypeListItem> findAllAsListItems(Pageable pageable);

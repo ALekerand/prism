@@ -24,6 +24,9 @@ public class EffectifCepeCec {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PERIODE_ACTIVITE")
+    private PeriodeActivite idPeriodeActivite;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -38,6 +41,12 @@ public class EffectifCepeCec {
     @Size(max = 10)
     @Column(name = "CODE_EFFECTIF_CEPE_CEC", length = 10)
     private String codeEffectifCepeCec;
+
+    @Column(name = "EFFECTIF_CEPE_CEC_NIVEAU_H")
+    private Integer effectifCepeCecNiveauH;
+
+    @Column(name = "EFFECTIF_CEPE_CEC_NIVEAU_F")
+    private Integer effectifCepeCecNiveauF;
 
     @Column(name = "EFFECTIF_CEPE_CANDIDAT_FILLE_CEC")
     private Integer effectifCepeCandidatFilleCec;

@@ -42,6 +42,9 @@ public class CentreWithPromoteurItem {
     private String encadreurNonMena;
     private Boolean encadrerParMena;
 
+    /** {@code false} = centre exclu des statistiques. */
+    private Boolean actif;
+
     /** Détail CEC : école tutrice (autres types : {@code null}). */
     private String ecoleTutrice;
 

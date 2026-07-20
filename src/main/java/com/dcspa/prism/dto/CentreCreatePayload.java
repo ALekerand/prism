@@ -38,5 +38,7 @@ public class CentreCreatePayload {
 
     private String localisationCentre;
     private String nomMilieuImplentation;
+    private Boolean actif;
+    private java.time.LocalDate dateCreationDaaje;
 }
 

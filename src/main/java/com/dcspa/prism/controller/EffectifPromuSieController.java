@@ -74,6 +74,7 @@ public class EffectifPromuSieController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
 		m.put("codeEffectifPromuSie", e.getCodeEffectifPromuSie());
 		m.put("effectifPromuSie3IvoirienH", e.getEffectifPromuSie3IvoirienH());
@@ -105,6 +106,8 @@ public class EffectifPromuSieController {
 		m.put("effectifPromuSie1314EtPlusHandicapF", e.getEffectifPromuSie1314EtPlusHandicapF());
 		m.put("effectifPromuSie1314EtPlusHandicapH", e.getEffectifPromuSie1314EtPlusHandicapH());
 		m.put("effectifPromuSieNiveauSie", e.getEffectifPromuSieNiveauSie());
+		m.put("effectifPromuSieNiveauH", e.getEffectifPromuSieNiveauH());
+		m.put("effectifPromuSieNiveauF", e.getEffectifPromuSieNiveauF());
 		return m;
 	}
 }

@@ -98,6 +98,10 @@ public class SaisieWorkflowService {
 		workflow.setDateSoumission(Instant.now());
 		workflow.setDecidePar(null);
 		workflow.setDateDecision(null);
+		// Nouveau cycle : réinitialiser les validateurs pour un historique cohérent.
+		workflow.setValideCoordPar(null);
+		workflow.setValideSupPar(null);
+		workflow.setValideCentralPar(null);
 		return ResponseEntity.ok(toRow(repository.save(workflow), user));
 	}
 
@@ -175,6 +179,105 @@ public class SaisieWorkflowService {
 			row.put("workflowOngletLibelle", SaisieWorkflowQueueTabResolver.tabLabel(tab, user));
 		}
 		return row;
+	}
+
+	/**
+	 * Timeline du cycle courant dérivée du snapshot {@link SaisieWorkflow}
+	 * (soumission + validations progressives + rejet/retour éventuel).
+	 */
+	@Transactional(readOnly = true)
+	public Map<String, Object> historique(String resourcePath, Integer recordId, AuthUser user) {
+		String resource = normalizeResource(resourcePath);
+		SaisieWorkflow workflow = repository.findByResourcePathAndRecordId(resource, recordId).orElse(null);
+		Map<String, Object> out = new LinkedHashMap<>();
+		out.put("resourcePath", resource);
+		out.put("recordId", recordId);
+		if (workflow == null) {
+			out.put("workflowStatut", SaisieWorkflowStatus.BROUILLON.name());
+			out.put("workflowStatutLibelle", label(SaisieWorkflowStatus.BROUILLON));
+			out.put("etapes", List.of());
+			return out;
+		}
+		out.put("workflowStatut", workflow.getStatut().name());
+		out.put("workflowStatutLibelle", label(workflow.getStatut()));
+		out.put("etapes", buildHistoriqueEtapes(workflow));
+		return out;
+	}
+
+	private List<Map<String, Object>> buildHistoriqueEtapes(SaisieWorkflow workflow) {
+		List<Map<String, Object>> etapes = new java.util.ArrayList<>();
+		SaisieWorkflowStatus statut = workflow.getStatut();
+
+		if (workflow.getProprietaire() != null) {
+			etapes.add(etape("PRISE_EN_CHARGE", "Prise en charge", workflow.getProprietaire(), null, null));
+		}
+		if (workflow.getSoumisPar() != null || workflow.getDateSoumission() != null) {
+			etapes.add(etape(
+					"SOUMISSION",
+					"Soumis pour validation",
+					workflow.getSoumisPar(),
+					workflow.getDateSoumission(),
+					null));
+		}
+		if (workflow.getValideCoordPar() != null) {
+			etapes.add(etape(
+					"VALIDATION_COORDONNATEUR",
+					"Validé par le coordonnateur",
+					workflow.getValideCoordPar(),
+					dateForStep(statut, SaisieWorkflowStatus.VALIDEE_COORDONNATEUR, workflow),
+					null));
+		}
+		if (workflow.getValideSupPar() != null) {
+			etapes.add(etape(
+					"VALIDATION_SUPERVISEUR",
+					"Validé par le superviseur",
+					workflow.getValideSupPar(),
+					dateForStep(statut, SaisieWorkflowStatus.VALIDEE_SUPERVISEUR, workflow),
+					null));
+		}
+		if (workflow.getValideCentralPar() != null) {
+			etapes.add(etape(
+					"VALIDATION_CENTRALE",
+					"Validé au niveau central",
+					workflow.getValideCentralPar(),
+					dateForStep(statut, SaisieWorkflowStatus.VALIDEE_CENTRALE, workflow),
+					null));
+		}
+		if (statut == SaisieWorkflowStatus.REJETE) {
+			etapes.add(etape(
+					"REJET",
+					"Rejeté",
+					workflow.getDecidePar(),
+					workflow.getDateDecision(),
+					workflow.getMotifRejet()));
+		} else if (statut == SaisieWorkflowStatus.RETOURNE) {
+			etapes.add(etape(
+					"RETOUR",
+					"Retourné pour correction",
+					workflow.getDecidePar(),
+					workflow.getDateDecision(),
+					workflow.getCommentaireRetour()));
+		}
+		return etapes;
+	}
+
+	private Instant dateForStep(SaisieWorkflowStatus current, SaisieWorkflowStatus stepStatus, SaisieWorkflow workflow) {
+		// Une seule DATE_DECISION en base : on l’associe à l’étape courante si elle correspond.
+		if (current == stepStatus) {
+			return workflow.getDateDecision();
+		}
+		return null;
+	}
+
+	private static Map<String, Object> etape(
+			String action, String libelle, String acteur, Instant date, String detail) {
+		Map<String, Object> m = new LinkedHashMap<>();
+		m.put("action", action);
+		m.put("libelle", libelle);
+		m.put("acteur", acteur);
+		m.put("date", date);
+		m.put("detail", detail);
+		return m;
 	}
 
 	private void recordValidatorStep(SaisieWorkflow workflow, SaisieWorkflowStatus nextStatus, String username) {

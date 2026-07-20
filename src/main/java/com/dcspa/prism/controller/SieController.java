@@ -2,6 +2,7 @@ package com.dcspa.prism.controller;
 
 import com.dcspa.prism.controller.support.ReferentialPutHelper;
 
+import com.dcspa.prism.dto.CentreActifUpdateRequest;
 import com.dcspa.prism.dto.CentreTypeListItem;
 import com.dcspa.prism.dto.CentreWithPromoteurItem;
 import com.dcspa.prism.dto.CentreSearchRequest;
@@ -23,10 +24,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -104,6 +107,19 @@ public class SieController {
 			@RequestBody UpdateCentreTypeInfosRequest req,
 			@AuthenticationPrincipal AuthUser user) {
 		return sieService.updateInfos(id, req, user)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@RequestMapping(value = "/{id}/actif", method = {RequestMethod.PUT, RequestMethod.PATCH})
+	public ResponseEntity<CentreTypeListItem> updateActif(
+			@PathVariable Integer id,
+			@RequestBody CentreActifUpdateRequest req,
+			@AuthenticationPrincipal AuthUser user) {
+		if (req == null || req.getActif() == null) {
+			return ResponseEntity.badRequest().build();
+		}
+		return sieService.updateActif(id, req.getActif(), user)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}

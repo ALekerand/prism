@@ -74,6 +74,7 @@ public class EffectifCpController {
 		row.put("id", entity.getId());
 		ReferentielEnricher.putRef(row, "NiveauCp", entity.getIdNiveauCp());
 		ReferentielEnricher.putRef(row, "AnneeScolaire", entity.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(row, "PeriodeActivite", entity.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(row, "Centre", entity.getIdCentre());
 		row.put("codeEffectifCp", entity.getCodeEffectifCp());
 		row.put("effectifCp911IvoirienH", entity.getEffectifCp911IvoirienH());
@@ -95,6 +96,8 @@ public class EffectifCpController {
 		row.put("effectifCp14NonIvoirienF", entity.getEffectifCp14NonIvoirienF());
 		row.put("effectifCp14NonIvoirienH", entity.getEffectifCp14NonIvoirienH());
 		row.put("effectifCpNiveauCp", entity.getEffectifCpNiveauCp());
+		row.put("effectifCpNiveauH", entity.getEffectifCpNiveauH());
+		row.put("effectifCpNiveauF", entity.getEffectifCpNiveauF());
 		return row;
 	}
 }

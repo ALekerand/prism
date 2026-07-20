@@ -29,6 +29,9 @@ public class EffectifCp {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PERIODE_ACTIVITE")
+    private PeriodeActivite idPeriodeActivite;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -95,6 +98,12 @@ public class EffectifCp {
 
     @Column(name = "EFFECTIF_CP_NIVEAU_CP")
     private Integer effectifCpNiveauCp;
+    @Column(name = "EFFECTIF_CP_NIVEAU_H")
+    private Integer effectifCpNiveauH;
+
+    @Column(name = "EFFECTIF_CP_NIVEAU_F")
+    private Integer effectifCpNiveauF;
+
 
 
 }

@@ -79,7 +79,7 @@ public class ImpactAlphaController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Impact", e.getIdImpact());
-		ReferentielEnricher.putRef(m, "Alpha", e.getIdCentre());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeImpactAlpha", e.getCodeImpactAlpha());
 		return m;
 	}

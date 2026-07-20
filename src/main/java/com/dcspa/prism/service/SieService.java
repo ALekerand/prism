@@ -211,6 +211,25 @@ public class SieService {
 		return Optional.of(CentreTypeListItemMapper.fromSie(save(existing)));
 	}
 
+	@Transactional
+	public Optional<CentreTypeListItem> updateActif(Integer id, boolean actif, AuthUser authUser) {
+		if (!isSieWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
+		if (!sieRepository.existsById(id)) {
+			return Optional.empty();
+		}
+		int updated = centreRepository.updateActifById(id, actif);
+		if (updated == 0) {
+			throw new IllegalArgumentException("Centre introuvable pour SIE #" + id);
+		}
+		Sie existing = sieRepository.findById(id).orElse(null);
+		if (existing == null) {
+			return Optional.empty();
+		}
+		return Optional.of(CentreTypeListItemMapper.fromSie(existing, actif));
+	}
+
 	// Met à jour les informations détaillées du SIE.
 	@Transactional
 	public Optional<CentreTypeListItem> updateInfos(Integer id, UpdateCentreTypeInfosRequest req, AuthUser authUser) {
@@ -241,8 +260,11 @@ public class SieService {
 			if (req.getNiveaux() != null) {
 				centreNiveauCreationService.replaceSieNiveaux(existing, req.getNiveaux());
 			}
+			syncCentreActif(existing.getId(), req);
 		}
-		return Optional.of(CentreTypeListItemMapper.fromSie(save(existing)));
+		Sie saved = save(existing);
+		centreRepository.findById(saved.getId()).ifPresent(saved::setCentre);
+		return Optional.of(CentreTypeListItemMapper.fromSie(saved));
 	}
 
 	// Supprime un SIE.
@@ -327,6 +349,7 @@ public class SieService {
 		item.setNiveaux(sieNiveauRepository.findByIdCentre_Id(sie.getId()).stream()
 				.map(this::toNiveauDetails)
 				.toList());
+		centreRepository.findById(sie.getId()).ifPresent(c -> item.setActif(CentreSupplementalFields.actifForApi(c)));
 		return item;
 	}
 
@@ -543,6 +566,16 @@ public class SieService {
 			}
 		}
 		item.setPromoteur(details);
+	}
+
+	private void syncCentreActif(Integer centreId, UpdateCentreTypeInfosRequest req) {
+		if (req == null || req.getActif() == null || centreId == null) {
+			return;
+		}
+		centreRepository.findById(centreId).ifPresent(c -> {
+			CentreSupplementalFields.applyActifToCentre(c, req.getActif());
+			centreRepository.save(c);
+		});
 	}
 
 }

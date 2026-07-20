@@ -29,6 +29,9 @@ public class EffectifAdmisIntegrationCp {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PERIODE_ACTIVITE")
+    private PeriodeActivite idPeriodeActivite;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -95,6 +98,12 @@ public class EffectifAdmisIntegrationCp {
 
     @Column(name = "EFFECTIF_ADMIS_INTEGRATION_CP_NIVEAU_CP")
     private Integer effectifAdmisIntegrationCpNiveauCp;
+    @Column(name = "EFFECTIF_ADMIS_INT_CP_NIVEAU_H")
+    private Integer effectifAdmisIntegrationCpNiveauH;
+
+    @Column(name = "EFFECTIF_ADMIS_INT_CP_NIVEAU_F")
+    private Integer effectifAdmisIntegrationCpNiveauF;
+
 
 
 }

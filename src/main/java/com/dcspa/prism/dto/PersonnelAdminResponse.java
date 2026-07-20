@@ -17,6 +17,7 @@ public class PersonnelAdminResponse {
     private Integer structureFormationCertificationId;
     private Integer statutPersonnelId;
     private Integer diplomeId;
+    private String libelleAutreDiplome;
 
     private String codePersonnel;
     private Boolean certifierPersonnel;

@@ -55,5 +55,8 @@ public class UpdateCentreTypeInfosRequest {
 
     /** Remplacement complet des niveaux CP/CEC/SIE si le champ est présent. */
     private List<CentreTypeNiveauCreatePayload> niveaux;
+
+    /** Inclus dans les statistiques si {@code true} ou {@code null}. */
+    private Boolean actif;
 }
 

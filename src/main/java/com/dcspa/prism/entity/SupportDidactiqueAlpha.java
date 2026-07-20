@@ -24,7 +24,7 @@ public class SupportDidactiqueAlpha {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CENTRE", nullable = false)
-    private Alpha idCentre;
+    private Centre idCentre;
 
     @Size(max = 50)
     @Column(name = "LIBELLE_AUTRE_SUPPORT", length = 50)

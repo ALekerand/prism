@@ -131,6 +131,30 @@ public class EffectifCec {
 
     @Column(name = "EFFECTIF_CEC_NIVEAU_CEC")
     private Integer effectifCecNiveauCec;
+    @Column(name = "EFFECTIF_CEC_NIVEAU_H")
+    private Integer effectifCecNiveauH;
 
+    @Column(name = "EFFECTIF_CEC_NIVEAU_F")
+    private Integer effectifCecNiveauF;
+
+
+    /** Effectif consolidé « moins de 6 ans » (demande client). */
+    @Column(name = "EFFECTIF_CEC_MOINS_DE_6_H")
+    private Integer effectifCecMoinsDe6H;
+
+    @Column(name = "EFFECTIF_CEC_MOINS_DE_6_F")
+    private Integer effectifCecMoinsDe6F;
+
+    @Column(name = "EFFECTIF_CEC_MOINS_DE_6_IVOIRIEN_H")
+    private Integer effectifCecMoinsDe6IvoirienH;
+
+    @Column(name = "EFFECTIF_CEC_MOINS_DE_6_IVOIRIEN_F")
+    private Integer effectifCecMoinsDe6IvoirienF;
+
+    @Column(name = "EFFECTIF_CEC_MOINS_DE_6_HANDICAP_H")
+    private Integer effectifCecMoinsDe6HandicapH;
+
+    @Column(name = "EFFECTIF_CEC_MOINS_DE_6_HANDICAP_F")
+    private Integer effectifCecMoinsDe6HandicapF;
 
 }

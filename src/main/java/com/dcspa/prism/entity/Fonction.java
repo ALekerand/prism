@@ -27,5 +27,9 @@ public class Fonction {
     @Column(name = "LIBELLE_FONCTION", length = 100)
     private String libelleFonction;
 
+    /** ALPHA | CP | CEC | SIE — null = toutes. */
+    @Size(max = 20)
+    @Column(name = "TYPE_CENTRE", length = 20)
+    private String typeCentre;
 
 }

@@ -46,6 +46,13 @@ class SaisieWorkflowQueueTabResolverTest {
 		assertEquals(SaisieWorkflowListTab.EN_COURS, SaisieWorkflowQueueTabResolver.resolve(w, user));
 	}
 
+	@Test
+	void conseiller_retourne_est_renvoye() {
+		SaisieWorkflow w = workflow(SaisieWorkflowStatus.RETOURNE, "c1", "c1");
+		AuthUser user = user("c1", "CONSEILLER");
+		assertEquals(SaisieWorkflowListTab.RENVOYE, SaisieWorkflowQueueTabResolver.resolve(w, user));
+	}
+
 	private static SaisieWorkflow workflow(SaisieWorkflowStatus statut, String prop, String soumis) {
 		SaisieWorkflow w = new SaisieWorkflow();
 		w.setStatut(statut);

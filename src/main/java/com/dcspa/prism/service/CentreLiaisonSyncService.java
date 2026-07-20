@@ -3,7 +3,6 @@ package com.dcspa.prism.service;
 import com.dcspa.prism.dto.LangueLiaisonSyncRequest;
 import com.dcspa.prism.dto.LiaisonCatalogSyncRequest;
 import com.dcspa.prism.dto.LiaisonCatalogUpdateRequest;
-import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.Competence;
 import com.dcspa.prism.entity.CompetenceCentre;
@@ -18,7 +17,8 @@ import com.dcspa.prism.entity.LangueApprentissage;
 import com.dcspa.prism.entity.MaterielAlpha;
 import com.dcspa.prism.entity.MaterielsPedagogique;
 import com.dcspa.prism.entity.RessourceFinanciereMateriel;
-import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.entity.SupportDidactique;
+import com.dcspa.prism.entity.SupportDidactiqueAlpha;
 import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.repository.CompetenceCentreRepository;
 import com.dcspa.prism.repository.CompetenceRepository;
@@ -33,6 +33,8 @@ import com.dcspa.prism.repository.LangueApprentissageRepository;
 import com.dcspa.prism.repository.MaterielAlphaRepository;
 import com.dcspa.prism.repository.MaterielsPedagogiqueRepository;
 import com.dcspa.prism.repository.RessourceFinanciereMaterielRepository;
+import com.dcspa.prism.repository.SupportDidactiqueAlphaRepository;
+import com.dcspa.prism.repository.SupportDidactiqueRepository;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +44,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CentreLiaisonSyncService {
 
-	private final AlphaRepository alphaRepository;
 	private final CentreRepository centreRepository;
 	private final DifficulteRepository difficulteRepository;
 	private final DifficulteAlphaRepository difficulteAlphaRepository;
@@ -56,11 +57,13 @@ public class CentreLiaisonSyncService {
 	private final RessourceFinanciereMaterielRepository ressourceFinanciereMaterielRepository;
 	private final MaterielsPedagogiqueRepository materielsPedagogiqueRepository;
 	private final MaterielAlphaRepository materielAlphaRepository;
+	private final SupportDidactiqueRepository supportDidactiqueRepository;
+	private final SupportDidactiqueAlphaRepository supportDidactiqueAlphaRepository;
 	private final LangueApprentissageRepository langueApprentissageRepository;
 
 	@Transactional
 	public void syncDifficulteAlpha(LiaisonCatalogSyncRequest req) {
-		Alpha centre = requireAlpha(req.getIdCentre());
+		Centre centre = requireCentre(req.getIdCentre());
 		deleteIntegerIds(difficulteAlphaRepository::deleteById, req.getDeleteLiaisonIds());
 		for (Integer catalogId : safeIds(req.getCreateCatalogIds())) {
 			Difficulte difficulte = difficulteRepository.findById(catalogId)
@@ -75,7 +78,7 @@ public class CentreLiaisonSyncService {
 
 	@Transactional
 	public void syncImpactAlpha(LiaisonCatalogSyncRequest req) {
-		Alpha centre = requireAlpha(req.getIdCentre());
+		Centre centre = requireCentre(req.getIdCentre());
 		deleteIntegerIds(impactAlphaRepository::deleteById, req.getDeleteLiaisonIds());
 		for (Integer catalogId : safeIds(req.getCreateCatalogIds())) {
 			Impact impact = impactRepository.findById(catalogId)
@@ -90,7 +93,7 @@ public class CentreLiaisonSyncService {
 
 	@Transactional
 	public void syncCompetenceCentre(LiaisonCatalogSyncRequest req) {
-		Alpha centre = requireAlpha(req.getIdCentre());
+		Centre centre = requireCentre(req.getIdCentre());
 		deleteIntegerIds(competenceCentreRepository::deleteById, req.getDeleteLiaisonIds());
 		for (Integer catalogId : safeIds(req.getCreateCatalogIds())) {
 			Competence competence = competenceRepository.findById(catalogId)
@@ -135,7 +138,7 @@ public class CentreLiaisonSyncService {
 
 	@Transactional
 	public void syncMaterielAlpha(LiaisonCatalogSyncRequest req) {
-		Alpha centre = requireAlpha(req.getIdCentre());
+		Centre centre = requireCentre(req.getIdCentre());
 		deleteIntegerIds(materielAlphaRepository::deleteById, req.getDeleteLiaisonIds());
 		for (Integer catalogId : safeIds(req.getCreateCatalogIds())) {
 			MaterielsPedagogique mp = materielsPedagogiqueRepository.findById(catalogId)
@@ -147,6 +150,22 @@ public class CentreLiaisonSyncService {
 			materielAlphaRepository.save(row);
 		}
 		applyMaterielUpdates(req);
+	}
+
+	@Transactional
+	public void syncSupportDidactiqueAlpha(LiaisonCatalogSyncRequest req) {
+		Centre centre = requireCentre(req.getIdCentre());
+		deleteIntegerIds(supportDidactiqueAlphaRepository::deleteById, req.getDeleteLiaisonIds());
+		for (Integer catalogId : safeIds(req.getCreateCatalogIds())) {
+			SupportDidactique sd = supportDidactiqueRepository.findById(catalogId)
+					.orElseThrow(() -> new IllegalArgumentException("Support didactique introuvable: " + catalogId));
+			SupportDidactiqueAlpha row = new SupportDidactiqueAlpha();
+			row.setIdCentre(centre);
+			row.setIdSupportDidactique(sd);
+			updateForCatalog(req, catalogId).ifPresent(u -> applySupportExtra(row, u));
+			supportDidactiqueAlphaRepository.save(row);
+		}
+		applySupportUpdates(req);
 	}
 
 	@Transactional
@@ -167,7 +186,6 @@ public class CentreLiaisonSyncService {
 				continue;
 			}
 			difficulteAlphaRepository.findById(u.getLiaisonId()).ifPresent(row -> {
-				// pas de champs extra sur difficulte_alpha
 				difficulteAlphaRepository.save(row);
 			});
 		}
@@ -219,6 +237,12 @@ public class CentreLiaisonSyncService {
 		}
 	}
 
+	private void applySupportExtra(SupportDidactiqueAlpha row, LiaisonCatalogUpdateRequest u) {
+		if (u.getLibelleAutreSupport() != null) {
+			row.setLibelleAutreSupport(u.getLibelleAutreSupport().trim());
+		}
+	}
+
 	private static java.util.Optional<LiaisonCatalogUpdateRequest> updateForCatalog(
 			LiaisonCatalogSyncRequest req, Integer catalogId) {
 		return safeUpdates(req).stream()
@@ -252,7 +276,7 @@ public class CentreLiaisonSyncService {
 	}
 
 	private void applyRessourceExtraFields(
-			com.dcspa.prism.entity.RessourceFinanciereMateriel row, LiaisonCatalogUpdateRequest u) {
+			RessourceFinanciereMateriel row, LiaisonCatalogUpdateRequest u) {
 		if (u.getSourceFinancement() != null) {
 			row.setSourceFinancement(u.getSourceFinancement().trim());
 		}
@@ -286,12 +310,29 @@ public class CentreLiaisonSyncService {
 		}
 	}
 
-	private Alpha requireAlpha(Integer idCentre) {
-		if (idCentre == null) {
-			throw new IllegalArgumentException("idCentre est obligatoire.");
+	private void applySupportUpdates(LiaisonCatalogSyncRequest req) {
+		Integer idCentre = req.getIdCentre();
+		for (LiaisonCatalogUpdateRequest u : safeUpdates(req)) {
+			if (u.getLiaisonId() != null) {
+				supportDidactiqueAlphaRepository.findById(u.getLiaisonId()).ifPresent(row -> {
+					applySupportExtra(row, u);
+					supportDidactiqueAlphaRepository.save(row);
+				});
+				continue;
+			}
+			if (idCentre == null || u.getCatalogId() == null) {
+				continue;
+			}
+			supportDidactiqueAlphaRepository.findAll().stream()
+					.filter(row -> row.getIdCentre() != null && Objects.equals(row.getIdCentre().getId(), idCentre))
+					.filter(row -> row.getIdSupportDidactique() != null
+							&& Objects.equals(row.getIdSupportDidactique().getId(), u.getCatalogId()))
+					.findFirst()
+					.ifPresent(row -> {
+						applySupportExtra(row, u);
+						supportDidactiqueAlphaRepository.save(row);
+					});
 		}
-		return alphaRepository.findById(idCentre)
-				.orElseThrow(() -> new IllegalArgumentException("Centre alpha introuvable: " + idCentre));
 	}
 
 	private Centre requireCentre(Integer idCentre) {

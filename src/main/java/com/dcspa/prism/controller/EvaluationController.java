@@ -199,7 +199,17 @@ public class EvaluationController {
 			if (item == null || item.getIdThemeEvaluation() == null) {
 				throw new IllegalArgumentException("Le thème d'évaluation est obligatoire");
 			}
-			if (item.getTaux() == null || item.getTaux() < 0 || item.getTaux() > 100) {
+			Integer taux = item.getTaux();
+			if (item.getNombreTotalEvalue() != null && item.getNombreResultatObtenu() != null) {
+				if (item.getNombreTotalEvalue() <= 0) {
+					throw new IllegalArgumentException("Le nombre total évalué doit être > 0");
+				}
+				if (item.getNombreResultatObtenu() < 0 || item.getNombreResultatObtenu() > item.getNombreTotalEvalue()) {
+					throw new IllegalArgumentException("Le nombre de résultats obtenus est invalide");
+				}
+				taux = (int) Math.round(100.0 * item.getNombreResultatObtenu() / item.getNombreTotalEvalue());
+			}
+			if (taux == null || taux < 0 || taux > 100) {
 				throw new IllegalArgumentException("Le taux doit être compris entre 0 et 100");
 			}
 			ThemeEvaluation theme = resolveTheme(item.getIdThemeEvaluation());
@@ -207,7 +217,9 @@ public class EvaluationController {
 			EvaluationThemeTaux row = new EvaluationThemeTaux();
 			row.setEvaluation(e);
 			row.setThemeEvaluation(theme);
-			row.setTaux(item.getTaux());
+			row.setTaux(taux);
+			row.setNombreTotalEvalue(item.getNombreTotalEvalue());
+			row.setNombreResultatObtenu(item.getNombreResultatObtenu());
 			e.getThemesTaux().add(row);
 			if (firstTheme == null) {
 				firstTheme = theme;
@@ -327,6 +339,8 @@ public class EvaluationController {
 		m.put("id", item.getId());
 		ReferentielEnricher.putRef(m, "ThemeEvaluation", item.getThemeEvaluation());
 		m.put("taux", item.getTaux());
+		m.put("nombreTotalEvalue", item.getNombreTotalEvalue());
+		m.put("nombreResultatObtenu", item.getNombreResultatObtenu());
 		return m;
 	}
 }

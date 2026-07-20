@@ -3,14 +3,15 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.SuiviSuperviseurRequest;
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.NiveauAlpha;
 import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.entity.SuiviSuperviseur;
 import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.repository.NiveauAlphaRepository;
 import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.repository.SuiviSuperviseurRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class SuiviSuperviseurController {
 	private final SuiviSuperviseurRepository repository;
 	private final AlphaRepository alphaRepository;
 	private final PeriodeActiviteRepository periodeActiviteRepository;
+	private final NiveauAlphaRepository niveauAlphaRepository;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -68,7 +70,7 @@ public class SuiviSuperviseurController {
 		if (denied != null) return denied;
 		try {
 			SuiviSuperviseur e = new SuiviSuperviseur();
-			apply(e, body);
+			apply(e, body, true);
 			e.setValideeSuperviseur(false);
 			return ResponseEntity.status(201).body(toRow(repository.save(e)));
 		} catch (IllegalArgumentException ex) {
@@ -88,7 +90,7 @@ public class SuiviSuperviseurController {
 			return ResponseEntity.badRequest().body(Map.of("message", "Modification impossible : le suivi superviseur est déjà validé."));
 		}
 		try {
-			apply(e, body);
+			apply(e, body, false);
 			return ResponseEntity.ok(toRow(repository.save(e)));
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
@@ -134,7 +136,7 @@ public class SuiviSuperviseurController {
 				.body(Map.of("message", "Accès refusé: permission " + permission + " requise"));
 	}
 
-	private void apply(SuiviSuperviseur e, SuiviSuperviseurRequest r) {
+	private void apply(SuiviSuperviseur e, SuiviSuperviseurRequest r, boolean creating) {
 		if (r == null || r.getIdAlpha() == null) throw new IllegalArgumentException("idAlpha est obligatoire");
 		Alpha alpha = alphaRepository.findById(r.getIdAlpha()).orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdAlpha()));
 		e.setIdAlpha(alpha);
@@ -142,8 +144,15 @@ public class SuiviSuperviseurController {
 			PeriodeActivite periode = periodeActiviteRepository.findById(r.getIdPeriodeActivite().longValue())
 					.orElseThrow(() -> new IllegalArgumentException("Période d'activité introuvable: " + r.getIdPeriodeActivite()));
 			e.setIdPeriodeActivite(periode);
-		} else if (e.getId() == null) {
+		} else if (creating) {
 			throw new IllegalArgumentException("idPeriodeActivite est obligatoire");
+		}
+		if (r.getIdNiveauAlpha() != null) {
+			NiveauAlpha niveau = niveauAlphaRepository.findById(r.getIdNiveauAlpha())
+					.orElseThrow(() -> new IllegalArgumentException("Niveau Alpha introuvable: " + r.getIdNiveauAlpha()));
+			e.setIdNiveauAlpha(niveau);
+		} else if (creating || e.getIdNiveauAlpha() == null) {
+			throw new IllegalArgumentException("idNiveauAlpha est obligatoire");
 		}
 		e.setNombreVisiteConseillerSuperviseurEffectue(r.getNombreVisiteConseillerSuperviseurEffectue());
 		e.setNombreReunionBilanConseillerSuperviseur(r.getNombreReunionBilanConseillerSuperviseur());
@@ -154,6 +163,7 @@ public class SuiviSuperviseurController {
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
 		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
+		ReferentielEnricher.putRef(m, "NiveauAlpha", e.getIdNiveauAlpha());
 		m.put("nombreVisiteConseillerSuperviseurEffectue", e.getNombreVisiteConseillerSuperviseurEffectue());
 		m.put("nombreReunionBilanConseillerSuperviseur", e.getNombreReunionBilanConseillerSuperviseur());
 		m.put("valideeSuperviseur", Boolean.TRUE.equals(e.getValideeSuperviseur()));

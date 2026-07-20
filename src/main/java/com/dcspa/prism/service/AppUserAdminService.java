@@ -131,6 +131,7 @@ public class AppUserAdminService {
         Set<AppRole> roles = resolveRoles(request.getRoleIds());
         u.setRoles(roles);
         applyScope(u, request);
+        applyIdentity(u, request);
         validateScopeForRoles(roles, u);
         assertUpsertWithinViewerScope(u, authUser);
         return toDto(appUserRepository.save(u));
@@ -162,6 +163,7 @@ public class AppUserAdminService {
         }
 
         applyScope(u, request);
+        applyIdentity(u, request);
         validateScopeForRoles(u.getRoles(), u);
         assertUpsertWithinViewerScope(u, authUser);
 
@@ -215,9 +217,27 @@ public class AppUserAdminService {
         user.setIdDrena(resolveOptional(drenaRepository, request.getIdDrena(), "DRENA"));
         user.setIdIep(resolveOptional(ieppRepository, request.getIdIep(), "IEPP"));
         user.setIdDepartement(resolveOptional(departementRepository, request.getIdDepartement(), "Département"));
-        user.setIdSousPrefecture(resolveOptional(sousPrefectureRepository, request.getIdSousPrefecture(), "Sous-préfecture"));
-        user.setIdCommune(resolveOptional(communeRepository, request.getIdCommune(), "Commune"));
-        user.setIdLocalite(resolveOptional(localiteDImplantationRepository, request.getIdLocalite(), "Localité"));
+        // Sous-préfecture / commune / localité : hors scope création utilisateur (conservés en BD si déjà présents).
+        user.setIdSousPrefecture(null);
+        user.setIdCommune(null);
+        user.setIdLocalite(null);
+    }
+
+    private void applyIdentity(AppUser user, AppUserAdminUpsertRequest request) {
+        user.setNom(trimToNull(request.getNom()));
+        user.setPrenoms(trimToNull(request.getPrenoms()));
+        user.setDateNaissance(request.getDateNaissance());
+        user.setLieuNaissance(trimToNull(request.getLieuNaissance()));
+        user.setDatePriseService(request.getDatePriseService());
+        user.setDateDepartRetraite(request.getDateDepartRetraite());
+    }
+
+    private static String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     private <T> T resolveOptional(JpaRepository<T, Integer> repository, Integer id, String label) {
@@ -245,14 +265,11 @@ public class AppUserAdminService {
         }
     }
 
-    private boolean hasAnyScope(AppUser user) {
+	private boolean hasAnyScope(AppUser user) {
         return user.getIdRegion() != null
                 || user.getIdDrena() != null
                 || user.getIdIep() != null
-                || user.getIdDepartement() != null
-                || user.getIdSousPrefecture() != null
-                || user.getIdCommune() != null
-                || user.getIdLocalite() != null;
+                || user.getIdDepartement() != null;
     }
 
     private void assertUserVisible(AppUser target, AuthUser viewer) {
@@ -374,6 +391,12 @@ public class AppUserAdminService {
                 .email(u.getEmail())
                 .actif(u.getActif())
                 .roleIds(roleIds)
+                .nom(u.getNom())
+                .prenoms(u.getPrenoms())
+                .dateNaissance(u.getDateNaissance())
+                .lieuNaissance(u.getLieuNaissance())
+                .datePriseService(u.getDatePriseService())
+                .dateDepartRetraite(u.getDateDepartRetraite())
                 .idRegion(idOf(region))
                 .idDrena(idOf(drena))
                 .idIep(idOf(iep))

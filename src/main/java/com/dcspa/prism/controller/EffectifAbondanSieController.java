@@ -75,6 +75,7 @@ public class EffectifAbondanSieController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
 		m.put("codeAbandonEffectifSie", e.getCodeAbandonEffectifSie());
 		m.put("effectifAbandonSie3IvoirienH", e.getEffectifAbandonSie3IvoirienH());
@@ -108,6 +109,8 @@ public class EffectifAbondanSieController {
 		m.put("effectifAbandonSie1314EtPlusNonIvoirienF", e.getEffectifAbandonSie1314EtPlusNonIvoirienF());
 		m.put("effectifAbandonSie1314EtPlusNonIvoirienH", e.getEffectifAbandonSie1314EtPlusNonIvoirienH());
 		m.put("effectifAbandonSieNiveauSie", e.getEffectifAbandonSieNiveauSie());
+		m.put("effectifAbandonSieNiveauH", e.getEffectifAbandonSieNiveauH());
+		m.put("effectifAbandonSieNiveauF", e.getEffectifAbandonSieNiveauF());
 		m.put("causeAbandonSie", e.getCauseAbandonSie());
 		return m;
 	}

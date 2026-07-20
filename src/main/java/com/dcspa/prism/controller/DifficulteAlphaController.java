@@ -79,7 +79,7 @@ public class DifficulteAlphaController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Difficulte", e.getIdDifficulte());
-		ReferentielEnricher.putRef(m, "Alpha", e.getIdCentre());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeDifficulteAlpha", e.getCodeDifficulteAlpha());
 		return m;
 	}

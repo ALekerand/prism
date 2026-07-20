@@ -75,6 +75,7 @@ public class EffectifReverseFormelSieController {
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		m.put("codeEffectifReverseFormelSie", e.getCodeEffectifReverseFormelSie());
 		m.put("effectifReverseFormelSie3IvoirienH", e.getEffectifReverseFormelSie3IvoirienH());
 		m.put("effectifReverseFormelSie3IvoirienF", e.getEffectifReverseFormelSie3IvoirienF());
@@ -105,6 +106,8 @@ public class EffectifReverseFormelSieController {
 		m.put("effectifReverseFormelSie1314EtPlusHandicapF", e.getEffectifReverseFormelSie1314EtPlusHandicapF());
 		m.put("effectifReverseFormelSie1314EtPlusHandicapH", e.getEffectifReverseFormelSie1314EtPlusHandicapH());
 		m.put("effectifReverseFormelSieNiveauSie", e.getEffectifReverseFormelSieNiveauSie());
+		m.put("effectifReverseFormelSieNiveauH", e.getEffectifReverseFormelSieNiveauH());
+		m.put("effectifReverseFormelSieNiveauF", e.getEffectifReverseFormelSieNiveauF());
 		return m;
 	}
 }

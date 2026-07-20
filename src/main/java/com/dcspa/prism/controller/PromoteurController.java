@@ -111,6 +111,8 @@ public class PromoteurController {
 		m.put("boitePostale", pp.getBoitePostale());
 		m.put("niveauEtudes", pp.getNiveauEtudes());
 		m.put("civilite", pp.getCivilite());
+		m.put("mail", pp.getMail());
+		m.put("organisationFaitiere", pp.getOrganisationFaitiere());
 		return m;
 	}
 
@@ -119,6 +121,7 @@ public class PromoteurController {
 		m.put("denomination", pm.getDenomination());
 		m.put("nomProgramme", pm.getNomProgramme());
 		m.put("nomRepresentant", pm.getNomRepresentantLegalStructure());
+		m.put("nomRepresentantLegalStructure", pm.getNomRepresentantLegalStructure());
 		m.put("contact", pm.getContact());
 		m.put("boitePostale", pm.getBoitePostale());
 		m.put("mail", pm.getMail());

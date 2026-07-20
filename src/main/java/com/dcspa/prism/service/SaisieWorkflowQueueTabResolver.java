@@ -36,10 +36,12 @@ public final class SaisieWorkflowQueueTabResolver {
 
 	public static String tabLabel(SaisieWorkflowListTab tab, AuthUser user) {
 		boolean conseillerView = user != null && user.hasRole("CONSEILLER") && !actsAsValidator(user);
+		boolean superviseurView = user != null && user.hasRole("SUPERVISEUR") && !user.hasAnyRole(ADMIN_ROLES);
 		return switch (tab) {
-			case ACTION -> conseillerView ? "À soumettre" : "À valider";
+			case ACTION -> conseillerView ? "À soumettre" : (superviseurView ? "En attente" : "À valider");
 			case EN_COURS -> conseillerView ? "En attente de validation" : "À venir";
-			case TERMINE -> conseillerView ? "Validé" : "Déjà validé par moi";
+			case TERMINE -> conseillerView ? "Validé" : (superviseurView ? "Traité" : "Déjà validé par moi");
+			case RENVOYE -> "Renvoyé pour modification";
 		};
 	}
 
@@ -55,7 +57,8 @@ public final class SaisieWorkflowQueueTabResolver {
 			return SaisieWorkflowListTab.EN_COURS;
 		}
 		return switch (workflow.getStatut()) {
-			case BROUILLON, RETOURNE -> SaisieWorkflowListTab.ACTION;
+			case BROUILLON -> SaisieWorkflowListTab.ACTION;
+			case RETOURNE -> SaisieWorkflowListTab.RENVOYE;
 			case SOUMIS -> SaisieWorkflowListTab.EN_COURS;
 			case VALIDEE_COORDONNATEUR, VALIDEE_SUPERVISEUR, VALIDEE_CENTRALE, REJETE -> SaisieWorkflowListTab.TERMINE;
 		};
@@ -68,6 +71,9 @@ public final class SaisieWorkflowQueueTabResolver {
 		}
 		if (canValidateNow(workflow, user)) {
 			return SaisieWorkflowListTab.ACTION;
+		}
+		if (workflow.getStatut() == SaisieWorkflowStatus.RETOURNE) {
+			return SaisieWorkflowListTab.RENVOYE;
 		}
 		if (workflow.getStatut() == SaisieWorkflowStatus.BROUILLON) {
 			return SaisieWorkflowListTab.EN_COURS;

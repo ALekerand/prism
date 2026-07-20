@@ -29,6 +29,9 @@ public class EffectifReverseFormelSie {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PERIODE_ACTIVITE")
+    private PeriodeActivite idPeriodeActivite;
 
     @Size(max = 10)
     @Column(name = "CODE_EFFECTIF_REVERSE_FORMEL_SIE", length = 10)
@@ -120,6 +123,12 @@ public class EffectifReverseFormelSie {
 
     @Column(name = "EFFECTIF_REVERSE_FORMEL_SIE_NIVEAU_SIE")
     private Integer effectifReverseFormelSieNiveauSie;
+    @Column(name = "EFFECTIF_REV_FORMEL_SIE_NIVEAU_H")
+    private Integer effectifReverseFormelSieNiveauH;
+
+    @Column(name = "EFFECTIF_REV_FORMEL_SIE_NIVEAU_F")
+    private Integer effectifReverseFormelSieNiveauF;
+
 
 
 }

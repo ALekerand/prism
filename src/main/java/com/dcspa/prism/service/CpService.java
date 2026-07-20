@@ -211,6 +211,25 @@ public class CpService {
 		return Optional.of(CentreTypeListItemMapper.fromCp(save(existing)));
 	}
 
+	@Transactional
+	public Optional<CentreTypeListItem> updateActif(Integer id, boolean actif, AuthUser authUser) {
+		if (!isCpWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
+		if (!cpRepository.existsById(id)) {
+			return Optional.empty();
+		}
+		int updated = centreRepository.updateActifById(id, actif);
+		if (updated == 0) {
+			throw new IllegalArgumentException("Centre introuvable pour CP #" + id);
+		}
+		Cp existing = cpRepository.findById(id).orElse(null);
+		if (existing == null) {
+			return Optional.empty();
+		}
+		return Optional.of(CentreTypeListItemMapper.fromCp(existing, actif));
+	}
+
 	// Met à jour les informations détaillées du CP.
 	@Transactional
 	public Optional<CentreTypeListItem> updateInfos(Integer id, UpdateCentreTypeInfosRequest req, AuthUser authUser) {
@@ -241,8 +260,11 @@ public class CpService {
 			if (req.getNiveaux() != null) {
 				centreNiveauCreationService.replaceCpNiveaux(existing, req.getNiveaux());
 			}
+			syncCentreActif(existing.getId(), req);
 		}
-		return Optional.of(CentreTypeListItemMapper.fromCp(save(existing)));
+		Cp saved = save(existing);
+		centreRepository.findById(saved.getId()).ifPresent(saved::setCentre);
+		return Optional.of(CentreTypeListItemMapper.fromCp(saved));
 	}
 
 	// Supprime un CP.
@@ -327,6 +349,7 @@ public class CpService {
 		item.setNiveaux(cpNiveauRepository.findByIdCentre_Id(cp.getId()).stream()
 				.map(this::toNiveauDetails)
 				.toList());
+		centreRepository.findById(cp.getId()).ifPresent(c -> item.setActif(CentreSupplementalFields.actifForApi(c)));
 		return item;
 	}
 
@@ -539,6 +562,16 @@ public class CpService {
 			}
 		}
 		item.setPromoteur(details);
+	}
+
+	private void syncCentreActif(Integer centreId, UpdateCentreTypeInfosRequest req) {
+		if (req == null || req.getActif() == null || centreId == null) {
+			return;
+		}
+		centreRepository.findById(centreId).ifPresent(c -> {
+			CentreSupplementalFields.applyActifToCentre(c, req.getActif());
+			centreRepository.save(c);
+		});
 	}
 
 }

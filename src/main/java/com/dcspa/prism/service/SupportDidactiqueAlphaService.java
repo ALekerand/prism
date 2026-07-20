@@ -16,16 +16,24 @@ public class SupportDidactiqueAlphaService {
 	private final SupportDidactiqueAlphaRepository repository;
 
 	@Transactional(readOnly = true)
-	public List<SupportDidactiqueAlpha> findAll() { return repository.findAll(); }
+	public List<SupportDidactiqueAlpha> findAll() {
+		return repository.findAll();
+	}
 
 	@Transactional(readOnly = true)
 	public Optional<SupportDidactiqueAlpha> findById(Integer id) {
-		return id == null ? Optional.empty() : repository.findById(id.longValue());
+		return id == null ? Optional.empty() : repository.findById(id);
 	}
 
 	@Transactional
-	public SupportDidactiqueAlpha save(SupportDidactiqueAlpha entity) { return repository.save(entity); }
+	public SupportDidactiqueAlpha save(SupportDidactiqueAlpha entity) {
+		return repository.save(entity);
+	}
 
 	@Transactional
-	public void deleteById(Integer id) { if (id != null) repository.deleteById(id.longValue()); }
+	public void deleteById(Integer id) {
+		if (id != null) {
+			repository.deleteById(id);
+		}
+	}
 }

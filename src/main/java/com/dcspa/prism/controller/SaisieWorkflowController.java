@@ -38,6 +38,16 @@ public class SaisieWorkflowController {
 		return ResponseEntity.ok(service.statuses(resource, recordIds, user));
 	}
 
+	/** Timeline du cycle de validation courant (snapshot {@code saisie_workflow}). */
+	@Transactional(readOnly = true)
+	@GetMapping("/historique")
+	public ResponseEntity<Map<String, Object>> historique(
+			@RequestParam String resource,
+			@RequestParam Integer recordId,
+			@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.ok(service.historique(resource, recordId, user));
+	}
+
 	@Transactional
 	@PostMapping("/claim")
 	public ResponseEntity<?> claim(

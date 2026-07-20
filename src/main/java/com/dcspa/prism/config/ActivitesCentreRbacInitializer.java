@@ -99,7 +99,7 @@ public class ActivitesCentreRbacInitializer {
         grant(superviseur, activitesEvaluation, lire, valider);
         grant(superviseur, activitesInfos, lire);
         grant(superviseur, saisieDonnees, lire, valider);
-        grant(iepp, suiviIepp, lire, creer, modifier, valider);
+        grant(iepp, suiviIepp, lire);
         grant(iepp, activitesPartenariat, lire);
         grant(iepp, activitesPerformance, lire);
         grant(iepp, activitesControle, lire);

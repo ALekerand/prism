@@ -2,6 +2,7 @@ package com.dcspa.prism.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -22,9 +23,18 @@ public class CentreTypeListItem {
     private Boolean autorisation;
     private Boolean estElectrifie;
 
-    @JsonProperty("aDeLeau")
-    @JsonAlias({"adeLeau"})
+    /**
+     * Getter explicite : Lombok {@code getADeLeau()} sérialisait aussi {@code ADeLeau}
+     * en plus de {@code aDeLeau}, ce qui casse les parsers JSON stricts.
+     */
+    @Getter(AccessLevel.NONE)
     private Boolean aDeLeau;
+
+    @JsonProperty("aDeLeau")
+    @JsonAlias({"adeLeau", "ADeLeau"})
+    public Boolean getADeLeau() {
+        return aDeLeau;
+    }
 
     private Integer nombreVisite;
     private Integer totalApprenants;
@@ -42,5 +52,8 @@ public class CentreTypeListItem {
 
     /** FK promoteur (liste / filtres UI). */
     private Integer idPromoteur;
+
+    /** Actif pour les statistiques ({@code false} = inactif). */
+    private Boolean actif;
 }
 

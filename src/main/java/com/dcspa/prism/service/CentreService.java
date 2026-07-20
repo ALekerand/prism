@@ -28,6 +28,12 @@ public class CentreService {
 	@Transactional
 	public Centre save(Centre centre) {
 		validateRequiredFields(centre);
+		if (centre.getActif() == null) {
+			centre.setActif(true);
+		}
+		if (centre.getId() == null && centre.getDateEnregistrement() == null) {
+			centre.setDateEnregistrement(java.time.LocalDate.now());
+		}
 		return centreRepository.save(centre);
 	}
 

@@ -4,6 +4,7 @@ import com.dcspa.prism.entity.Iep;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
@@ -29,6 +30,18 @@ public final class SpecificationSupport {
 			return cb.conjunction();
 		}
 		return cb.equal(path, value);
+	}
+
+	/** Filtre liste centres : actif=true → null ou true ; actif=false → false uniquement. */
+	public static <T> Predicate centreActifFilter(CriteriaBuilder cb, Root<T> root, Boolean actif) {
+		if (actif == null) {
+			return cb.conjunction();
+		}
+		var centre = root.join("centre", JoinType.INNER);
+		if (Boolean.TRUE.equals(actif)) {
+			return cb.or(cb.isNull(centre.get("actif")), cb.isTrue(centre.get("actif")));
+		}
+		return cb.isFalse(centre.get("actif"));
 	}
 
 	/** Recherche insensible à la casse (LIKE %terme%). */

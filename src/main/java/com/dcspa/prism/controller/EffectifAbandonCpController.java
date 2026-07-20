@@ -76,6 +76,7 @@ public class EffectifAbandonCpController {
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "NiveauCp", e.getIdNiveauCp());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifAbandonCp", e.getCodeEffectifAbandonCp());
 		m.put("effectifAbandonCp911IvoirienH", e.getEffectifAbandonCp911IvoirienH());
@@ -96,6 +97,8 @@ public class EffectifAbandonCpController {
 		m.put("effectifAbandonCp14NonIvoirienF", e.getEffectifAbandonCp14NonIvoirienF());
 		m.put("effectifAbandonCp14NonIvoirienH", e.getEffectifAbandonCp14NonIvoirienH());
 		m.put("effectifAbandonCpNiveauCp", e.getEffectifAbandonCpNiveauCp());
+		m.put("effectifAbandonCpNiveauH", e.getEffectifAbandonCpNiveauH());
+		m.put("effectifAbandonCpNiveauF", e.getEffectifAbandonCpNiveauF());
 		m.put("causeAbandonCp", e.getCauseAbandonCp());
 		return m;
 	}

@@ -3,14 +3,15 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.SuiviIeppRequest;
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.NiveauAlpha;
 import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.entity.SuiviIepp;
 import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.repository.NiveauAlphaRepository;
 import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.repository.SuiviIeppRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class SuiviIeppController {
 	private final SuiviIeppRepository repository;
 	private final AlphaRepository alphaRepository;
 	private final PeriodeActiviteRepository periodeActiviteRepository;
+	private final NiveauAlphaRepository niveauAlphaRepository;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -68,7 +70,7 @@ public class SuiviIeppController {
 		if (denied != null) return denied;
 		try {
 			SuiviIepp e = new SuiviIepp();
-			apply(e, body);
+			apply(e, body, true);
 			e.setValideeIepp(false);
 			return ResponseEntity.status(201).body(toRow(repository.save(e)));
 		} catch (IllegalArgumentException ex) {
@@ -88,7 +90,7 @@ public class SuiviIeppController {
 			return ResponseEntity.badRequest().body(Map.of("message", "Modification impossible : le suivi IEPP est déjà validé."));
 		}
 		try {
-			apply(e, body);
+			apply(e, body, false);
 			return ResponseEntity.ok(toRow(repository.save(e)));
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
@@ -135,7 +137,7 @@ public class SuiviIeppController {
 				.body(Map.of("message", "Accès refusé: permission " + permission + " requise"));
 	}
 
-	private void apply(SuiviIepp e, SuiviIeppRequest r) {
+	private void apply(SuiviIepp e, SuiviIeppRequest r, boolean creating) {
 		if (r == null || r.getIdAlpha() == null) throw new IllegalArgumentException("idAlpha est obligatoire");
 		Alpha alpha = alphaRepository.findById(r.getIdAlpha()).orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdAlpha()));
 		e.setIdAlpha(alpha);
@@ -143,8 +145,15 @@ public class SuiviIeppController {
 			PeriodeActivite periode = periodeActiviteRepository.findById(r.getIdPeriodeActivite().longValue())
 					.orElseThrow(() -> new IllegalArgumentException("Période d'activité introuvable: " + r.getIdPeriodeActivite()));
 			e.setIdPeriodeActivite(periode);
-		} else if (e.getId() == null) {
+		} else if (creating) {
 			throw new IllegalArgumentException("idPeriodeActivite est obligatoire");
+		}
+		if (r.getIdNiveauAlpha() != null) {
+			NiveauAlpha niveau = niveauAlphaRepository.findById(r.getIdNiveauAlpha())
+					.orElseThrow(() -> new IllegalArgumentException("Niveau Alpha introuvable: " + r.getIdNiveauAlpha()));
+			e.setIdNiveauAlpha(niveau);
+		} else if (creating || e.getIdNiveauAlpha() == null) {
+			throw new IllegalArgumentException("idNiveauAlpha est obligatoire");
 		}
 		e.setNombreVisiteEffectueParIepp(r.getNombreVisiteEffectueParIepp());
 		e.setNombreReunionPointActiviteAlpha(r.getNombreReunionPointActiviteAlpha());
@@ -155,6 +164,7 @@ public class SuiviIeppController {
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
 		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
+		ReferentielEnricher.putRef(m, "NiveauAlpha", e.getIdNiveauAlpha());
 		m.put("nombreVisiteEffectueParIepp", e.getNombreVisiteEffectueParIepp());
 		m.put("nombreReunionPointActiviteAlpha", e.getNombreReunionPointActiviteAlpha());
 		m.put("valideeIepp", Boolean.TRUE.equals(e.getValideeIepp()));

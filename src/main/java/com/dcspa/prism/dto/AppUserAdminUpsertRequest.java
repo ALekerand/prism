@@ -20,8 +20,16 @@ public class AppUserAdminUpsertRequest {
     private Integer idDrena;
     private Integer idIep;
     private Integer idDepartement;
+    /** Ignorés à l'upsert (hors scope création utilisateur). */
     private Integer idSousPrefecture;
     private Integer idCommune;
     private Integer idLocalite;
+
+    private String nom;
+    private String prenoms;
+    private java.time.LocalDate dateNaissance;
+    private String lieuNaissance;
+    private java.time.LocalDate datePriseService;
+    private java.time.LocalDate dateDepartRetraite;
 }
 

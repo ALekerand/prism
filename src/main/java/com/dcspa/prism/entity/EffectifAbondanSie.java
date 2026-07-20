@@ -24,11 +24,18 @@ public class EffectifAbondanSie {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PERIODE_ACTIVITE")
+    private PeriodeActivite idPeriodeActivite;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_NIVEAU_SIE", nullable = false)
     private NiveauSieCec idNiveauSie;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_CENTRE")
+    private Sie idCentre;
 
     @Size(max = 10)
     @Column(name = "CODE_ABANDON_EFFECTIF_SIE", length = 10)
@@ -126,6 +133,12 @@ public class EffectifAbondanSie {
 
     @Column(name = "EFFECTIF_ABANDON_SIE_NIVEAU_SIE")
     private Integer effectifAbandonSieNiveauSie;
+    @Column(name = "EFFECTIF_ABANDON_SIE_NIVEAU_H")
+    private Integer effectifAbandonSieNiveauH;
+
+    @Column(name = "EFFECTIF_ABANDON_SIE_NIVEAU_F")
+    private Integer effectifAbandonSieNiveauF;
+
 
     @Lob
     @Column(name = "CAUSE_ABANDON_SIE")

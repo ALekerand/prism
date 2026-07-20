@@ -212,6 +212,25 @@ public class CecService {
 		return Optional.of(CentreTypeListItemMapper.fromCec(save(existing)));
 	}
 
+	@Transactional
+	public Optional<CentreTypeListItem> updateActif(Integer id, boolean actif, AuthUser authUser) {
+		if (!isCecWithinCirconscription(id, authUser)) {
+			return Optional.empty();
+		}
+		if (!cecRepository.existsById(id)) {
+			return Optional.empty();
+		}
+		int updated = centreRepository.updateActifById(id, actif);
+		if (updated == 0) {
+			throw new IllegalArgumentException("Centre introuvable pour CEC #" + id);
+		}
+		Cec existing = cecRepository.findById(id).orElse(null);
+		if (existing == null) {
+			return Optional.empty();
+		}
+		return Optional.of(CentreTypeListItemMapper.fromCec(existing, actif));
+	}
+
 	// Met à jour les informations détaillées du CEC.
 	@Transactional
 	public Optional<CentreTypeListItem> updateInfos(Integer id, UpdateCentreTypeInfosRequest req, AuthUser authUser) {
@@ -244,8 +263,11 @@ public class CecService {
 			if (req.getNiveaux() != null) {
 				centreNiveauCreationService.replaceCecNiveaux(existing, req.getNiveaux());
 			}
+			syncCentreActif(existing.getId(), req);
 		}
-		return Optional.of(CentreTypeListItemMapper.fromCec(save(existing)));
+		Cec saved = save(existing);
+		centreRepository.findById(saved.getId()).ifPresent(saved::setCentre);
+		return Optional.of(CentreTypeListItemMapper.fromCec(saved));
 	}
 
 	// Supprime un CEC.
@@ -374,7 +396,18 @@ public class CecService {
 				item.setPromoteur(details);
 			}
 		}
+		centreRepository.findById(cec.getId()).ifPresent(c -> item.setActif(CentreSupplementalFields.actifForApi(c)));
 		return item;
+	}
+
+	private void syncCentreActif(Integer centreId, UpdateCentreTypeInfosRequest req) {
+		if (req == null || req.getActif() == null || centreId == null) {
+			return;
+		}
+		centreRepository.findById(centreId).ifPresent(c -> {
+			CentreSupplementalFields.applyActifToCentre(c, req.getActif());
+			centreRepository.save(c);
+		});
 	}
 
 	private CentreWithPromoteurItem.NiveauDetails toNiveauDetails(CecNiveau niveau) {

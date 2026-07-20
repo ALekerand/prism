@@ -24,6 +24,9 @@ public class EffectifSie {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PERIODE_ACTIVITE")
+    private PeriodeActivite idPeriodeActivite;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -117,6 +120,12 @@ public class EffectifSie {
 
     @Column(name = "EFFECTIF_SIE_NIVEAU_SIE")
     private Integer effectifSieNiveauSie;
+    @Column(name = "EFFECTIF_SIE_NIVEAU_H")
+    private Integer effectifSieNiveauH;
+
+    @Column(name = "EFFECTIF_SIE_NIVEAU_F")
+    private Integer effectifSieNiveauF;
+
 
     @Column(name = "EFFECTIF_SIE_4_6_NON_IVOIRIIEN_F")
     private Integer effectifSie46NonIvoiriienF;

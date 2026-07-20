@@ -32,6 +32,10 @@ public class SuiviIepp {
 	@JoinColumn(name = "ID_PERIODE_ACTIVITE")
 	private PeriodeActivite idPeriodeActivite;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ID_NIVEAU_ALPHA")
+	private NiveauAlpha idNiveauAlpha;
+
 	@Column(name = "NOMBRE_VISITE_EFFECTUE_PAR_IEPP")
 	private Integer nombreVisiteEffectueParIepp;
 

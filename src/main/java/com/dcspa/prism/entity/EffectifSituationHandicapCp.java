@@ -24,6 +24,9 @@ public class EffectifSituationHandicapCp {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PERIODE_ACTIVITE")
+    private PeriodeActivite idPeriodeActivite;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -92,6 +95,12 @@ public class EffectifSituationHandicapCp {
 
     @Column(name = "EFFECTIF_SITUATION_HANDICAP_CP_NIVEAU_CP")
     private Integer effectifSituationHandicapCpNiveauCp;
+    @Column(name = "EFFECTIF_SIT_HANDICAP_CP_NIVEAU_H")
+    private Integer effectifSituationHandicapCpNiveauH;
+
+    @Column(name = "EFFECTIF_SIT_HANDICAP_CP_NIVEAU_F")
+    private Integer effectifSituationHandicapCpNiveauF;
+
 
     @Column(name = "EFFECTIF_SITUATION_HANDICAP_CP_12_13_NON_IVOIRIIEN_F")
     private Integer effectifSituationHandicapCp1213NonIvoiriienF;

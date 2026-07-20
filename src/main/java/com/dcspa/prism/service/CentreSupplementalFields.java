@@ -29,6 +29,27 @@ final class CentreSupplementalFields {
         centre.setGpsValide(payload.getGpsValide());
         centre.setStructurePartenaire(trimToNull(payload.getStructurePartenaire()));
         centre.setNomPartenaire(trimToNull(payload.getNomPartenaire()));
+        if (payload.getActif() != null) {
+            centre.setActif(payload.getActif());
+        }
+        if (payload.getDateCreationDaaje() != null) {
+            centre.setDateCreationDaaje(payload.getDateCreationDaaje());
+        }
+    }
+
+    static void applyActifToCentre(Centre centre, Boolean actif) {
+        if (centre == null || actif == null) {
+            return;
+        }
+        centre.setActif(actif);
+    }
+
+    static Boolean actifForApi(Centre centre) {
+        if (centre == null) {
+            return Boolean.TRUE;
+        }
+        Boolean value = centre.getActif();
+        return value == null ? Boolean.TRUE : value;
     }
 
     static void copyToAlpha(Alpha alpha, Centre centre) {

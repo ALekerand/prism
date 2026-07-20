@@ -55,6 +55,17 @@ public class GlobalExceptionHandler {
 		return badRequest(ex.getMessage() != null ? ex.getMessage() : "Paramètres invalides.", errorId);
 	}
 
+	@ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+	public ResponseEntity<Map<String, Object>> handleMethodNotSupported(
+			org.springframework.web.HttpRequestMethodNotSupportedException ex) {
+		String errorId = newErrorId();
+		LOGGER.warn("[{}] Méthode HTTP non supportée: {}", errorId, ex.getMessage());
+		HttpStatus status = HttpStatus.METHOD_NOT_ALLOWED;
+		Map<String, Object> body = errorBody(status, "Méthode HTTP non autorisée pour cette ressource.", errorId);
+		body.put("detail", ex.getMessage());
+		return ResponseEntity.status(status).body(body);
+	}
+
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<Map<String, Object>> handleConstraintViolation(ConstraintViolationException ex) {
 		String errorId = newErrorId();
@@ -80,7 +91,10 @@ public class GlobalExceptionHandler {
 		String errorId = newErrorId();
 		LOGGER.error("[{}] Exception non gérée: {}", errorId, ex.getMessage(), ex);
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-		return ResponseEntity.status(status).body(errorBody(status, GENERIC_SERVER_ERROR, errorId));
+		Map<String, Object> body = errorBody(status, GENERIC_SERVER_ERROR, errorId);
+		// En local (include-message=always) : détail technique pour accélérer le diagnostic.
+		body.put("detail", ex.getClass().getSimpleName() + ": " + String.valueOf(ex.getMessage()));
+		return ResponseEntity.status(status).body(body);
 	}
 
 	private static String friendlyDeserializationMessage(Throwable cause) {

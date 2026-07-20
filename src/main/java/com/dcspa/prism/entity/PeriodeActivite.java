@@ -27,5 +27,10 @@ public class PeriodeActivite {
     @Column(name = "LIBELLE_PERIODE_ACTIVITE", length = 50)
     private String libellePeriodeActivite;
 
+    @Column(name = "DATE_DEBUT")
+    private java.time.LocalDate dateDebut;
+
+    @Column(name = "DATE_FIN")
+    private java.time.LocalDate dateFin;
 
 }

@@ -7,6 +7,8 @@ import com.dcspa.prism.entity.Document;
 import com.dcspa.prism.entity.NatureDocument;
 import com.dcspa.prism.entity.TypeDocument;
 import com.dcspa.prism.repository.DocumentRepository;
+import com.dcspa.prism.security.AuthUser;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,8 +19,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,8 +35,15 @@ class DocumentServiceFindAllListItemsTest {
 	@Mock
 	private DocumentRepository documentRepository;
 
+	@Mock
+	private CirconscriptionResolver circonscriptionResolver;
+
 	@InjectMocks
 	private DocumentService documentService;
+
+	private static AuthUser nationalUser() {
+		return new AuthUser(1, "admin", "x", true, List.of(), List.of("ADMIN"), null, null, null, null, null, null, null);
+	}
 
 	@Test
 	void findAllListItemsReturnsFlattenedRows() {
@@ -67,7 +74,8 @@ class DocumentServiceFindAllListItemsTest {
 		when(documentRepository.findAll(any(Specification.class), any(Pageable.class)))
 				.thenReturn(new PageImpl<>(List.of(d), PageRequest.of(0, 20), 1L));
 
-		Page<DocumentListItem> page = documentService.findAllListItems(PageRequest.of(0, 20), new DocumentListFilter());
+		Page<DocumentListItem> page = documentService.findAllListItems(
+				PageRequest.of(0, 20), new DocumentListFilter(), nationalUser());
 
 		assertThat(page.getTotalElements()).isEqualTo(1);
 		DocumentListItem item = page.getContent().get(0);

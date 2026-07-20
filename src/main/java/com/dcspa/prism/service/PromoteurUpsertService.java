@@ -72,6 +72,8 @@ public class PromoteurUpsertService {
         physique.setBoitePostale(trim(payload.getBoitePostale()));
         physique.setNiveauEtudes(trim(payload.getNiveauEtudes()));
         physique.setCivilite(trim(payload.getCivilite()));
+        physique.setMail(trim(payload.getMail()));
+        physique.setOrganisationFaitiere(trim(payload.getOrganisationFaitiere()));
         personnephysiqueRepository.save(physique);
     }
 

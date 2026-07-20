@@ -1,0 +1,94 @@
+SET @old_fk := (
+  SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'materiel_alpha'
+    AND COLUMN_NAME = 'ID_CENTRE' AND REFERENCED_TABLE_NAME = 'alpha' LIMIT 1
+);
+SET @drop_sql := IF(@old_fk IS NULL, 'SELECT 1',
+  CONCAT('ALTER TABLE materiel_alpha DROP FOREIGN KEY `', REPLACE(@old_fk, '`', '``'), '`'));
+PREPARE stmt FROM @drop_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @old_fk := (
+  SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'difficulte_alpha'
+    AND COLUMN_NAME = 'ID_CENTRE' AND REFERENCED_TABLE_NAME = 'alpha' LIMIT 1
+);
+SET @drop_sql := IF(@old_fk IS NULL, 'SELECT 1',
+  CONCAT('ALTER TABLE difficulte_alpha DROP FOREIGN KEY `', REPLACE(@old_fk, '`', '``'), '`'));
+PREPARE stmt FROM @drop_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @old_fk := (
+  SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'impact_alpha'
+    AND COLUMN_NAME = 'ID_CENTRE' AND REFERENCED_TABLE_NAME = 'alpha' LIMIT 1
+);
+SET @drop_sql := IF(@old_fk IS NULL, 'SELECT 1',
+  CONCAT('ALTER TABLE impact_alpha DROP FOREIGN KEY `', REPLACE(@old_fk, '`', '``'), '`'));
+PREPARE stmt FROM @drop_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @old_fk := (
+  SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'competence_centre'
+    AND COLUMN_NAME = 'ID_CENTRE' AND REFERENCED_TABLE_NAME = 'alpha' LIMIT 1
+);
+SET @drop_sql := IF(@old_fk IS NULL, 'SELECT 1',
+  CONCAT('ALTER TABLE competence_centre DROP FOREIGN KEY `', REPLACE(@old_fk, '`', '``'), '`'));
+PREPARE stmt FROM @drop_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @old_fk := (
+  SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'support_didactique_alpha'
+    AND COLUMN_NAME = 'ID_CENTRE' AND REFERENCED_TABLE_NAME = 'alpha' LIMIT 1
+);
+SET @drop_sql := IF(@old_fk IS NULL, 'SELECT 1',
+  CONCAT('ALTER TABLE support_didactique_alpha DROP FOREIGN KEY `', REPLACE(@old_fk, '`', '``'), '`'));
+PREPARE stmt FROM @drop_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @new_fk_exists := (
+  SELECT COUNT(*) FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'materiel_alpha'
+    AND COLUMN_NAME = 'ID_CENTRE' AND REFERENCED_TABLE_NAME = 'centre'
+);
+SET @add_sql := IF(@new_fk_exists = 0,
+  'ALTER TABLE materiel_alpha ADD CONSTRAINT fk_materiel_alpha_centre FOREIGN KEY (ID_CENTRE) REFERENCES centre (ID_CENTRE)',
+  'SELECT 1');
+PREPARE stmt FROM @add_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @new_fk_exists := (
+  SELECT COUNT(*) FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'difficulte_alpha'
+    AND COLUMN_NAME = 'ID_CENTRE' AND REFERENCED_TABLE_NAME = 'centre'
+);
+SET @add_sql := IF(@new_fk_exists = 0,
+  'ALTER TABLE difficulte_alpha ADD CONSTRAINT fk_difficulte_alpha_centre FOREIGN KEY (ID_CENTRE) REFERENCES centre (ID_CENTRE)',
+  'SELECT 1');
+PREPARE stmt FROM @add_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @new_fk_exists := (
+  SELECT COUNT(*) FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'impact_alpha'
+    AND COLUMN_NAME = 'ID_CENTRE' AND REFERENCED_TABLE_NAME = 'centre'
+);
+SET @add_sql := IF(@new_fk_exists = 0,
+  'ALTER TABLE impact_alpha ADD CONSTRAINT fk_impact_alpha_centre FOREIGN KEY (ID_CENTRE) REFERENCES centre (ID_CENTRE)',
+  'SELECT 1');
+PREPARE stmt FROM @add_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @new_fk_exists := (
+  SELECT COUNT(*) FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'competence_centre'
+    AND COLUMN_NAME = 'ID_CENTRE' AND REFERENCED_TABLE_NAME = 'centre'
+);
+SET @add_sql := IF(@new_fk_exists = 0,
+  'ALTER TABLE competence_centre ADD CONSTRAINT fk_competence_centre_centre FOREIGN KEY (ID_CENTRE) REFERENCES centre (ID_CENTRE)',
+  'SELECT 1');
+PREPARE stmt FROM @add_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @new_fk_exists := (
+  SELECT COUNT(*) FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'support_didactique_alpha'
+    AND COLUMN_NAME = 'ID_CENTRE' AND REFERENCED_TABLE_NAME = 'centre'
+);
+SET @add_sql := IF(@new_fk_exists = 0,
+  'ALTER TABLE support_didactique_alpha ADD CONSTRAINT fk_support_didactique_alpha_centre FOREIGN KEY (ID_CENTRE) REFERENCES centre (ID_CENTRE)',
+  'SELECT 1');
+PREPARE stmt FROM @add_sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;

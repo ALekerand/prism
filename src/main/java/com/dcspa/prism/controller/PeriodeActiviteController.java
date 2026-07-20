@@ -65,6 +65,10 @@ public class PeriodeActiviteController {
 	}
 
 	private Map<String, Object> toRow(PeriodeActivite e) {
-		return new LinkedHashMap<>(ReferentielEnricher.toRef(e));
+		Map<String, Object> row = new LinkedHashMap<>(ReferentielEnricher.toRef(e));
+		row.put("dateDebut", e.getDateDebut());
+		row.put("dateFin", e.getDateFin());
+		row.put("horsDelai", com.dcspa.prism.service.PeriodeActiviteHorsDelai.isHorsDelai(e));
+		return row;
 	}
 }

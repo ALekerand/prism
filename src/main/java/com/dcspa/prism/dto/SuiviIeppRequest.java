@@ -10,6 +10,7 @@ import lombok.Setter;
 public class SuiviIeppRequest {
 	private Integer idAlpha;
 	private Integer idPeriodeActivite;
+	private Integer idNiveauAlpha;
 	private Integer nombreVisiteEffectueParIepp;
 	private Integer nombreReunionPointActiviteAlpha;
 }

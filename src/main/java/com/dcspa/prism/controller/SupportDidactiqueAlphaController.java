@@ -1,7 +1,9 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.controller.support.ReferentielEnricher;
+import com.dcspa.prism.dto.LiaisonCatalogSyncRequest;
 import com.dcspa.prism.entity.SupportDidactiqueAlpha;
+import com.dcspa.prism.service.CentreLiaisonSyncService;
 import com.dcspa.prism.service.SupportDidactiqueAlphaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ import java.util.Optional;
 public class SupportDidactiqueAlphaController {
 
 	private final SupportDidactiqueAlphaService supportDidactiqueAlphaService;
+	private final CentreLiaisonSyncService centreLiaisonSyncService;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -46,6 +49,13 @@ public class SupportDidactiqueAlphaController {
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> create(@RequestBody SupportDidactiqueAlpha body) {
 		return ResponseEntity.status(201).body(toRow(supportDidactiqueAlphaService.save(body)));
+	}
+
+	@Transactional
+	@PostMapping("/sync")
+	public ResponseEntity<Void> sync(@RequestBody LiaisonCatalogSyncRequest request) {
+		centreLiaisonSyncService.syncSupportDidactiqueAlpha(request);
+		return ResponseEntity.noContent().build();
 	}
 
 	@Transactional
@@ -70,7 +80,7 @@ public class SupportDidactiqueAlphaController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "SupportDidactique", e.getIdSupportDidactique());
-		ReferentielEnricher.putRef(m, "Alpha", e.getIdCentre());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("libelleAutreSupport", e.getLibelleAutreSupport());
 		return m;
 	}

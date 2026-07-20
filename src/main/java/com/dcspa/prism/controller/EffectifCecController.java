@@ -107,6 +107,8 @@ public class EffectifCecController {
 		row.put("effectifCec1216HandicapH", entity.getEffectifCec1216HandicapH());
 		row.put("effectifCec1216HandicapF", entity.getEffectifCec1216HandicapF());
 		row.put("effectifCecNiveauCec", entity.getEffectifCecNiveauCec());
+		row.put("effectifCecNiveauH", entity.getEffectifCecNiveauH());
+		row.put("effectifCecNiveauF", entity.getEffectifCecNiveauF());
 		return row;
 	}
 }

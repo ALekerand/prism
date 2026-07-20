@@ -7,5 +7,7 @@ public enum SaisieWorkflowListTab {
 	/** Soumis en attente (conseiller) ou pas encore au palier de l'utilisateur (validateur). */
 	EN_COURS,
 	/** Validé / traité par l'utilisateur ou circuit terminé côté conseiller. */
-	TERMINE
+	TERMINE,
+	/** Renvoyé pour modification (retour validateur). */
+	RENVOYE
 }

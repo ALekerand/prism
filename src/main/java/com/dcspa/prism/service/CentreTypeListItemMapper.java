@@ -3,6 +3,7 @@ package com.dcspa.prism.service;
 import com.dcspa.prism.dto.CentreTypeListItem;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.entity.Cec;
+import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.Cp;
 import com.dcspa.prism.entity.Sie;
 
@@ -13,8 +14,16 @@ public final class CentreTypeListItemMapper {
     private CentreTypeListItemMapper() {
     }
 
-    // Mappe une ligne Alpha vers le DTO affiché en liste.
-    public static CentreTypeListItem fromAlpha(Alpha a) {
+    private static Boolean actifFromCentre(Centre centre) {
+        if (centre == null) {
+            return Boolean.TRUE;
+        }
+        Boolean actif = centre.getActif();
+        return actif == null ? Boolean.TRUE : actif;
+    }
+
+    /** Variante explicite : évite d'accéder à la relation lazy {@code centre}. */
+    public static CentreTypeListItem fromAlpha(Alpha a, Boolean actif) {
         return new CentreTypeListItem(
                 a.getId(),
                 a.getCodeCentre(),
@@ -41,12 +50,17 @@ public final class CentreTypeListItemMapper {
                 a.getNomMilieuImplentation(),
                 a.getEncadreurNonMena(),
                 a.getEncadrerParMena(),
-                a.getIdPromoteur()
+                a.getIdPromoteur(),
+                actif == null ? Boolean.TRUE : actif
         );
     }
 
-    // Mappe un CEC vers le DTO (pas de code type spécifique).
-    public static CentreTypeListItem fromCec(Cec c) {
+    // Mappe une ligne Alpha vers le DTO affiché en liste.
+    public static CentreTypeListItem fromAlpha(Alpha a) {
+        return fromAlpha(a, actifFromCentre(a.getCentre()));
+    }
+
+    public static CentreTypeListItem fromCec(Cec c, Boolean actif) {
         return new CentreTypeListItem(
                 c.getId(),
                 c.getCodeCentre(),
@@ -73,12 +87,17 @@ public final class CentreTypeListItemMapper {
                 c.getNomMilieuImplentation(),
                 c.getEncadreurNonMena(),
                 c.getEncadrerParMena(),
-                c.getIdPromoteur()
+                c.getIdPromoteur(),
+                actif == null ? Boolean.TRUE : actif
         );
     }
 
-    // Mappe un CP vers le DTO.
-    public static CentreTypeListItem fromCp(Cp c) {
+    // Mappe un CEC vers le DTO (pas de code type spécifique).
+    public static CentreTypeListItem fromCec(Cec c) {
+        return fromCec(c, actifFromCentre(c.getCentre()));
+    }
+
+    public static CentreTypeListItem fromCp(Cp c, Boolean actif) {
         return new CentreTypeListItem(
                 c.getId(),
                 c.getCodeCentre(),
@@ -105,12 +124,17 @@ public final class CentreTypeListItemMapper {
                 c.getNomMilieuImplentation(),
                 c.getEncadreurNonMena(),
                 c.getEncadrerParMena(),
-                c.getIdPromoteur()
+                c.getIdPromoteur(),
+                actif == null ? Boolean.TRUE : actif
         );
     }
 
-    // Mappe un SIE vers le DTO.
-    public static CentreTypeListItem fromSie(Sie s) {
+    // Mappe un CP vers le DTO.
+    public static CentreTypeListItem fromCp(Cp c) {
+        return fromCp(c, actifFromCentre(c.getCentre()));
+    }
+
+    public static CentreTypeListItem fromSie(Sie s, Boolean actif) {
         return new CentreTypeListItem(
                 s.getId(),
                 s.getCodeCentre(),
@@ -137,7 +161,13 @@ public final class CentreTypeListItemMapper {
                 s.getNomMilieuImplentation(),
                 s.getEncadreurNonMena(),
                 s.getEncadrerParMena(),
-                s.getIdPromoteur()
+                s.getIdPromoteur(),
+                actif == null ? Boolean.TRUE : actif
         );
+    }
+
+    // Mappe un SIE vers le DTO.
+    public static CentreTypeListItem fromSie(Sie s) {
+        return fromSie(s, actifFromCentre(s.getCentre()));
     }
 }

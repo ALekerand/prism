@@ -1,6 +1,7 @@
 package com.dcspa.prism.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -49,6 +50,7 @@ public class AppUser {
     @JoinColumn(name = "ID_DEPARTEMENT")
     private Departement idDepartement;
 
+    /** Conservé en BD pour compatibilité ; non exposé à la création utilisateur. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SOUS_PREFECTURE")
     private SousPrefecture idSousPrefecture;
@@ -60,6 +62,27 @@ public class AppUser {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_LOCALITE")
     private LocaliteDImplantation idLocalite;
+
+    @Size(max = 100)
+    @Column(name = "NOM", length = 100)
+    private String nom;
+
+    @Size(max = 100)
+    @Column(name = "PRENOMS", length = 100)
+    private String prenoms;
+
+    @Column(name = "DATE_NAISSANCE")
+    private java.time.LocalDate dateNaissance;
+
+    @Size(max = 150)
+    @Column(name = "LIEU_NAISSANCE", length = 150)
+    private String lieuNaissance;
+
+    @Column(name = "DATE_PRISE_SERVICE")
+    private java.time.LocalDate datePriseService;
+
+    @Column(name = "DATE_DEPART_RETRAITE")
+    private java.time.LocalDate dateDepartRetraite;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

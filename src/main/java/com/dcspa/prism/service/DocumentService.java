@@ -4,7 +4,9 @@ import com.dcspa.prism.dto.DocumentListFilter;
 import com.dcspa.prism.dto.DocumentListItem;
 import com.dcspa.prism.entity.Document;
 import com.dcspa.prism.repository.DocumentRepository;
+import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
 import com.dcspa.prism.repository.spec.DocumentSpecifications;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.pagination.PageableUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class DocumentService {
 
 	private final DocumentRepository documentRepository;
+	private final CirconscriptionResolver circonscriptionResolver;
 
 	@Transactional(readOnly = true)
 	public List<Document> findAll() {
@@ -29,9 +32,15 @@ public class DocumentService {
 
 	/** Liste paginée pour le module Visites (même donnée que {@code Document}, forme aplatie). */
 	@Transactional(readOnly = true)
-	public Page<DocumentListItem> findAllListItems(Pageable pageable, DocumentListFilter filter) {
+	public Page<DocumentListItem> findAllListItems(Pageable pageable, DocumentListFilter filter, AuthUser authUser) {
 		Pageable p = PageableUtils.cap(pageable);
-		Specification<Document> spec = DocumentSpecifications.fromFilter(filter);
+		DocumentListFilter f = filter == null ? new DocumentListFilter() : filter;
+		Specification<Document> scope = CentreCirconscriptionSpecifications.forDocument(
+				circonscriptionResolver.resolve(authUser));
+		Specification<Document> filterSpec = DocumentSpecifications.fromFilter(f);
+		Specification<Document> spec = scope == null
+				? filterSpec
+				: Specification.where(scope).and(filterSpec);
 		return documentRepository.findAll(spec, p).map(DocumentListItemMapper::fromDocument);
 	}
 

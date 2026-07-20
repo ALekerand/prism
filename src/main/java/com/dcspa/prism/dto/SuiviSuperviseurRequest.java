@@ -10,6 +10,7 @@ import lombok.Setter;
 public class SuiviSuperviseurRequest {
 	private Integer idAlpha;
 	private Integer idPeriodeActivite;
+	private Integer idNiveauAlpha;
 	private Integer nombreVisiteConseillerSuperviseurEffectue;
 	private Integer nombreReunionBilanConseillerSuperviseur;
 }

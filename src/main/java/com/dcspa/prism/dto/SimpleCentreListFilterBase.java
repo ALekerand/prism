@@ -27,4 +27,6 @@ public abstract class SimpleCentreListFilterBase {
 	private Boolean estElectrifie;
 	private Boolean aDeLeau;
 	private Integer nombreVisite;
+	/** Filtre statut centre : true = actifs (null ou true), false = inactifs. */
+	private Boolean actif;
 }

@@ -76,6 +76,7 @@ public class EffectifSituationHandicapSieController {
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		m.put("codeEffectifSituationHandicapSie", e.getCodeEffectifSituationHandicapSie());
 		m.put("effectifSituationHandicapSie3IvoirienH", e.getEffectifSituationHandicapSie3IvoirienH());
 		m.put("effectifSituationHandicapSie3IvoirienF", e.getEffectifSituationHandicapSie3IvoirienF());
@@ -94,6 +95,8 @@ public class EffectifSituationHandicapSieController {
 		m.put("effectifSituationHandicapSie1314EtPlusIvoirienF", e.getEffectifSituationHandicapSie1314EtPlusIvoirienF());
 		m.put("effectifSituationHandicapSie1314EtPlusIvoirienH", e.getEffectifSituationHandicapSie1314EtPlusIvoirienH());
 		m.put("effectifSituationHandicapSieNiveauSie", e.getEffectifSituationHandicapSieNiveauSie());
+		m.put("effectifSituationHandicapSieNiveauH", e.getEffectifSituationHandicapSieNiveauH());
+		m.put("effectifSituationHandicapSieNiveauF", e.getEffectifSituationHandicapSieNiveauF());
 		return m;
 	}
 }

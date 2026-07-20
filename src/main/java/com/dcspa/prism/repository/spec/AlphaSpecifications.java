@@ -59,6 +59,7 @@ public final class AlphaSpecifications {
 
 			predicates.add(SpecificationSupport.globalTextOrId(cb, root, f.getQ(),
 					"codeCentre", "codeAlpha", "libelleAlpha", "encadreurNonMena", "localisationCentre", "nomMilieuImplentation"));
+			predicates.add(SpecificationSupport.centreActifFilter(cb, root, f.getActif()));
 
 			return cb.and(predicates.toArray(Predicate[]::new));
 		};

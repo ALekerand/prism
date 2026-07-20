@@ -107,5 +107,16 @@ public class Centre {
     @Column(name = "NOM_MILIEU_IMPLENTATION", length = 100)
     private String nomMilieuImplentation;
 
+    /** Actif = inclus dans les statistiques ; false = désactivé. */
+    @Column(name = "ACTIF")
+    private Boolean actif = true;
+
+    /** Date système d’enregistrement. */
+    @Column(name = "DATE_ENREGISTREMENT")
+    private java.time.LocalDate dateEnregistrement;
+
+    /** Date de création DAAJE (saisie). */
+    @Column(name = "DATE_CREATION_DAAJE")
+    private java.time.LocalDate dateCreationDaaje;
 
 }

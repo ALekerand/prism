@@ -109,12 +109,11 @@ public class PersonnelAdminService {
     @Transactional(readOnly = true)
     public Map<String, Object> buildTypeSummary(String centreType, CirconscriptionAttachement att) {
         String normalized = centreType == null ? "" : centreType.trim().toUpperCase();
-        Specification<Centre> scope = CentreCirconscriptionSpecifications.forCentre(att);
-        List<Centre> centres = scope == null
-                ? centreRepository.findAll()
-                : centreRepository.findAll(scope);
+        Specification<Centre> scope = CentreCirconscriptionSpecifications.forCentreStats(att);
+        List<Centre> centres = centreRepository.findAll(scope);
         List<Integer> centreIds = centres.stream()
                 .filter(c -> matchesCentreType(c.getCodeCentre(), normalized))
+                .filter(CentreCirconscriptionSpecifications::isActif)
                 .map(Centre::getId)
                 .toList();
 
@@ -174,7 +173,7 @@ public class PersonnelAdminService {
         Personnel p = new Personnel();
         applyRequestToEntity(p, r);
         Personnel saved = personnelRepository.save(p);
-        syncDiplome(saved, r.getIdDiplomeId());
+        syncDiplome(saved, r.getIdDiplomeId(), r.getLibelleAutreDiplome());
         return toDto(saved);
     }
 
@@ -184,7 +183,7 @@ public class PersonnelAdminService {
                 .orElseThrow(() -> new IllegalArgumentException("Personnel introuvable: " + id));
         applyRequestToEntity(p, r);
         Personnel saved = personnelRepository.save(p);
-        syncDiplome(saved, r.getIdDiplomeId());
+        syncDiplome(saved, r.getIdDiplomeId(), r.getLibelleAutreDiplome());
         return toDto(saved);
     }
 
@@ -237,7 +236,7 @@ public class PersonnelAdminService {
         p.setNomRepresentantLegalSturcture(r.getNomRepresentantLegalSturcture());
     }
 
-    private void syncDiplome(Personnel personnel, Integer idDiplomeId) {
+    private void syncDiplome(Personnel personnel, Integer idDiplomeId, String libelleAutreDiplome) {
         if (personnel == null || personnel.getId() == null) {
             return;
         }
@@ -250,6 +249,7 @@ public class PersonnelAdminService {
         DiplomePersonnel link = new DiplomePersonnel();
         link.setIdPersonnel(personnel);
         link.setIdDiplome(diplome);
+        link.setLibelleAutreDiplome(trimToNull(libelleAutreDiplome));
         diplomePersonnelRepository.save(link);
     }
 
@@ -263,10 +263,21 @@ public class PersonnelAdminService {
                 .orElse(null);
     }
 
+    private String resolveLibelleAutreDiplome(Personnel p) {
+        if (p == null || p.getId() == null) {
+            return null;
+        }
+        return diplomePersonnelRepository.findByIdPersonnel_Id(p.getId()).stream()
+                .findFirst()
+                .map(dp -> dp.getLibelleAutreDiplome())
+                .orElse(null);
+    }
+
     private PersonnelAdminResponse toDto(Personnel p) {
         return PersonnelAdminResponse.builder()
                 .id(p.getId())
                 .diplomeId(resolveDiplomeId(p))
+                .libelleAutreDiplome(resolveLibelleAutreDiplome(p))
                 .niveauPersonnelId(p.getIdNiveauPersonnel() != null ? p.getIdNiveauPersonnel().getId() : null)
                 .fonctionId(p.getIdFonction() != null ? p.getIdFonction().getId() : null)
                 .civiliteId(p.getIdCivilite() != null ? p.getIdCivilite().getId() : null)
@@ -295,6 +306,14 @@ public class PersonnelAdminService {
             throw new IllegalArgumentException("Champ requis: " + field);
         }
         return v.longValue();
+    }
+
+    private static String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }
 

@@ -85,6 +85,7 @@ public final class SimpleCentreTypeSpecifications {
 		predicates.add(SpecificationSupport.containsIgnoreCase(cb, root.get("encadreurNonMena"), f.getEncadreurNonMena()));
 		predicates.add(SpecificationSupport.containsIgnoreCase(cb, root.get("localisationCentre"), f.getLocalisationCentre()));
 		predicates.add(SpecificationSupport.containsIgnoreCase(cb, root.get("nomMilieuImplentation"), f.getNomMilieuImplentation()));
+		predicates.add(SpecificationSupport.centreActifFilter(cb, root, f.getActif()));
 		return predicates;
 	}
 }

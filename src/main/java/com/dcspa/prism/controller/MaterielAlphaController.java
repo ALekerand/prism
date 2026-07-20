@@ -3,10 +3,10 @@ package com.dcspa.prism.controller;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.LiaisonCatalogSyncRequest;
 import com.dcspa.prism.dto.MaterielAlphaRequest;
-import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.MaterielAlpha;
 import com.dcspa.prism.entity.MaterielsPedagogique;
-import com.dcspa.prism.repository.AlphaRepository;
+import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.repository.MaterielsPedagogiqueRepository;
 import com.dcspa.prism.service.CentreLiaisonSyncService;
 import com.dcspa.prism.service.MaterielAlphaService;
@@ -33,7 +33,7 @@ public class MaterielAlphaController {
 
 	private final MaterielAlphaService materielalphaService;
 	private final CentreLiaisonSyncService centreLiaisonSyncService;
-	private final AlphaRepository alphaRepository;
+	private final CentreRepository centreRepository;
 	private final MaterielsPedagogiqueRepository materielsPedagogiqueRepository;
 
 	@Transactional(readOnly = true)
@@ -82,8 +82,8 @@ public class MaterielAlphaController {
 	private MaterielAlpha toEntity(Integer id, MaterielAlphaRequest r) {
 		MaterielAlpha m = new MaterielAlpha();
 		m.setId(id);
-		Alpha centre = alphaRepository.findById(r.getIdCentre())
-				.orElseThrow(() -> new IllegalArgumentException("Alpha introuvable: " + r.getIdCentre()));
+		Centre centre = centreRepository.findById(r.getIdCentre())
+				.orElseThrow(() -> new IllegalArgumentException("Centre introuvable: " + r.getIdCentre()));
 		MaterielsPedagogique mp = materielsPedagogiqueRepository.findById(r.getIdMaterielPedagogique())
 				.orElseThrow(() -> new IllegalArgumentException(
 						"MaterielPedagogique introuvable: " + r.getIdMaterielPedagogique()));
@@ -97,7 +97,7 @@ public class MaterielAlphaController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "MaterielPedagogique", e.getIdMaterielPedagogique());
-		ReferentielEnricher.putRef(m, "Alpha", e.getIdCentre());
+		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("libelleAutreMateriel", e.getLibelleAutreMateriel());
 		return m;
 	}

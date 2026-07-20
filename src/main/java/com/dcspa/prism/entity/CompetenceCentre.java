@@ -24,7 +24,7 @@ public class CompetenceCentre {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CENTRE", nullable = false)
-    private Alpha idCentre;
+    private Centre idCentre;
 
     @Size(max = 50)
     @Column(name = "CODE_COMPETENCE_CENTRE", length = 50)

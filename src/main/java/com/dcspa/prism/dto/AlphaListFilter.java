@@ -33,6 +33,8 @@ public class AlphaListFilter {
 	private Boolean estElectrifie;
 	private Boolean aDeLeau;
 	private Integer nombreVisite;
+	/** Filtre statut centre : true = actifs (null ou true), false = inactifs. */
+	private Boolean actif;
 
 	/** Aucun critère utile : la liste peut utiliser un chemin SQL allégé (projection DTO). */
 	public boolean isEmpty() {
@@ -61,6 +63,7 @@ public class AlphaListFilter {
 				&& encadrerParMena == null
 				&& estElectrifie == null
 				&& aDeLeau == null
-				&& nombreVisite == null;
+				&& nombreVisite == null
+				&& actif == null;
 	}
 }

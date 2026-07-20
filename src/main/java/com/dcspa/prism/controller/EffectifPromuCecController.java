@@ -75,6 +75,7 @@ public class EffectifPromuCecController {
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "NiveauSie", e.getIdNiveauSie());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifPromuCec", e.getCodeEffectifPromuCec());
 		m.put("effectifPromuCecMoins3F", e.getEffectifPromuCecMoins3F());
@@ -108,6 +109,8 @@ public class EffectifPromuCecController {
 		m.put("effectifPromuCec1216HandicapH", e.getEffectifPromuCec1216HandicapH());
 		m.put("effectifPromuCec1216HandicapF", e.getEffectifPromuCec1216HandicapF());
 		m.put("effectifPromuCecNiveauCec", e.getEffectifPromuCecNiveauCec());
+		m.put("effectifPromuCecNiveauH", e.getEffectifPromuCecNiveauH());
+		m.put("effectifPromuCecNiveauF", e.getEffectifPromuCecNiveauF());
 		return m;
 	}
 }

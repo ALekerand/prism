@@ -72,4 +72,12 @@ public class Personnephysique {
     @Column(name = "CIVILITE", length = 30)
     private String civilite;
 
+    @Size(max = 150)
+    @Column(name = "MAIL", length = 150)
+    private String mail;
+
+    @Size(max = 150)
+    @Column(name = "ORGANISATION_FAITIERE", length = 150)
+    private String organisationFaitiere;
+
 }

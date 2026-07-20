@@ -11,6 +11,7 @@ public class LiaisonCatalogUpdateRequest {
     private Integer catalogId;
     private String libelleAutreInfrastructure;
     private String libelleAutreMateriel;
+    private String libelleAutreSupport;
     private String sourceFinancement;
     private BigDecimal montant;
 }

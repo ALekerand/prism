@@ -75,6 +75,7 @@ public class EffectifSituationHandicapCpController {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "NiveauCp", e.getIdNiveauCp());
 		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifSituationHandicapCp", e.getCodeEffectifSituationHandicapCp());
@@ -97,6 +98,8 @@ public class EffectifSituationHandicapCpController {
 		m.put("effectifSituationHandicapCp14NonIvoirienF", e.getEffectifSituationHandicapCp14NonIvoirienF());
 		m.put("effectifSituationHandicapCp14NonIvoirienH", e.getEffectifSituationHandicapCp14NonIvoirienH());
 		m.put("effectifSituationHandicapCpNiveauCp", e.getEffectifSituationHandicapCpNiveauCp());
+		m.put("effectifSituationHandicapCpNiveauH", e.getEffectifSituationHandicapCpNiveauH());
+		m.put("effectifSituationHandicapCpNiveauF", e.getEffectifSituationHandicapCpNiveauF());
 		return m;
 	}
 }

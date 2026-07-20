@@ -29,6 +29,9 @@ public class EffectifAbandonCp {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_ANNEE_SCOLAIRE", nullable = false)
     private AnneScolaire idAnneeScolaire;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_PERIODE_ACTIVITE")
+    private PeriodeActivite idPeriodeActivite;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -92,6 +95,12 @@ public class EffectifAbandonCp {
 
     @Column(name = "EFFECTIF_ABANDON_CP_NIVEAU_CP")
     private Integer effectifAbandonCpNiveauCp;
+    @Column(name = "EFFECTIF_ABANDON_CP_NIVEAU_H")
+    private Integer effectifAbandonCpNiveauH;
+
+    @Column(name = "EFFECTIF_ABANDON_CP_NIVEAU_F")
+    private Integer effectifAbandonCpNiveauF;
+
 
     @Lob
     @Column(name = "CAUSE_ABANDON_CP")

@@ -36,4 +36,10 @@ public class EvaluationThemeTaux {
 	@NotNull
 	@Column(name = "TAUX", nullable = false)
 	private Integer taux;
+
+	@Column(name = "NOMBRE_TOTAL_EVALUE")
+	private Integer nombreTotalEvalue;
+
+	@Column(name = "NOMBRE_RESULTAT_OBTENU")
+	private Integer nombreResultatObtenu;
 }

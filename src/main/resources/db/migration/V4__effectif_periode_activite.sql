@@ -1,0 +1,15 @@
+CALL prism_add_column_if_missing('effectif_cp', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_sie', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_abandon_cp', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_abandon_cec', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_abondan_sie', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_situation_handicap_cp', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_situation_handicap_cec', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_situation_handicap_sie', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_cepe_cp', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_cepe_cec', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_admis_integration_cp', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_integration_formel_cp', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_promu_sie', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_promu_cec', 'ID_PERIODE_ACTIVITE', 'INT NULL');
+CALL prism_add_column_if_missing('effectif_reverse_formel_sie', 'ID_PERIODE_ACTIVITE', 'INT NULL');

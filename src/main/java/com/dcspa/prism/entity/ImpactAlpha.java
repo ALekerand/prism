@@ -24,7 +24,7 @@ public class ImpactAlpha {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ID_CENTRE", nullable = false)
-    private Alpha idCentre;
+    private Centre idCentre;
 
     @Size(max = 10)
     @Column(name = "CODE_IMPACT_ALPHA", length = 10)

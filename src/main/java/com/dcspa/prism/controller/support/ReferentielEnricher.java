@@ -22,6 +22,7 @@ import com.dcspa.prism.entity.Diplome;
 import com.dcspa.prism.entity.Discipline;
 import com.dcspa.prism.entity.DomaineActivite;
 import com.dcspa.prism.entity.Drena;
+import com.dcspa.prism.entity.EcoleTutrice;
 import com.dcspa.prism.entity.Fonction;
 import com.dcspa.prism.entity.Fonctionnalite;
 import com.dcspa.prism.entity.Impact;
@@ -165,6 +166,7 @@ public final class ReferentielEnricher {
 			case SourceFinancement sf -> ref3(sf.getId(), sf.getCodeSourceFinancement(), sf.getLibelleSourceFinancement());
 			case Difficulte diff -> ref3(diff.getId(), diff.getCodeDifficulte(), diff.getLibelleDifficulte());
 			case DomaineActivite da -> ref3(da.getId(), da.getCodeDomaineActivite(), da.getLibelleDomaineActivite());
+			case EcoleTutrice et -> ref3(et.getId(), et.getCodeEcoleTutrice(), et.getLibelleEcoleTutrice());
 			case Civilite civi -> ref3(civi.getId(), civi.getCodeCivilite(), civi.getLibelleCivilite());
 			case Fonction fon -> ref3(fon.getId(), fon.getCodeFonction(), fon.getLibelleFonction());
 			case Impact imp -> ref3(imp.getId(), imp.getCodeImpact(), imp.getLibelleImpact());

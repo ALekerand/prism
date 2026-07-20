@@ -75,6 +75,7 @@ public class EffectifIntegrationFormelCpController {
 		m.put("id", e.getId());
 		ReferentielEnricher.putRef(m, "NiveauCp", e.getIdNiveauCp());
 		ReferentielEnricher.putRef(m, "AnneeScolaire", e.getIdAnneeScolaire());
+		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "Centre", e.getIdCentre());
 		m.put("codeEffectifIntegrationFormelCp", e.getCodeEffectifIntegrationFormelCp());
 		m.put("effectifIntegrationFormelCp911IvoirienH", e.getEffectifIntegrationFormelCp911IvoirienH());
@@ -96,6 +97,8 @@ public class EffectifIntegrationFormelCpController {
 		m.put("effectifIntegrationFormelCp14NonIvoirienF", e.getEffectifIntegrationFormelCp14NonIvoirienF());
 		m.put("effectifIntegrationFormelCp14NonIvoirienH", e.getEffectifIntegrationFormelCp14NonIvoirienH());
 		m.put("effectifIntegrationFormelCpNiveauCp", e.getEffectifIntegrationFormelCpNiveauCp());
+		m.put("effectifIntegrationFormelCpNiveauH", e.getEffectifIntegrationFormelCpNiveauH());
+		m.put("effectifIntegrationFormelCpNiveauF", e.getEffectifIntegrationFormelCpNiveauF());
 		return m;
 	}
 }

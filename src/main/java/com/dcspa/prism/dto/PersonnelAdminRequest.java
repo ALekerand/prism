@@ -13,6 +13,7 @@ public class PersonnelAdminRequest {
     private Integer idStructureFormationCertificationId;
     private Integer idStatutPersonnelId;
     private Integer idDiplomeId;
+    private String libelleAutreDiplome;
 
     private String codePersonnel;
     private Boolean certifierPersonnel;
