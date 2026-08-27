@@ -10,7 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Données de démonstration pour les référentiels sans dépendances FK complexes.
@@ -54,6 +57,7 @@ public class ReferentielDemoDataInitializer {
     private final NiveauCpRepository niveauCpRepository;
     private final NiveauSieCecRepository niveauSieCecRepository;
     private final PartenaireRepository partenaireRepository;
+    private final EcoleTutriceRepository ecoleTutriceRepository;
     private final PeriodeActiviteRepository periodeActiviteRepository;
     private final PeriodiciteRepository periodiciteRepository;
     private final RegimealphabetisationRepository regimealphabetisationRepository;
@@ -61,6 +65,7 @@ public class ReferentielDemoDataInitializer {
     private final SupportDidactiqueRepository supportDidactiqueRepository;
     private final TypeAlphaRepository typeAlphaRepository;
     private final TypeDocumentRepository typeDocumentRepository;
+    private final TypeSieRepository typeSieRepository;
     private final CampagneRepository campagneRepository;
     private final CategorieCentreAlphaRepository categorieCentreAlphaRepository;
     private final AlphaRepository alphaRepository;
@@ -70,12 +75,14 @@ public class ReferentielDemoDataInitializer {
     private final AppRoleRepository appRoleRepository;
 
     // Dépendances nécessaires pour créer des centres + personnel de démo
+    private final RegionRepository regionRepository;
     private final DepartementRepository departementRepository;
     private final SousPrefectureRepository sousPrefectureRepository;
     private final MilieuImplantationRepository milieuImplantationRepository;
     private final CommuneRepository communeRepository;
     private final LocaliteDImplantationRepository localiteDImplantationRepository;
     private final DrenaRepository drenaRepository;
+    private final DrenaDepartementRepository drenaDepartementRepository;
     private final IeppRepository ieppRepository;
     private final PromoteurRepository promoteurRepository;
     private final PersonnephysiqueRepository personnephysiqueRepository;
@@ -88,12 +95,14 @@ public class ReferentielDemoDataInitializer {
     @Transactional
     public void seedReferentielsDemo() {
         // Socles requis pour centres/personnel
-        seedDepartements();
+        seedRegions();
         seedMilieuxImplantation();
+        seedDepartements();
         seedCommunes();
         seedSousPrefectures();
         seedLocalites();
         seedDrenas();
+        seedDrenaDepartements();
         seedIeps();
         seedTypePersonneMorale();
         seedPromoteurs();
@@ -117,12 +126,14 @@ public class ReferentielDemoDataInitializer {
         seedNiveauxCp();
         seedNiveauxSieCec();
         seedPartenaires();
+        seedEcolesTutrices();
         seedPeriodesActivite();
         seedPeriodicites();
         seedRegimes();
         seedStatutsPersonnel();
         seedSupportsDidactiques();
         seedTypesAlpha();
+        seedTypesSie();
         seedTypesDocument();
         seedCampagnes();
         seedCategoriesCentreAlpha();
@@ -145,6 +156,7 @@ public class ReferentielDemoDataInitializer {
     private void syncReferenceRealiteLabels() {
         syncRolesRealite();
         syncMilieuxRealite();
+        syncGeoAbidjanReferentiel();
         syncBasicGeoLabels();
         syncNiveauxRealite();
     }
@@ -225,12 +237,212 @@ public class ReferentielDemoDataInitializer {
                 });
 
         localiteDImplantationRepository.findAll().stream()
-                .filter(l -> "LOC1".equalsIgnoreCase(String.valueOf(l.getCodeLocalite())))
+                .filter(l -> "Angré".equalsIgnoreCase(String.valueOf(l.getNomLocalite()))
+                        || "Cocody Angré".equalsIgnoreCase(String.valueOf(l.getNomLocalite())))
                 .findFirst()
                 .ifPresent(l -> {
-                    l.setNomLocalite("Cocody Angré");
+                    l.setNomLocalite("Angré");
                     localiteDImplantationRepository.save(l);
                 });
+    }
+
+    /** Jeu géographique Abidjan : région, couverture DRENA/département, communes, localités (idempotent). */
+    private void syncGeoAbidjanReferentiel() {
+        Region region = upsertRegion("DAA", "District Autonome d'Abidjan");
+        Departement departement = upsertDepartement("ABJ", "Abidjan", region);
+        MilieuImplantation milieuUrbain = milieuImplantationRepository.findAll().stream()
+                .filter(x -> "URB".equalsIgnoreCase(String.valueOf(x.getCodeMilieuImplentation()))
+                        || "URBAIN".equalsIgnoreCase(String.valueOf(x.getLibelleTypeImplentation())))
+                .findFirst()
+                .orElseGet(() -> {
+                    MilieuImplantation m = new MilieuImplantation();
+                    m.setCodeMilieuImplentation("URB");
+                    m.setLibelleTypeImplentation("URBAIN");
+                    return milieuImplantationRepository.save(m);
+                });
+
+        Drena drena = upsertDrena("DABJ", "DRENA Abidjan");
+        upsertDrenaDepartement(drena, departement);
+        upsertIep(drena, "IEP1", "IEP Cocody");
+        upsertIep(drena, "IEPYOP", "IEP Yopougon");
+
+        Map<String, List<String>> localitesParCommune = new LinkedHashMap<>();
+        localitesParCommune.put("Cocody", List.of("Angré", "Riviera 3", "Deux Plateaux", "Bonoumin", "Cocody Centre"));
+        localitesParCommune.put("Yopougon", List.of("Siporex", "Niangon", "Selmer", "Toits Rouges", "Wassakara"));
+        localitesParCommune.put("Adjamé", List.of("Bracodi", "220 Logements", "Williamsville"));
+        localitesParCommune.put("Plateau", List.of("Plateau Dokui", "Indénié", "Commerce"));
+        localitesParCommune.put("Marcory", List.of("Marcory Zone 4", "Anoumabo", "Biétry"));
+        localitesParCommune.put("Treichville", List.of("Arras", "Belleville", "Zone 3"));
+        localitesParCommune.put("Koumassi", List.of("Grand Campement", "Remblai", "Prodomo"));
+        localitesParCommune.put("Abobo", List.of("Abobo Baoulé", "Avocatier", "Sagbé"));
+
+        localitesParCommune.forEach((communeNom, localites) -> {
+            Commune commune = upsertCommune(codeCommune(communeNom), communeNom);
+            SousPrefecture sousPrefecture = upsertSousPrefecture(codeSousPrefecture(communeNom), communeNom, departement);
+            for (String localiteNom : localites) {
+                upsertLocalite(localiteNom, sousPrefecture, commune, milieuUrbain);
+            }
+        });
+    }
+
+    private void seedRegions() {
+        if (regionRepository.count() > 0) return;
+        Region region = new Region();
+        region.setCodeRegion("DAA");
+        region.setLibelleRegion("District Autonome d'Abidjan");
+        regionRepository.save(region);
+    }
+
+    private void seedDrenaDepartements() {
+        if (drenaDepartementRepository.count() > 0) return;
+        Drena drena = drenaRepository.findAll().stream()
+                .filter(d -> "DABJ".equalsIgnoreCase(String.valueOf(d.getCodeDrena())))
+                .findFirst()
+                .orElse(null);
+        Departement dep = departementRepository.findAll().stream()
+                .filter(d -> "ABJ".equalsIgnoreCase(String.valueOf(d.getCodeDepartement())))
+                .findFirst()
+                .orElse(null);
+        if (drena == null || dep == null) return;
+        upsertDrenaDepartement(drena, dep);
+    }
+
+    private Region upsertRegion(String code, String libelle) {
+        Region region = regionRepository.findAll().stream()
+                .filter(r -> code.equalsIgnoreCase(String.valueOf(r.getCodeRegion()))
+                        || libelle.equalsIgnoreCase(String.valueOf(r.getLibelleRegion())))
+                .findFirst()
+                .orElseGet(Region::new);
+        region.setCodeRegion(code);
+        region.setLibelleRegion(libelle);
+        return regionRepository.save(region);
+    }
+
+    private Departement upsertDepartement(String code, String nom, Region region) {
+        Departement departement = departementRepository.findAll().stream()
+                .filter(d -> code.equalsIgnoreCase(String.valueOf(d.getCodeDepartement()))
+                        || nom.equalsIgnoreCase(String.valueOf(d.getNomDepartement())))
+                .findFirst()
+                .orElseGet(Departement::new);
+        departement.setCodeDepartement(code);
+        departement.setNomDepartement(nom);
+        departement.setIdRegion(region);
+        return departementRepository.save(departement);
+    }
+
+    private Drena upsertDrena(String code, String nom) {
+        Drena drena = drenaRepository.findAll().stream()
+                .filter(d -> code.equalsIgnoreCase(String.valueOf(d.getCodeDrena()))
+                        || nom.equalsIgnoreCase(String.valueOf(d.getNomDrena())))
+                .findFirst()
+                .orElseGet(Drena::new);
+        drena.setCodeDrena(code);
+        drena.setNomDrena(nom);
+        if (drena.getMailDrena() == null || drena.getMailDrena().isBlank()) {
+            drena.setMailDrena("drena-abj@prism.local");
+        }
+        if (drena.getTelephoneDrena() == null || drena.getTelephoneDrena().isBlank()) {
+            drena.setTelephoneDrena("0102030405");
+        }
+        return drenaRepository.save(drena);
+    }
+
+    private void upsertDrenaDepartement(Drena drena, Departement departement) {
+        boolean exists = drenaDepartementRepository.findAll().stream()
+                .anyMatch(link -> link.getIdDrena() != null
+                        && link.getIdDepartement() != null
+                        && Objects.equals(link.getIdDrena().getId(), drena.getId())
+                        && Objects.equals(link.getIdDepartement().getId(), departement.getId()));
+        if (exists) return;
+        DrenaDepartement link = new DrenaDepartement();
+        link.setIdDrena(drena);
+        link.setIdDepartement(departement);
+        drenaDepartementRepository.save(link);
+    }
+
+    private Iep upsertIep(Drena drena, String code, String nom) {
+        Iep iep = ieppRepository.findAll().stream()
+                .filter(i -> drena.getId() != null
+                        && i.getIdDrena() != null
+                        && Objects.equals(i.getIdDrena().getId(), drena.getId())
+                        && (code.equalsIgnoreCase(String.valueOf(i.getCodeIep()))
+                        || nom.equalsIgnoreCase(String.valueOf(i.getNomIep()))))
+                .findFirst()
+                .orElseGet(Iep::new);
+        iep.setIdDrena(drena);
+        iep.setCodeIep(code);
+        iep.setNomIep(nom);
+        if (iep.getMailIep() == null || iep.getMailIep().isBlank()) {
+            iep.setMailIep("iep-" + code.toLowerCase() + "@prism.local");
+        }
+        if (iep.getTelephoneIep() == null || iep.getTelephoneIep().isBlank()) {
+            iep.setTelephoneIep("0708091011");
+        }
+        return ieppRepository.save(iep);
+    }
+
+    private Commune upsertCommune(String code, String nom) {
+        Commune commune = communeRepository.findAll().stream()
+                .filter(c -> code.equalsIgnoreCase(String.valueOf(c.getCodeCommune()))
+                        || nom.equalsIgnoreCase(String.valueOf(c.getNomCommune())))
+                .findFirst()
+                .orElseGet(Commune::new);
+        commune.setCodeCommune(code);
+        commune.setNomCommune(nom);
+        return communeRepository.save(commune);
+    }
+
+    private SousPrefecture upsertSousPrefecture(String code, String nom, Departement departement) {
+        SousPrefecture sousPrefecture = sousPrefectureRepository.findAll().stream()
+                .filter(sp -> departement.getId() != null
+                        && sp.getIdDepartement() != null
+                        && Objects.equals(sp.getIdDepartement().getId(), departement.getId())
+                        && (code.equalsIgnoreCase(String.valueOf(sp.getCodeSousPrefecture()))
+                        || nom.equalsIgnoreCase(String.valueOf(sp.getNomSousPrefecture()))))
+                .findFirst()
+                .orElseGet(SousPrefecture::new);
+        sousPrefecture.setIdDepartement(departement);
+        sousPrefecture.setCodeSousPrefecture(code);
+        sousPrefecture.setNomSousPrefecture(nom);
+        return sousPrefectureRepository.save(sousPrefecture);
+    }
+
+    private void upsertLocalite(
+            String nom,
+            SousPrefecture sousPrefecture,
+            Commune commune,
+            MilieuImplantation milieu
+    ) {
+        LocaliteDImplantation localite = localiteDImplantationRepository.findAll().stream()
+                .filter(l -> nom.equalsIgnoreCase(String.valueOf(l.getNomLocalite()))
+                        && l.getIdSousPrefecture() != null
+                        && sousPrefecture.getId() != null
+                        && Objects.equals(l.getIdSousPrefecture().getId(), sousPrefecture.getId()))
+                .findFirst()
+                .orElseGet(LocaliteDImplantation::new);
+        localite.setIdSousPrefecture(sousPrefecture);
+        localite.setIdMilieuImplentation(milieu);
+        localite.setIdCommune(commune);
+        localite.setNomLocalite(nom);
+        localiteDImplantationRepository.save(localite);
+    }
+
+    private static String codeCommune(String nom) {
+        return switch (nom) {
+            case "Cocody" -> "COC";
+            case "Yopougon" -> "YOP";
+            case "Adjamé" -> "ADJ";
+            case "Plateau" -> "PLA";
+            case "Marcory" -> "MAR";
+            case "Treichville" -> "TRE";
+            case "Koumassi" -> "KOU";
+            case "Abobo" -> "ABO";
+            default -> nom.substring(0, Math.min(3, nom.length())).toUpperCase();
+        };
+    }
+
+    private static String codeSousPrefecture(String nom) {
+        return "SP" + codeCommune(nom);
     }
 
     private void seedCampagnes() {
@@ -253,9 +465,11 @@ public class ReferentielDemoDataInitializer {
     private void seedDepartements() {
         if (departementRepository.count() > 0) return;
 
+        Region region = regionRepository.findAll().stream().findFirst().orElse(null);
         Departement d = new Departement();
         d.setCodeDepartement("ABJ");
         d.setNomDepartement("Abidjan");
+        d.setIdRegion(region);
         departementRepository.save(d);
     }
 
@@ -306,8 +520,7 @@ public class ReferentielDemoDataInitializer {
         loc.setIdSousPrefecture(sp);
         loc.setIdMilieuImplentation(mi);
         loc.setIdCommune(com);
-        loc.setCodeLocalite("LOC1");
-        loc.setNomLocalite("Cocody Angré");
+        loc.setNomLocalite("Angré");
         localiteDImplantationRepository.save(loc);
     }
 
@@ -940,6 +1153,21 @@ public class ReferentielDemoDataInitializer {
         savePartenaire("Collectivité locale");
     }
 
+    private void seedEcolesTutrices() {
+        if (ecoleTutriceRepository.count() > 0) {
+            return;
+        }
+        saveEcoleTutrice("École primaire publique");
+        saveEcoleTutrice("École primaire privée");
+        saveEcoleTutrice("Groupe scolaire");
+    }
+
+    private void saveEcoleTutrice(String libelle) {
+        EcoleTutrice e = new EcoleTutrice();
+        e.setLibelleEcoleTutrice(libelle.length() > 100 ? libelle.substring(0, 100) : libelle);
+        ecoleTutriceRepository.save(e);
+    }
+
     private void savePartenaire(String libelle) {
         Partenaire e = new Partenaire();
         e.setLibellePartenaire(libelle.length() > 100 ? libelle.substring(0, 100) : libelle);
@@ -1034,6 +1262,20 @@ public class ReferentielDemoDataInitializer {
         TypeAlpha e = new TypeAlpha();
         e.setLibelleTypeAlpha(libelle.length() > 50 ? libelle.substring(0, 50) : libelle);
         typeAlphaRepository.save(e);
+    }
+
+    private void seedTypesSie() {
+        if (typeSieRepository.count() > 0) {
+            return;
+        }
+        saveTypeSie("Confectionnel");
+        saveTypeSie("Madrassa");
+    }
+
+    private void saveTypeSie(String libelle) {
+        TypeSie e = new TypeSie();
+        e.setLibelleTypeSie(libelle.length() > 50 ? libelle.substring(0, 50) : libelle);
+        typeSieRepository.save(e);
     }
 
     private void seedTypesDocument() {

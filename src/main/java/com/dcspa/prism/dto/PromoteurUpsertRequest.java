@@ -36,7 +36,7 @@ public class PromoteurUpsertRequest {
         private String niveauEtudes;
         private String civilite;
         private String mail;
-        private String organisationFaitiere;
+        private Integer idOrganisationFaitiere;
     }
 
     @Getter

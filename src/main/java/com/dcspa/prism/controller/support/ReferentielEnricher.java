@@ -42,6 +42,7 @@ import com.dcspa.prism.entity.NiveauCp;
 import com.dcspa.prism.entity.NiveauEvaluation;
 import com.dcspa.prism.entity.NiveauPersonnel;
 import com.dcspa.prism.entity.NiveauSieCec;
+import com.dcspa.prism.entity.OrganisationFaitiere;
 import com.dcspa.prism.entity.Ong;
 import com.dcspa.prism.entity.Partenaire;
 import com.dcspa.prism.entity.Particulier;
@@ -68,6 +69,7 @@ import com.dcspa.prism.entity.ThemeEvaluation;
 import com.dcspa.prism.entity.TypeAlpha;
 import com.dcspa.prism.entity.TypeDocument;
 import com.dcspa.prism.entity.TypePersonneMorale;
+import com.dcspa.prism.entity.TypeSie;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -167,6 +169,10 @@ public final class ReferentielEnricher {
 			case Difficulte diff -> ref3(diff.getId(), diff.getCodeDifficulte(), diff.getLibelleDifficulte());
 			case DomaineActivite da -> ref3(da.getId(), da.getCodeDomaineActivite(), da.getLibelleDomaineActivite());
 			case EcoleTutrice et -> ref3(et.getId(), et.getCodeEcoleTutrice(), et.getLibelleEcoleTutrice());
+			case OrganisationFaitiere of -> ref3(
+					of.getId(),
+					of.getSigleOrganisationFaitiere() != null ? of.getSigleOrganisationFaitiere() : of.getCodeOrganisationFaitiere(),
+					of.getLibelleOrganisationFaitiere());
 			case Civilite civi -> ref3(civi.getId(), civi.getCodeCivilite(), civi.getLibelleCivilite());
 			case Fonction fon -> ref3(fon.getId(), fon.getCodeFonction(), fon.getLibelleFonction());
 			case Impact imp -> ref3(imp.getId(), imp.getCodeImpact(), imp.getLibelleImpact());
@@ -178,6 +184,7 @@ public final class ReferentielEnricher {
 			case StatutPersonnel stp -> ref3(stp.getId(), stp.getCodeStatutPersonnel(), stp.getLibelleStatutPersonnel());
 			case StructureFormationCertification sfc -> ref3(sfc.getId(), sfc.getCodeStructureCertification(), sfc.getLibelleStructureCertification());
 			case TypeAlpha ta -> ref3(ta.getId(), null, ta.getLibelleTypeAlpha());
+			case TypeSie ts -> ref3(ts.getId(), null, ts.getLibelleTypeSie());
 			case TypeDocument td -> ref3(td.getId(), td.getCodeTypeDocument(), td.getLibelleTypeDocument());
 			case TypePersonneMorale tpm -> ref3(tpm.getId(), null, tpm.getLibelle());
 			default -> refIdOnly(entity);
@@ -232,6 +239,9 @@ public final class ReferentielEnricher {
 		m.put("boitePostale", p.getBoitePostale());
 		m.put("niveauEtudes", p.getNiveauEtudes());
 		m.put("civilite", p.getCivilite());
+		m.put("mail", p.getMail());
+		m.put("idOrganisationFaitiere", p.getIdOrganisationFaitiere() != null ? p.getIdOrganisationFaitiere().getId() : null);
+		m.put("organisationFaitiere", p.getIdOrganisationFaitiere() != null ? toRef(p.getIdOrganisationFaitiere()) : null);
 		return m;
 	}
 

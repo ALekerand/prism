@@ -102,5 +102,9 @@ public class Sie {
     @Column(name = "LIBELLE_SIE", length = 100)
     private String libelleSie;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_TYPE_SIE")
+    private TypeSie idTypeSie;
+
 
 }

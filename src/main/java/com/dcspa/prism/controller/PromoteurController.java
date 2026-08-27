@@ -2,18 +2,22 @@ package com.dcspa.prism.controller;
 
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
+import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.PromoteurListFilter;
+import com.dcspa.prism.entity.OrganisationFaitiere;
 import com.dcspa.prism.entity.Personnemorale;
 import com.dcspa.prism.entity.Personnephysique;
 import com.dcspa.prism.entity.Promoteur;
 import com.dcspa.prism.repository.PersonnemoraleRepository;
 import com.dcspa.prism.repository.PersonnephysiqueRepository;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.PromoteurService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,8 +53,9 @@ public class PromoteurController {
 	@GetMapping("/paged")
 	public ResponseEntity<Page<Map<String, Object>>> findAllPaged(
 			@PageableDefault(size = 20, sort = "id") Pageable pageable,
-			@ModelAttribute PromoteurListFilter filter) {
-		return ResponseEntity.ok(promoteurService.findAll(filter, pageable).map(this::toRow));
+			@ModelAttribute PromoteurListFilter filter,
+			@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.ok(promoteurService.findAll(filter, pageable, user).map(this::toRow));
 	}
 
 	@Transactional(readOnly = true)
@@ -112,7 +117,11 @@ public class PromoteurController {
 		m.put("niveauEtudes", pp.getNiveauEtudes());
 		m.put("civilite", pp.getCivilite());
 		m.put("mail", pp.getMail());
-		m.put("organisationFaitiere", pp.getOrganisationFaitiere());
+		OrganisationFaitiere organisationFaitiere = pp.getIdOrganisationFaitiere();
+		m.put("idOrganisationFaitiere", organisationFaitiere != null ? organisationFaitiere.getId() : null);
+		m.put("libelleOrganisationFaitiere", organisationFaitiere != null ? organisationFaitiere.getLibelleOrganisationFaitiere() : null);
+		m.put("sigleOrganisationFaitiere", organisationFaitiere != null ? organisationFaitiere.getSigleOrganisationFaitiere() : null);
+		m.put("organisationFaitiere", organisationFaitiere != null ? ReferentielEnricher.toRef(organisationFaitiere) : null);
 		return m;
 	}
 

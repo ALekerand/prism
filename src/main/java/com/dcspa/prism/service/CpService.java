@@ -278,7 +278,11 @@ public class CpService {
 	}
 
 	private Specification<Cp> combineCpScope(CpListFilter filter, AuthUser authUser) {
-		Specification<Cp> base = SimpleCentreTypeSpecifications.forCp(filter);
+		CpListFilter effective = filter != null ? filter : new CpListFilter();
+		if (effective.getEstPromu() == null && effective.getExcludePromu() == null) {
+			effective.setExcludePromu(true);
+		}
+		Specification<Cp> base = SimpleCentreTypeSpecifications.forCp(effective);
 		Specification<Cp> scope = CentreCirconscriptionSpecifications.forCp(circonscriptionResolver.resolve(authUser));
 		if (scope == null) {
 			return base;

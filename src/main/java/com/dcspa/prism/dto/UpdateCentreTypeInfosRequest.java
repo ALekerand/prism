@@ -50,6 +50,9 @@ public class UpdateCentreTypeInfosRequest {
     /** Année civile de création (CEC). */
     private Integer anneeCreation;
 
+    /** Type SIE (référentiel {@code type_sie}). */
+    private Integer typeSieId;
+
     /** Remplacement complet des niveaux Alpha si le champ est présent. */
     private List<AlphaNiveauCreatePayload> niveauxAlpha;
 

@@ -115,7 +115,6 @@ public class LocaliteDImplantationController {
 		entity.setIdSousPrefecture(sp);
 		entity.setIdMilieuImplentation(mi);
 		entity.setIdCommune(c);
-		entity.setCodeLocalite(req.getCodeLocalite());
 		entity.setNomLocalite(req.getNomLocalite());
 	}
 }

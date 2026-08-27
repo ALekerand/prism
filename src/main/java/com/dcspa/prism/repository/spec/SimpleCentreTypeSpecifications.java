@@ -86,6 +86,22 @@ public final class SimpleCentreTypeSpecifications {
 		predicates.add(SpecificationSupport.containsIgnoreCase(cb, root.get("localisationCentre"), f.getLocalisationCentre()));
 		predicates.add(SpecificationSupport.containsIgnoreCase(cb, root.get("nomMilieuImplentation"), f.getNomMilieuImplentation()));
 		predicates.add(SpecificationSupport.centreActifFilter(cb, root, f.getActif()));
+		if (f instanceof CpListFilter cpFilter) {
+			predicates.add(cpPromuFilter(cb, root, cpFilter));
+		}
 		return predicates;
+	}
+
+	private static <T> Predicate cpPromuFilter(CriteriaBuilder cb, Root<T> root, CpListFilter f) {
+		if (f.getEstPromu() != null) {
+			if (Boolean.TRUE.equals(f.getEstPromu())) {
+				return cb.isTrue(root.get("estPromu"));
+			}
+			return cb.or(cb.isFalse(root.get("estPromu")), cb.isNull(root.get("estPromu")));
+		}
+		if (Boolean.TRUE.equals(f.getExcludePromu())) {
+			return cb.or(cb.isFalse(root.get("estPromu")), cb.isNull(root.get("estPromu")));
+		}
+		return cb.conjunction();
 	}
 }

@@ -73,6 +73,11 @@ public class CentreWithPromoteurItem {
     private ReferenceDetails categorieCentreAlpha;
     private ReferenceDetails typeAlpha;
     private ReferenceDetails regimeAlpha;
+
+    /** Renseignés uniquement pour le détail SIE. */
+    private Integer idTypeSie;
+    private ReferenceDetails typeSie;
+
     private List<NiveauDetails> niveaux;
 
     @Getter

@@ -28,6 +28,7 @@ import com.dcspa.prism.entity.Sie;
 import com.dcspa.prism.entity.SieNiveau;
 import com.dcspa.prism.entity.SousPrefecture;
 import com.dcspa.prism.entity.TypePromoteur;
+import com.dcspa.prism.entity.TypeSie;
 import com.dcspa.prism.repository.AutoriteAutorisationRepository;
 import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.repository.IeppRepository;
@@ -40,6 +41,7 @@ import com.dcspa.prism.repository.PersonnemoraleRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.repository.SieNiveauRepository;
 import com.dcspa.prism.repository.SieRepository;
+import com.dcspa.prism.repository.TypeSieRepository;
 import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
 import com.dcspa.prism.repository.spec.SimpleCentreTypeSpecifications;
 import com.dcspa.prism.security.AuthUser;
@@ -76,6 +78,7 @@ public class SieService {
 	private final PersonnemoraleRepository personnemoraleRepository;
 	private final CentreNiveauCreationService centreNiveauCreationService;
 	private final SieNiveauRepository sieNiveauRepository;
+	private final TypeSieRepository typeSieRepository;
 	private final CirconscriptionResolver circonscriptionResolver;
 	private final CirconscriptionWriteGuard circonscriptionWriteGuard;
 
@@ -192,6 +195,7 @@ public class SieService {
 		Sie entity = new Sie();
 		entity.setCentre(savedCentre);
 		entity.setLibelleSie(req.getLibelle());
+		entity.setIdTypeSie(resolveTypeSie(req.getTypeSieId()));
 		copyCentreFieldsToSie(entity, savedCentre);
 		Sie savedSie = save(entity);
 		centreNiveauCreationService.createSieNiveaux(savedSie, req.getNiveaux());
@@ -255,6 +259,9 @@ public class SieService {
 			existing.setNomMilieuImplentation(resolveNomMilieuImplentationForUpdate(req, existing.getIdLocalite()));
 			existing.setEncadreurNonMena(req.getEncadreurNonMena());
 			existing.setEncadrerParMena(req.getEncadrerParMena());
+			if (req.getTypeSieId() != null) {
+				existing.setIdTypeSie(resolveTypeSie(req.getTypeSieId()));
+			}
 			CentreSupplementalFields.applyUpdate(existing, req);
 			CentrePromoteurSync.applyPromoteurChange(req, existing.getId(), centreRepository, promoteurRepository, existing::setIdPromoteur);
 			if (req.getNiveaux() != null) {
@@ -344,6 +351,7 @@ public class SieService {
 		item.setNomMilieuImplentation(sie.getNomMilieuImplentation());
 		item.setEncadreurNonMena(sie.getEncadreurNonMena());
 		item.setEncadrerParMena(sie.getEncadrerParMena());
+		attachTypeSie(item, sie);
 		attachReferences(item, sie);
 		attachPromoteur(item, sie.getIdPromoteur());
 		item.setNiveaux(sieNiveauRepository.findByIdCentre_Id(sie.getId()).stream()
@@ -494,6 +502,23 @@ public class SieService {
 		ref.setCode(region.getCodeRegion());
 		ref.setLibelle(region.getLibelleRegion());
 		return ref;
+	}
+
+	private TypeSie resolveTypeSie(Integer typeSieId) {
+		return typeSieRepository.findById(Objects.requireNonNull(typeSieId, "typeSieId est obligatoire"))
+				.orElseThrow(() -> new IllegalArgumentException("Type SIE introuvable: " + typeSieId));
+	}
+
+	private void attachTypeSie(CentreWithPromoteurItem item, Sie sie) {
+		if (sie.getIdTypeSie() == null) {
+			return;
+		}
+		TypeSie typeSie = sie.getIdTypeSie();
+		item.setIdTypeSie(typeSie.getId());
+		CentreWithPromoteurItem.ReferenceDetails ref = new CentreWithPromoteurItem.ReferenceDetails();
+		ref.setId(typeSie.getId());
+		ref.setLibelle(typeSie.getLibelleTypeSie());
+		item.setTypeSie(ref);
 	}
 
 	private String resolveNomMilieuImplentation(Integer milieuId, LocaliteDImplantation localite) {

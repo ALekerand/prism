@@ -1,11 +1,13 @@
 package com.dcspa.prism.service;
 
 import com.dcspa.prism.dto.PromoteurUpsertRequest;
+import com.dcspa.prism.entity.OrganisationFaitiere;
 import com.dcspa.prism.entity.Personnephysique;
 import com.dcspa.prism.entity.Personnemorale;
 import com.dcspa.prism.entity.Promoteur;
 import com.dcspa.prism.entity.TypePersonneMorale;
 import com.dcspa.prism.entity.TypePromoteur;
+import com.dcspa.prism.repository.OrganisationFaitiereRepository;
 import com.dcspa.prism.repository.PersonnephysiqueRepository;
 import com.dcspa.prism.repository.PersonnemoraleRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
@@ -22,6 +24,7 @@ public class PromoteurUpsertService {
     private final PersonnephysiqueRepository personnephysiqueRepository;
     private final PersonnemoraleRepository personnemoraleRepository;
     private final TypePersonneMoraleRepository typePersonneMoraleRepository;
+    private final OrganisationFaitiereRepository organisationFaitiereRepository;
 
     @Transactional
     public Promoteur resolveOrCreate(PromoteurUpsertRequest request) {
@@ -73,7 +76,7 @@ public class PromoteurUpsertService {
         physique.setNiveauEtudes(trim(payload.getNiveauEtudes()));
         physique.setCivilite(trim(payload.getCivilite()));
         physique.setMail(trim(payload.getMail()));
-        physique.setOrganisationFaitiere(trim(payload.getOrganisationFaitiere()));
+        physique.setIdOrganisationFaitiere(resolveOrganisationFaitiere(payload.getIdOrganisationFaitiere()));
         personnephysiqueRepository.save(physique);
     }
 
@@ -112,5 +115,13 @@ public class PromoteurUpsertService {
 
     private String trim(String value) {
         return normalize(value);
+    }
+
+    private OrganisationFaitiere resolveOrganisationFaitiere(Integer id) {
+        if (id == null) {
+            return null;
+        }
+        return organisationFaitiereRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Organisation faîtière introuvable: " + id));
     }
 }

@@ -102,5 +102,8 @@ public class Cp {
     @Column(name = "LIBELLLE_CP", length = 100)
     private String libellleCp;
 
+    /** Centre promu (classes passerelles) — exclu des listes CP standards. */
+    @Column(name = "EST_PROMU")
+    private Boolean estPromu;
 
 }

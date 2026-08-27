@@ -4,12 +4,13 @@ Guide unique pour installer, lancer en local, appliquer les migrations SQL et d�
 
 | Dépôt | Rôle | Chemin type |
 |--------|------|-------------|
-| **prism** | API Spring Boot (WAR), scripts SQL, config Apache | `…/AENF APP/prism` |
-| **prism_front** | Application Angular 17 | `…/AENF APP/FRONTEND/prism_front` |
+| **prism** | API Spring Boot (WAR), scripts SQL, config Apache | `…/AENF/prism-backend/prism` |
+| **prism_front** | Application Angular 17 | `…/AENF/prism-frontend` |
 
 **Autres docs :**
 
-- Front — roadmap d’intégration : `prism_front/DOCS/ROADMAP.md`
+- Front — roadmap d’intégration : `prism-frontend/DOCS/ROADMAP.md`
+- Mémoire architecte : `AENF/.docs/` (source de vérité)
 - Apache (staging VPS) : `prism/deploy/apache/dcspa-prism-port91.conf`
 
 ---
@@ -83,12 +84,12 @@ Après modification du code ou ajout d’endpoints : **redémarrer** `spring-boo
 
 ---
 
-## 3. Frontend (prism_front)
+## 3. Frontend (prism-frontend)
 
 ### Installation des dépendances
 
 ```powershell
-cd FRONTEND/prism_front
+cd prism-frontend
 npm ci
 ```
 
@@ -169,6 +170,7 @@ Vérifier en navigateur : `http://<ip>:91/dcspa/` et les appels réseau vers `/d
 ## 6. Contacts / conventions
 
 - Migrations SQL : toujours versionner dans `prism/db/` avec un nom daté explicite.
-- Roadmap fonctionnelle front ↔ API : `prism_front/DOCS/ROADMAP.md` (mise à jour manuelle après chaque lot).
+- Roadmap fonctionnelle front ↔ API : `prism-frontend/DOCS/ROADMAP.md` (mise à jour manuelle après chaque lot).
+- Architecture / API / BDD : voir `../../.docs/` à la racine AENF.
 
 *Dernière mise à jour : 2026-05-17*
