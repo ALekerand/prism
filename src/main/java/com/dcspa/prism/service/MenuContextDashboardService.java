@@ -59,6 +59,7 @@ import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.repository.SieRepository;
 import com.dcspa.prism.repository.VisiteRepository;
 import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
+import com.dcspa.prism.repository.spec.CentreListScopeSpecifications;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
 import com.dcspa.prism.service.circonscription.CirconscriptionLevel;
@@ -142,11 +143,12 @@ public class MenuContextDashboardService {
 					cards.addAll(personnelCardsFromMap(personnelAdminService.buildCentreDashboard(centreId)));
 					subtitle = "Centre sélectionné";
 				} else if (centreType != null && !centreType.isBlank()) {
-					cards.addAll(personnelCardsFromMap(personnelAdminService.buildTypeSummary(centreType, att)));
+					cards.addAll(personnelCardsFromMap(personnelAdminService.buildTypeSummary(centreType, att, user)));
 					subtitle = centreTypeLabel(normalizeCentreType(centreType));
 				} else {
-					long personnel = count(personnelRepository, CentreCirconscriptionSpecifications.forPersonnelStats(att));
-					long centres = count(centreRepository, CentreCirconscriptionSpecifications.forCentreStats(att));
+					long personnel = count(personnelRepository, CentreListScopeSpecifications.andOwnViaIdCentre(
+							CentreCirconscriptionSpecifications.forPersonnelStats(att), user));
+					long centres = count(centreRepository, ownCentreStats(att, user));
 					cards.add(card("Personnel", personnel, scopeLabel, "users", null));
 					cards.add(card("Centres", centres, "Affinez par type ou par centre", "building", "mint"));
 					subtitle = scopeLabel;
@@ -154,13 +156,13 @@ public class MenuContextDashboardService {
 			}
 			case "CENTRES" -> {
 				String type = normalizeCentreType(centreType);
-				long centres = countCentresByType(att, type);
-				long personnel = countPersonnelForCentreType(att, type);
+				long centres = countCentresByType(att, type, user);
+				long personnel = countPersonnelForCentreType(att, type, user);
 				subtitle = centreTypeLabel(type);
 				cards.add(card("Centres", centres, subtitle, "building", null));
 				cards.add(card("Personnel rattaché", personnel, "Agents sur les centres " + type, "users", "mint"));
 				if ("ALPHA".equals(type)) {
-					long alphaRows = count(alphaRepository, CentreCirconscriptionSpecifications.forAlphaStats(att));
+					long alphaRows = count(alphaRepository, ownTypedStats(CentreCirconscriptionSpecifications.forAlphaStats(att), user));
 					cards.add(card("Fiches Alpha", alphaRows, "Centres alphabétisation enregistrés", "school", null));
 				}
 			}
@@ -168,8 +170,8 @@ public class MenuContextDashboardService {
 				subtitle = nationalView
 						? "Promoteurs — vue nationale (tout le territoire)"
 						: "Promoteurs et rattachement aux centres";
-				var promoteurStats = countPromoteursInScope(att);
-				long centres = count(centreRepository, CentreCirconscriptionSpecifications.forCentreStats(att));
+				var promoteurStats = countPromoteursInScope(att, user);
+				long centres = count(centreRepository, ownCentreStats(att, user));
 				cards.add(card("Promoteurs", promoteurStats.total(), "Structures enregistrées", "handshake", null));
 				cards.add(card("Personnes physiques", promoteurStats.physiques(), null, "user", null));
 				cards.add(card("Personnes morales", promoteurStats.morales(), null, "building", "mint"));
@@ -177,20 +179,20 @@ public class MenuContextDashboardService {
 			}
 			case "APPRENANT" -> {
 				String path = normalizeApiPath(apiPath);
-				long records = countApprenantRecords(path, att);
+				long records = countApprenantRecords(path, att, user);
 				String type = normalizeCentreTypeOrNull(centreType);
 				subtitle = apprenantSubtitle(subModule, path);
 				cards.add(card("Fiches saisies", records, subtitle, "clipboard-list", null));
 				if (type != null) {
-					long centres = countCentresByType(att, type);
+					long centres = countCentresByType(att, type, user);
 					cards.add(card("Centres " + type, centres, scopeLabel, "building", "mint"));
 				} else {
-					cards.add(card("Centres (périmètre)", count(centreRepository, CentreCirconscriptionSpecifications.forCentreStats(att)), scopeLabel, "building", "mint"));
+					cards.add(card("Centres (périmètre)", count(centreRepository, ownCentreStats(att, user)), scopeLabel, "building", "mint"));
 				}
 			}
 			case "ACTIVITES" -> {
 				subtitle = activitesSubtitle(subModule, apiPath);
-				cards.addAll(activitesCards(att, subModule, apiPath));
+				cards.addAll(activitesCards(att, user, subModule, apiPath));
 			}
 			case "ADMIN" -> {
 				subtitle = adminSubtitle(subModule);
@@ -213,8 +215,8 @@ public class MenuContextDashboardService {
 
 	private record PromoteurScopeStats(long total, long physiques, long morales) {}
 
-	private PromoteurScopeStats countPromoteursInScope(CirconscriptionAttachement att) {
-		Specification<Centre> centreScope = CentreCirconscriptionSpecifications.forCentreStats(att);
+	private PromoteurScopeStats countPromoteursInScope(CirconscriptionAttachement att, AuthUser user) {
+		Specification<Centre> centreScope = ownCentreStats(att, user);
 		List<Centre> centres = centreRepository.findAll(centreScope);
 		List<Promoteur> promoteurs = centres.stream()
 				.map(Centre::getIdPromoteur)
@@ -248,30 +250,42 @@ public class MenuContextDashboardService {
 		return cards;
 	}
 
-	private List<Map<String, Object>> activitesCards(CirconscriptionAttachement att, String subModule, String apiPath) {
+	private List<Map<String, Object>> activitesCards(
+			CirconscriptionAttachement att, AuthUser user, String subModule, String apiPath) {
 		String sub = subModule == null ? "" : subModule.trim().toLowerCase(Locale.ROOT);
 		String path = normalizeApiPath(apiPath);
 		List<Map<String, Object>> cards = new ArrayList<>();
 		switch (sub) {
-			case "controle" -> cards.add(card("Contrôles", count(controleRepository, CentreCirconscriptionSpecifications.forControleStats(att)), "Suivis pédagogiques Alpha", "clipboard-check", null));
-			case "evaluation" -> cards.add(card("Évaluations", count(evaluationRepository, CentreCirconscriptionSpecifications.forEvaluationStats(att)), "Évaluations périodiques", "chart-line", "mint"));
-			case "visite" -> cards.add(card("Visites", count(visiteRepository, CentreCirconscriptionSpecifications.forVisiteStats(att)), "Points de visite enregistrés", "map-pin", null));
+			case "controle" -> cards.add(card("Contrôles", count(controleRepository, ownViaAlpha(
+					CentreCirconscriptionSpecifications.forControleStats(att), user)), "Suivis pédagogiques Alpha", "clipboard-check", null));
+			case "evaluation" -> cards.add(card("Évaluations", count(evaluationRepository, ownViaAlpha(
+					CentreCirconscriptionSpecifications.forEvaluationStats(att), user)), "Évaluations périodiques", "chart-line", "mint"));
+			case "visite" -> cards.add(card("Visites", count(visiteRepository, ownViaAlpha(
+					CentreCirconscriptionSpecifications.forVisiteStats(att), user)), "Points de visite enregistrés", "map-pin", null));
 			case "dossier" -> {
-				long centres = count(centreRepository, CentreCirconscriptionSpecifications.forCentreStats(att));
+				long centres = count(centreRepository, ownCentreStats(att, user));
 				cards.add(card("Centres", centres, "Dossiers centre à compléter", "folder-open", null));
-				cards.add(card("Partenariats", count(appuiPartenaireRepository, CentreCirconscriptionSpecifications.forAppuiPartenaireStats(att)), "Appuis partenaires", "hands-helping", "mint"));
+				cards.add(card("Partenariats", count(appuiPartenaireRepository, ownViaIdCentre(
+						CentreCirconscriptionSpecifications.forAppuiPartenaireStats(att), user)), "Appuis partenaires", "hands-helping", "mint"));
 			}
-			case "performance" -> cards.add(card("Performances", count(performanceRepository, CentreCirconscriptionSpecifications.forPerformanceStats(att)), "Fiches performance Alpha", "chart-bar", "mint"));
-			case "partenariat" -> cards.add(card("Partenariats", count(appuiPartenaireRepository, CentreCirconscriptionSpecifications.forAppuiPartenaireStats(att)), "Appuis et partenariats", "handshake", null));
+			case "performance" -> cards.add(card("Performances", count(performanceRepository, ownViaAlpha(
+					CentreCirconscriptionSpecifications.forPerformanceStats(att), user)), "Fiches performance Alpha", "chart-bar", "mint"));
+			case "partenariat" -> cards.add(card("Partenariats", count(appuiPartenaireRepository, ownViaIdCentre(
+					CentreCirconscriptionSpecifications.forAppuiPartenaireStats(att), user)), "Appuis et partenariats", "handshake", null));
 			default -> {
 				if (path.contains("performance")) {
-					cards.add(card("Performances", count(performanceRepository, CentreCirconscriptionSpecifications.forPerformanceStats(att)), null, "chart-bar", "mint"));
+					cards.add(card("Performances", count(performanceRepository, ownViaAlpha(
+							CentreCirconscriptionSpecifications.forPerformanceStats(att), user)), null, "chart-bar", "mint"));
 				} else if (path.contains("appui-partenaire")) {
-					cards.add(card("Partenariats", count(appuiPartenaireRepository, CentreCirconscriptionSpecifications.forAppuiPartenaireStats(att)), null, "handshake", null));
+					cards.add(card("Partenariats", count(appuiPartenaireRepository, ownViaIdCentre(
+							CentreCirconscriptionSpecifications.forAppuiPartenaireStats(att), user)), null, "handshake", null));
 				} else {
-					cards.add(card("Visites", count(visiteRepository, CentreCirconscriptionSpecifications.forVisiteStats(att)), null, "map-pin", null));
-					cards.add(card("Contrôles", count(controleRepository, CentreCirconscriptionSpecifications.forControleStats(att)), null, "clipboard-check", null));
-					cards.add(card("Évaluations", count(evaluationRepository, CentreCirconscriptionSpecifications.forEvaluationStats(att)), null, "chart-line", "mint"));
+					cards.add(card("Visites", count(visiteRepository, ownViaAlpha(
+							CentreCirconscriptionSpecifications.forVisiteStats(att), user)), null, "map-pin", null));
+					cards.add(card("Contrôles", count(controleRepository, ownViaAlpha(
+							CentreCirconscriptionSpecifications.forControleStats(att), user)), null, "clipboard-check", null));
+					cards.add(card("Évaluations", count(evaluationRepository, ownViaAlpha(
+							CentreCirconscriptionSpecifications.forEvaluationStats(att), user)), null, "chart-line", "mint"));
 				}
 			}
 		}
@@ -380,48 +394,70 @@ public class MenuContextDashboardService {
 		return cards;
 	}
 
-	private long countApprenantRecords(String path, CirconscriptionAttachement att) {
+	private long countApprenantRecords(String path, CirconscriptionAttachement att, AuthUser user) {
 		String p = normalizeApiPath(path);
 		if (p.isEmpty()) {
-			return count(effectifAlphaRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifAlpha.class, att));
+			return count(effectifAlphaRepository, ownBackedStats(EffectifAlpha.class, att, user));
 		}
 		return switch (p) {
-			case "effectif-alpha", "effectifalpha" -> count(effectifAlphaRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifAlpha.class, att));
-			case "effectif-cec" -> count(effectifCecRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifCec.class, att));
-			case "effectif-cp" -> count(effectifCpRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifCp.class, att));
-			case "effectif-sie" -> count(effectifSieRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifSie.class, att));
-			case "effectif-abandon-alpha" -> count(effectifAbandonAlphaRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifAbandonAlpha.class, att));
-			case "effectif-abandon-cec" -> count(effectifAbandonCecRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifAbandonCec.class, att));
-			case "effectif-abandon-cp" -> count(effectifAbandonCpRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifAbandonCp.class, att));
-			case "effectif-abondan-sie" -> count(effectifAbondanSieRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifAbondanSie.class, att));
-			case "effectif-passage-alpha" -> count(effectifPassageAlphaRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifPassageAlpha.class, att));
-			case "effectif-situation-handicap-alpha" -> count(effectifSituationHandicapAlphaRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifSituationHandicapAlpha.class, att));
-			case "effectif-situation-handicap-cec" -> count(effectifSituationHandicapCecRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifSituationHandicapCec.class, att));
-			case "effectif-situation-handicap-cp" -> count(effectifSituationHandicapCpRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifSituationHandicapCp.class, att));
-			case "effectif-situation-handicap-sie" -> count(effectifSituationHandicapSieRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifSituationHandicapSie.class, att));
-			case "effectif-cepe-cp" -> count(effectifCepeCpRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifCepeCp.class, att));
-			case "effectif-cepe-cec" -> count(effectifCepeCecRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifCepeCec.class, att));
-			case "effectif-admis-integration-cp" -> count(effectifAdmisIntegrationCpRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifAdmisIntegrationCp.class, att));
-			case "effectif-integration-formel-cp" -> count(effectifIntegrationFormelCpRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifIntegrationFormelCp.class, att));
-			case "effectif-promu-sie" -> count(effectifPromuSieRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifPromuSie.class, att));
-			case "effectif-promu-cec" -> count(effectifPromuCecRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifPromuCec.class, att));
-			case "effectif-reverse-formel-sie" -> count(effectifReverseFormelSieRepository, CentreCirconscriptionSpecifications.forCentreBackedStats(EffectifReverseFormelSie.class, att));
+			case "effectif-alpha", "effectifalpha" -> count(effectifAlphaRepository, ownBackedStats(EffectifAlpha.class, att, user));
+			case "effectif-cec" -> count(effectifCecRepository, ownBackedStats(EffectifCec.class, att, user));
+			case "effectif-cp" -> count(effectifCpRepository, ownBackedStats(EffectifCp.class, att, user));
+			case "effectif-sie" -> count(effectifSieRepository, ownBackedStats(EffectifSie.class, att, user));
+			case "effectif-abandon-alpha" -> count(effectifAbandonAlphaRepository, ownBackedStats(EffectifAbandonAlpha.class, att, user));
+			case "effectif-abandon-cec" -> count(effectifAbandonCecRepository, ownBackedStats(EffectifAbandonCec.class, att, user));
+			case "effectif-abandon-cp" -> count(effectifAbandonCpRepository, ownBackedStats(EffectifAbandonCp.class, att, user));
+			case "effectif-abondan-sie" -> count(effectifAbondanSieRepository, ownBackedStats(EffectifAbondanSie.class, att, user));
+			case "effectif-passage-alpha" -> count(effectifPassageAlphaRepository, ownBackedStats(EffectifPassageAlpha.class, att, user));
+			case "effectif-situation-handicap-alpha" -> count(effectifSituationHandicapAlphaRepository, ownBackedStats(EffectifSituationHandicapAlpha.class, att, user));
+			case "effectif-situation-handicap-cec" -> count(effectifSituationHandicapCecRepository, ownBackedStats(EffectifSituationHandicapCec.class, att, user));
+			case "effectif-situation-handicap-cp" -> count(effectifSituationHandicapCpRepository, ownBackedStats(EffectifSituationHandicapCp.class, att, user));
+			case "effectif-situation-handicap-sie" -> count(effectifSituationHandicapSieRepository, ownBackedStats(EffectifSituationHandicapSie.class, att, user));
+			case "effectif-cepe-cp" -> count(effectifCepeCpRepository, ownBackedStats(EffectifCepeCp.class, att, user));
+			case "effectif-cepe-cec" -> count(effectifCepeCecRepository, ownBackedStats(EffectifCepeCec.class, att, user));
+			case "effectif-admis-integration-cp" -> count(effectifAdmisIntegrationCpRepository, ownBackedStats(EffectifAdmisIntegrationCp.class, att, user));
+			case "effectif-integration-formel-cp" -> count(effectifIntegrationFormelCpRepository, ownBackedStats(EffectifIntegrationFormelCp.class, att, user));
+			case "effectif-promu-sie" -> count(effectifPromuSieRepository, ownBackedStats(EffectifPromuSie.class, att, user));
+			case "effectif-promu-cec" -> count(effectifPromuCecRepository, ownBackedStats(EffectifPromuCec.class, att, user));
+			case "effectif-reverse-formel-sie" -> count(effectifReverseFormelSieRepository, ownBackedStats(EffectifReverseFormelSie.class, att, user));
 			default -> 0L;
 		};
 	}
 
-	private long countCentresByType(CirconscriptionAttachement att, String type) {
+	private static <T> Specification<T> ownBackedStats(Class<T> type, CirconscriptionAttachement att, AuthUser user) {
+		return CentreListScopeSpecifications.andOwnViaTypedCentre(
+				CentreCirconscriptionSpecifications.forCentreBackedStats(type, att), user);
+	}
+
+	private long countCentresByType(CirconscriptionAttachement att, String type, AuthUser user) {
 		return switch (type) {
-			case "ALPHA" -> count(alphaRepository, CentreCirconscriptionSpecifications.forAlphaStats(att));
-			case "CEC" -> count(cecRepository, CentreCirconscriptionSpecifications.forCecStats(att));
-			case "CP" -> count(cpRepository, CentreCirconscriptionSpecifications.forCpStats(att));
-			case "SIE" -> count(sieRepository, CentreCirconscriptionSpecifications.forSieStats(att));
-			default -> count(centreRepository, CentreCirconscriptionSpecifications.forCentreStats(att));
+			case "ALPHA" -> count(alphaRepository, ownTypedStats(CentreCirconscriptionSpecifications.forAlphaStats(att), user));
+			case "CEC" -> count(cecRepository, ownTypedStats(CentreCirconscriptionSpecifications.forCecStats(att), user));
+			case "CP" -> count(cpRepository, ownTypedStats(CentreCirconscriptionSpecifications.forCpStats(att), user));
+			case "SIE" -> count(sieRepository, ownTypedStats(CentreCirconscriptionSpecifications.forSieStats(att), user));
+			default -> count(centreRepository, ownCentreStats(att, user));
 		};
 	}
 
-	private long countPersonnelForCentreType(CirconscriptionAttachement att, String type) {
-		Specification<Centre> centreScope = CentreCirconscriptionSpecifications.forCentreStats(att);
+	private static Specification<Centre> ownCentreStats(CirconscriptionAttachement att, AuthUser user) {
+		return CentreListScopeSpecifications.andOwnCentre(
+				CentreCirconscriptionSpecifications.forCentreStats(att), user);
+	}
+
+	private static <T> Specification<T> ownTypedStats(Specification<T> geoStats, AuthUser user) {
+		return CentreListScopeSpecifications.andOwnTypedCentres(geoStats, user);
+	}
+
+	private static <T> Specification<T> ownViaAlpha(Specification<T> geoStats, AuthUser user) {
+		return CentreListScopeSpecifications.andOwnViaAlpha(geoStats, user);
+	}
+
+	private static <T> Specification<T> ownViaIdCentre(Specification<T> geoStats, AuthUser user) {
+		return CentreListScopeSpecifications.andOwnViaIdCentre(geoStats, user);
+	}
+
+	private long countPersonnelForCentreType(CirconscriptionAttachement att, String type, AuthUser user) {
+		Specification<Centre> centreScope = ownCentreStats(att, user);
 		List<Centre> centres = centreRepository.findAll(centreScope);
 		List<Integer> centreIds = centres.stream()
 				.filter(c -> matchesCentreType(c.getCodeCentre(), type))

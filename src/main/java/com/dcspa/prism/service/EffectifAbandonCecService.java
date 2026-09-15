@@ -22,7 +22,10 @@ public class EffectifAbandonCecService {
 	public Optional<EffectifAbandonCec> findById(Integer id) { return repository.findById(id); }
 
 	@Transactional
-	public EffectifAbandonCec save(EffectifAbandonCec entity) { return repository.save(entity); }
+	public EffectifAbandonCec save(EffectifAbandonCec entity) {
+		com.dcspa.prism.service.effectif.EffectifEntityCoherence.applyAndValidate(entity);
+		return repository.save(entity);
+	}
 
 	@Transactional
 	public void deleteById(Integer id) { repository.deleteById(id); }

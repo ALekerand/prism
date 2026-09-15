@@ -40,6 +40,7 @@ import com.dcspa.prism.repository.PersonnephysiqueRepository;
 import com.dcspa.prism.repository.PersonnemoraleRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
+import com.dcspa.prism.repository.spec.CentreListScopeSpecifications;
 import com.dcspa.prism.repository.spec.SimpleCentreTypeSpecifications;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.pagination.PageableUtils;
@@ -77,6 +78,7 @@ public class CecService {
 	private final CecNiveauRepository cecNiveauRepository;
 	private final CirconscriptionResolver circonscriptionResolver;
 	private final CirconscriptionWriteGuard circonscriptionWriteGuard;
+	private final CentreConseillerLabelService centreConseillerLabelService;
 
 	// Charge tous les CEC.
 	@Transactional(readOnly = true)
@@ -89,7 +91,7 @@ public class CecService {
 	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, CecListFilter filter, AuthUser authUser) {
 		Pageable p = PageableUtils.cap(pageable);
 		Specification<Cec> spec = combineCecScope(filter, authUser);
-		return cecRepository.findAll(spec, p).map(CentreTypeListItemMapper::fromCec);
+		return centreConseillerLabelService.enrich(cecRepository.findAll(spec, p).map(CentreTypeListItemMapper::fromCec));
 	}
 
 	// Détail par identifiant.
@@ -109,7 +111,9 @@ public class CecService {
 	@Transactional(readOnly = true)
 	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request, AuthUser authUser) {
 		Map<String, String> criteria = request == null ? null : request.getCriteria();
-		Specification<Cec> scope = CentreCirconscriptionSpecifications.forCec(circonscriptionResolver.resolve(authUser));
+		Specification<Cec> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forCec(circonscriptionResolver.resolve(authUser)),
+				authUser);
 		List<Cec> source = scope == null ? cecRepository.findAll() : cecRepository.findAll(scope);
 		return source.stream()
 				.map(this::toDetailedItem)
@@ -186,6 +190,7 @@ public class CecService {
 		centre.setLocalisationCentre(c.getLocalisationCentre());
 		centre.setNomMilieuImplentation(resolveNomMilieuImplentation(c.getIdMilieuImplentation(), localite));
 		CentreSupplementalFields.applyToCentre(centre, c);
+		CentreRegistrationMetadata.applyOnCreate(centre, authUser);
 		Centre savedCentre = centreService.save(centre);
 
 		Cec entity = new Cec();
@@ -282,7 +287,9 @@ public class CecService {
 
 	private Specification<Cec> combineCecScope(CecListFilter filter, AuthUser authUser) {
 		Specification<Cec> base = SimpleCentreTypeSpecifications.forCec(filter);
-		Specification<Cec> scope = CentreCirconscriptionSpecifications.forCec(circonscriptionResolver.resolve(authUser));
+		Specification<Cec> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forCec(circonscriptionResolver.resolve(authUser)),
+				authUser);
 		if (scope == null) {
 			return base;
 		}
@@ -293,7 +300,9 @@ public class CecService {
 		if (cecId == null) {
 			return false;
 		}
-		Specification<Cec> scope = CentreCirconscriptionSpecifications.forCec(circonscriptionResolver.resolve(user));
+		Specification<Cec> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forCec(circonscriptionResolver.resolve(user)),
+				user);
 		if (scope == null) {
 			return true;
 		}
@@ -396,7 +405,10 @@ public class CecService {
 				item.setPromoteur(details);
 			}
 		}
-		centreRepository.findById(cec.getId()).ifPresent(c -> item.setActif(CentreSupplementalFields.actifForApi(c)));
+		centreRepository.findById(cec.getId()).ifPresent(c -> {
+			item.setActif(CentreSupplementalFields.actifForApi(c));
+			centreConseillerLabelService.fill(item, c);
+		});
 		return item;
 	}
 

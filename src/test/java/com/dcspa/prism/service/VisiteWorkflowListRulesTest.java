@@ -3,6 +3,7 @@ package com.dcspa.prism.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.dcspa.prism.entity.Alpha;
+import com.dcspa.prism.entity.Centre;
 import com.dcspa.prism.entity.Visite;
 import com.dcspa.prism.security.AuthUser;
 import java.util.LinkedHashMap;
@@ -30,8 +31,17 @@ class VisiteWorkflowListRulesTest {
 	}
 
 	private static Visite visiteAvecIep(int id, int idIep) {
+		return visiteAvecIep(id, idIep, null);
+	}
+
+	private static Visite visiteAvecIep(int id, int idIep, String enregistrePar) {
 		Alpha alpha = new Alpha();
 		alpha.setIdIep(idIep);
+		if (enregistrePar != null) {
+			Centre centre = new Centre();
+			centre.setEnregistrePar(enregistrePar);
+			alpha.setCentre(centre);
+		}
 		Visite v = new Visite();
 		v.setId(id);
 		v.setIdAlpha(alpha);
@@ -60,6 +70,20 @@ class VisiteWorkflowListRulesTest {
 		AuthUser c1 = user("commission_1_conseiller_1", "CONSEILLER", null);
 		Map<String, Object> wf = workflowSoumisPar("commission_1_conseiller_1", "commission_1_conseiller_1");
 		assertThat(VisiteWorkflowListRules.isRowVisible(v, wf, c1)).isTrue();
+	}
+
+	@Test
+	void conseiller2NeVoitPasBrouillonSansProprietaireSurCentreDuConseiller1() {
+		Visite v = visiteAvecIep(1, 10, "commission_1_conseiller_1");
+		AuthUser c2 = user("commission_1_conseiller_2", "CONSEILLER", 10);
+		assertThat(VisiteWorkflowListRules.isRowVisible(v, Map.of(), c2)).isFalse();
+	}
+
+	@Test
+	void conseillerVoitBrouillonSansProprietaireSurSonCentre() {
+		Visite v = visiteAvecIep(5, 10, "commission_1_conseiller_2");
+		AuthUser c2 = user("commission_1_conseiller_2", "CONSEILLER", 10);
+		assertThat(VisiteWorkflowListRules.isRowVisible(v, Map.of(), c2)).isTrue();
 	}
 
 	@Test

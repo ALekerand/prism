@@ -22,7 +22,10 @@ public class EffectifPassageAlphaService {
 	public Optional<EffectifPassageAlpha> findById(Integer id) { return repository.findById(id); }
 
 	@Transactional
-	public EffectifPassageAlpha save(EffectifPassageAlpha entity) { return repository.save(entity); }
+	public EffectifPassageAlpha save(EffectifPassageAlpha entity) {
+		com.dcspa.prism.service.effectif.EffectifEntityCoherence.applyAndValidate(entity);
+		return repository.save(entity);
+	}
 
 	@Transactional
 	public void deleteById(Integer id) { repository.deleteById(id); }

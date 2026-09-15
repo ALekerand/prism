@@ -1,11 +1,13 @@
 package com.dcspa.prism.controller;
 
 import com.dcspa.prism.controller.support.PermissionGuard;
+import com.dcspa.prism.dto.AdminResetPasswordRequest;
 import com.dcspa.prism.dto.AppUserAdminResponse;
 import com.dcspa.prism.dto.AppUserAdminUpsertRequest;
 import com.dcspa.prism.dto.AppUserUpdateRolesRequest;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.AppUserAdminService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -86,6 +88,19 @@ public class AppUserAdminController {
             return denied;
         }
         appUserAdminService.updateUserRoles(id, request, user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<?> resetPassword(
+            @PathVariable Integer id,
+            @Valid @RequestBody AdminResetPasswordRequest request,
+            @AuthenticationPrincipal AuthUser user) {
+        ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "MODIFIER");
+        if (denied != null) {
+            return denied;
+        }
+        appUserAdminService.resetPassword(id, request.getNewPassword(), user);
         return ResponseEntity.noContent().build();
     }
 }

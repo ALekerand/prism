@@ -22,7 +22,9 @@ import com.dcspa.prism.repository.PersonnelRepository;
 import com.dcspa.prism.repository.StatutPersonnelRepository;
 import com.dcspa.prism.repository.StructureFormationCertificationRepository;
 import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
+import com.dcspa.prism.repository.spec.CentreListScopeSpecifications;
 import com.dcspa.prism.repository.spec.PersonnelSpecifications;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
 import com.dcspa.prism.service.pagination.PageableUtils;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +51,7 @@ public class PersonnelAdminService {
     private final DiplomePersonnelRepository diplomePersonnelRepository;
     private final DiplomeRepository diplomeRepository;
     private final StatutPersonnelRepository statutPersonnelRepository;
+    private final CirconscriptionResolver circonscriptionResolver;
 
     @Transactional(readOnly = true)
     public Page<PersonnelAdminResponse> listByCentre(Integer centreId, PersonnelListFilter filter, Pageable pageable) {
@@ -103,13 +106,25 @@ public class PersonnelAdminService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> buildTypeSummary(String centreType) {
-        return buildTypeSummary(centreType, null);
+        return buildTypeSummary(centreType, null, null);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> buildTypeSummary(String centreType, AuthUser user) {
+        CirconscriptionAttachement att = circonscriptionResolver.resolve(user);
+        return buildTypeSummary(centreType, att, user);
     }
 
     @Transactional(readOnly = true)
     public Map<String, Object> buildTypeSummary(String centreType, CirconscriptionAttachement att) {
+        return buildTypeSummary(centreType, att, null);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> buildTypeSummary(String centreType, CirconscriptionAttachement att, AuthUser user) {
         String normalized = centreType == null ? "" : centreType.trim().toUpperCase();
-        Specification<Centre> scope = CentreCirconscriptionSpecifications.forCentreStats(att);
+        Specification<Centre> scope = CentreListScopeSpecifications.andOwnCentre(
+                CentreCirconscriptionSpecifications.forCentreStats(att), user);
         List<Centre> centres = centreRepository.findAll(scope);
         List<Integer> centreIds = centres.stream()
                 .filter(c -> matchesCentreType(c.getCodeCentre(), normalized))

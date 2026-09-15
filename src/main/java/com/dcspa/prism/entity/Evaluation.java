@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Getter
 @Setter
@@ -27,6 +29,7 @@ public class Evaluation implements ActivitesCentreWorkflowEntity {
 	@Column(name = "ID_EVALUATION", nullable = false)
 	private Integer id;
 
+	@NotFound(action = NotFoundAction.IGNORE)
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "ID_ALPHA", nullable = false)

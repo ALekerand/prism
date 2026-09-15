@@ -7,18 +7,39 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface AppUserRepository extends BaseRepository<AppUser, Integer>, JpaSpecificationExecutor<AppUser> {
 
     @EntityGraph(attributePaths = {
             "roles",
-            "roles.roleFonctionnalitePermissions",
-            "roles.roleFonctionnalitePermissions.fonctionnalite",
-            "roles.roleFonctionnalitePermissions.permission"
+            "idRegion",
+            "idDrena",
+            "idIep",
+            "idDepartement",
+            "idSousPrefecture",
+            "idCommune",
+            "idLocalite"
     })
     Optional<AppUser> findByUsername(String username);
+
+    List<AppUser> findByUsernameIn(Collection<String> usernames);
+
+    @Query("""
+            SELECT DISTINCT CONCAT(f.codeFonctionnalite, ':', p.codePermission)
+            FROM AppUser u
+            JOIN u.roles r
+            JOIN r.roleFonctionnalitePermissions rfp
+            JOIN rfp.fonctionnalite f
+            JOIN rfp.permission p
+            WHERE u.username = :username
+            """)
+    List<String> findPermissionKeysByUsername(@Param("username") String username);
 
     /**
      * Surcharge `findAll()` pour charger les rôles (évite Lazy + N+1 dans l'admin).

@@ -2,12 +2,15 @@ package com.dcspa.prism.controller;
 
 import com.dcspa.prism.codegen.AutoCodePutMerge;
 
+import com.dcspa.prism.controller.support.EffectifSaisieWorkflowSupport;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.entity.EffectifSituationHandicapCec;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.EffectifSituationHandicapCecService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,28 +32,42 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EffectifSituationHandicapCecController {
 
+	private static final String WORKFLOW_RESOURCE = "/api/effectif-situation-handicap-cec";
+
 	private final EffectifSituationHandicapCecService effectifSituationHandicapCecService;
+	private final EffectifSaisieWorkflowSupport effectifWorkflow;
 
 	@Transactional(readOnly = true)
 	@GetMapping
-	public ResponseEntity<List<Map<String, Object>>> findAll() {
-		return ResponseEntity.ok(effectifSituationHandicapCecService.findAll().stream().map(this::toRow).collect(Collectors.toList()));
+	public ResponseEntity<List<Map<String, Object>>> findAll(@AuthenticationPrincipal AuthUser user) {
+		List<Map<String, Object>> rows = effectifSituationHandicapCecService.findAll().stream()
+				.map(this::toRow)
+				.collect(Collectors.toList());
+		return ResponseEntity.ok(effectifWorkflow.enrichAndFilterList(WORKFLOW_RESOURCE, rows, user));
 	}
 
 	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
+	public ResponseEntity<Map<String, Object>> findById(
+			@PathVariable Integer id,
+			@AuthenticationPrincipal AuthUser user) {
 		return effectifSituationHandicapCecService.findById(id)
 				.map(this::toRow)
+				.flatMap(row -> effectifWorkflow.enrichAndFilterOne(WORKFLOW_RESOURCE, row, user))
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@Transactional
 	@PostMapping
-	public ResponseEntity<Map<String, Object>> create(@RequestBody EffectifSituationHandicapCec body) {
+	public ResponseEntity<Map<String, Object>> create(
+			@RequestBody EffectifSituationHandicapCec body,
+			@AuthenticationPrincipal AuthUser user) {
 		EffectifSituationHandicapCec saved = effectifSituationHandicapCecService.save(body);
-		return ResponseEntity.status(201).body(toRow(saved));
+		effectifWorkflow.claimAfterCreate(WORKFLOW_RESOURCE, saved.getId(), user);
+		Map<String, Object> row = toRow(saved);
+		effectifWorkflow.enrichRows(WORKFLOW_RESOURCE, List.of(row), user);
+		return ResponseEntity.status(201).body(row);
 	}
 
 	@Transactional
@@ -67,6 +84,7 @@ public class EffectifSituationHandicapCecController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
+		effectifWorkflow.purgeOnDelete(WORKFLOW_RESOURCE, id);
 		effectifSituationHandicapCecService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}

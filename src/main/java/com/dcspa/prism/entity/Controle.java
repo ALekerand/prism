@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.BatchSize;
 
 @Getter
@@ -29,6 +31,7 @@ public class Controle implements ActivitesCentreWorkflowEntity {
 	@Column(name = "ID_CONTROLE", nullable = false)
 	private Integer id;
 
+	@NotFound(action = NotFoundAction.IGNORE)
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "ID_ALPHA", nullable = false)
@@ -74,6 +77,9 @@ public class Controle implements ActivitesCentreWorkflowEntity {
 
 	@Column(name = "CONFORMITE_PROGRAMME")
 	private Boolean conformiteProgramme;
+
+	@Column(name = "COMMENTAIRE", length = 500)
+	private String commentaire;
 
 	@Column(name = "VALIDEE_COORDONNATEUR")
 	private Boolean valideeCoordonnateur;

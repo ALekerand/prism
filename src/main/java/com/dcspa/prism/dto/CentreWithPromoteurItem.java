@@ -45,6 +45,12 @@ public class CentreWithPromoteurItem {
     /** {@code false} = centre exclu des statistiques. */
     private Boolean actif;
 
+    /** Login du conseiller qui a enregistré le centre. */
+    private String enregistrePar;
+
+    /** Nom affiché du conseiller (prénoms + nom), ou le login. */
+    private String conseillerNom;
+
     /** Détail CEC : école tutrice (autres types : {@code null}). */
     private String ecoleTutrice;
 

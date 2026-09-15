@@ -28,6 +28,7 @@ public class EffectifAlphaService {
 	@Transactional
 	public EffectifAlpha save(EffectifAlpha entity) {
 		validateRequiredFields(entity);
+		com.dcspa.prism.service.effectif.EffectifEntityCoherence.applyAndValidate(entity);
 		return effectifAlphaRepository.save(entity);
 	}
 

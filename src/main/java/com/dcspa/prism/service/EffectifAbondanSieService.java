@@ -22,7 +22,10 @@ public class EffectifAbondanSieService {
 	public Optional<EffectifAbondanSie> findById(Integer id) { return repository.findById(id); }
 
 	@Transactional
-	public EffectifAbondanSie save(EffectifAbondanSie entity) { return repository.save(entity); }
+	public EffectifAbondanSie save(EffectifAbondanSie entity) {
+		com.dcspa.prism.service.effectif.EffectifEntityCoherence.applyAndValidate(entity);
+		return repository.save(entity);
+	}
 
 	@Transactional
 	public void deleteById(Integer id) { repository.deleteById(id); }

@@ -10,11 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ControleRepository extends BaseRepository<Controle, Integer>, JpaSpecificationExecutor<Controle> {
-	@EntityGraph(attributePaths = {"idAlpha", "idDiscipline", "idManuel", "idNiveauControle", "idNiveauAlpha"})
+	@EntityGraph(attributePaths = {"idAlpha", "idDiscipline", "idManuel", "idNiveauControle", "idNiveauAlpha", "idPeriodeActivite"})
 	@Query("select c from Controle c")
 	List<Controle> findAllWithRefs();
 
-	@EntityGraph(attributePaths = {"idAlpha", "idDiscipline", "idManuel", "idNiveauControle", "idNiveauAlpha"})
+	@EntityGraph(attributePaths = {"idAlpha", "idDiscipline", "idManuel", "idNiveauControle", "idNiveauAlpha", "idPeriodeActivite"})
 	@Query("select c from Controle c where c.id = :id")
 	Optional<Controle> findByIdWithRefs(@Param("id") Integer id);
 }

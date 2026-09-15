@@ -1,7 +1,9 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ActivitesCentreCirconscriptionEnricher;
 import com.dcspa.prism.controller.support.ActivitesCentreSaisieWorkflowGate;
 import com.dcspa.prism.controller.support.ActivitesCentreWorkflow;
+import com.dcspa.prism.controller.support.EffectifSaisieWorkflowSupport;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.PermissionGuard;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
@@ -25,6 +27,7 @@ import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.time.LocalTime;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +44,8 @@ public class ControleController {
 	private static final String WORKFLOW_RESOURCE = "/api/controle";
 	private final ControleRepository controleRepository;
 	private final ActivitesCentreSaisieWorkflowGate saisieWorkflowGate;
+	private final EffectifSaisieWorkflowSupport saisieWorkflow;
+	private final ActivitesCentreCirconscriptionEnricher circonscriptionEnricher;
 	private final AlphaRepository alphaRepository;
 	private final DisciplineRepository disciplineRepository;
 	private final ManuelRepository manuelRepository;
@@ -53,7 +58,8 @@ public class ControleController {
 	public ResponseEntity<?> findAll(@AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return ResponseEntity.ok(controleRepository.findAllWithRefs().stream().map(this::toRow).toList());
+		List<Map<String, Object>> rows = controleRepository.findAllWithRefs().stream().map(this::toRow).toList();
+		return ResponseEntity.ok(saisieWorkflow.enrichAndFilterList(WORKFLOW_RESOURCE, rows, user));
 	}
 
 	@Transactional(readOnly = true)
@@ -61,7 +67,11 @@ public class ControleController {
 	public ResponseEntity<?> findById(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return controleRepository.findByIdWithRefs(id).map(this::toRow).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+		return controleRepository.findByIdWithRefs(id)
+				.map(this::toRow)
+				.flatMap(row -> saisieWorkflow.enrichAndFilterOne(WORKFLOW_RESOURCE, row, user))
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@Transactional(readOnly = true)
@@ -76,7 +86,8 @@ public class ControleController {
 			@AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return ResponseEntity.ok(controleRepository.findAllWithRefs().stream()
+		return ResponseEntity.ok(saisieWorkflow.enrichAndFilterList(WORKFLOW_RESOURCE,
+				controleRepository.findAllWithRefs().stream()
 				.filter(x -> idAlpha == null || idAlpha.equals(JpaAssociationIds.intIdOrNull(x.getIdAlpha())))
 				.filter(x -> idDiscipline == null || idDiscipline.equals(JpaAssociationIds.intIdOrNull(x.getIdDiscipline())))
 				.filter(x -> idManuel == null || idManuel.equals(JpaAssociationIds.intIdOrNull(x.getIdManuel())))
@@ -85,7 +96,7 @@ public class ControleController {
 						|| idPeriodeActivite.equals(JpaAssociationIds.intIdOrNull(x.getIdPeriodeActivite())))
 				.filter(x -> conformiteProgramme == null || conformiteProgramme.equals(x.getConformiteProgramme()))
 				.map(this::toRow)
-				.toList());
+				.toList(), user));
 	}
 
 	@Transactional
@@ -97,7 +108,11 @@ public class ControleController {
 			Controle e = new Controle();
 			apply(e, body);
 			ActivitesCentreWorkflow.initializeDraft(e);
-			return ResponseEntity.status(201).body(toRow(controleRepository.save(e)));
+			Controle saved = controleRepository.save(e);
+			saisieWorkflow.claimAfterCreate(WORKFLOW_RESOURCE, saved.getId(), FEATURE, user);
+			Map<String, Object> row = toRow(saved);
+			saisieWorkflow.enrichRows(WORKFLOW_RESOURCE, List.of(row), user);
+			return ResponseEntity.status(201).body(row);
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
 		}
@@ -131,6 +146,7 @@ public class ControleController {
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
 		}
+		saisieWorkflow.purgeOnDelete(WORKFLOW_RESOURCE, id);
 		controleRepository.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
@@ -203,6 +219,7 @@ public class ControleController {
 		e.setNombreKitManuelsCvc(r.getNombreKitManuelsCvc());
 		e.setNombreKitAutre(r.getNombreKitAutre());
 		e.setConformiteProgramme(r.getConformiteProgramme());
+		e.setCommentaire(r.getCommentaire() == null ? null : r.getCommentaire().trim());
 		if (r.getHorairesFormation() != null) {
 			replaceHoraires(e, r);
 		}
@@ -251,6 +268,7 @@ public class ControleController {
 	private Map<String, Object> toRow(Controle e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
+		circonscriptionEnricher.putAlphaCirconscription(m, e.getIdAlpha());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
 		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "Discipline", e.getIdDiscipline());
@@ -264,6 +282,7 @@ public class ControleController {
 		m.put("nombreKitManuelsCvc", e.getNombreKitManuelsCvc());
 		m.put("nombreKitAutre", e.getNombreKitAutre());
 		m.put("conformiteProgramme", e.getConformiteProgramme());
+		m.put("commentaire", e.getCommentaire());
 		ActivitesCentreWorkflow.putStatus(m, e);
 		m.put("horairesFormation", e.getHorairesFormation().stream().map(this::toHoraireRow).toList());
 		m.put("kitsManuels", e.getKitsManuels().stream().map(this::toKitRow).toList());

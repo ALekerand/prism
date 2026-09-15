@@ -10,9 +10,11 @@ import com.dcspa.prism.entity.TypeDocument;
 import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.repository.NatureDocumentRepository;
 import com.dcspa.prism.repository.TypeDocumentRepository;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.DocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,14 +41,16 @@ public class DocumentController {
 
 	@Transactional(readOnly = true)
 	@GetMapping
-	public ResponseEntity<List<Map<String, Object>>> findAll() {
-		return ResponseEntity.ok(documentService.findAll().stream().map(this::toRow).toList());
+	public ResponseEntity<List<Map<String, Object>>> findAll(@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.ok(documentService.findAllForUser(user).stream().map(this::toRow).toList());
 	}
 
 	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
-		return documentService.findById(id)
+	public ResponseEntity<Map<String, Object>> findById(
+			@PathVariable Integer id,
+			@AuthenticationPrincipal AuthUser user) {
+		return documentService.findByIdForUser(id, user)
 				.map(this::toRow)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
@@ -54,23 +58,40 @@ public class DocumentController {
 
 	@Transactional
 	@PostMapping
-	public ResponseEntity<Map<String, Object>> create(@RequestBody DocumentRequest request) {
-		return ResponseEntity.status(201).body(toRow(documentService.save(toEntity(null, request))));
+	public ResponseEntity<?> create(
+			@RequestBody DocumentRequest request,
+			@AuthenticationPrincipal AuthUser user) {
+		try {
+			return ResponseEntity.status(201).body(toRow(documentService.save(toEntity(null, request, user), user)));
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+		}
 	}
 
 	@Transactional
 	@PutMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> update(@PathVariable Integer id, @RequestBody DocumentRequest request) {
-		if (documentService.findById(id).isEmpty()) {
+	public ResponseEntity<?> update(
+			@PathVariable Integer id,
+			@RequestBody DocumentRequest request,
+			@AuthenticationPrincipal AuthUser user) {
+		if (documentService.findByIdForUser(id, user).isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(toRow(documentService.save(toEntity(id, request))));
+		try {
+			return ResponseEntity.ok(toRow(documentService.save(toEntity(id, request, user), user)));
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+		}
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Integer id) {
-		documentService.deleteById(id);
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<?> delete(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
+		try {
+			documentService.deleteByIdForUser(id, user);
+			return ResponseEntity.noContent().build();
+		} catch (IllegalArgumentException ex) {
+			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+		}
 	}
 
 	private Map<String, Object> toRow(Document d) {
@@ -88,7 +109,7 @@ public class DocumentController {
 		return m;
 	}
 
-	private Document toEntity(Integer id, DocumentRequest r) {
+	private Document toEntity(Integer id, DocumentRequest r, AuthUser user) {
 		Document d = new Document();
 		d.setId(id);
 
@@ -110,7 +131,7 @@ public class DocumentController {
 		d.setBienrensigne(r.getBienrensigne());
 		String codeDocument = r.getCodeDocument();
 		if (id != null) {
-			codeDocument = documentService.findById(id)
+			codeDocument = documentService.findByIdForUser(id, user)
 					.map(ex -> AutoCodePutMerge.mergeCodeString(r.getCodeDocument(), ex.getCodeDocument()))
 					.orElse(codeDocument);
 		}

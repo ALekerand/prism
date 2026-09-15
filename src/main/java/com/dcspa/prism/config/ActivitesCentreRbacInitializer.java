@@ -121,6 +121,11 @@ public class ActivitesCentreRbacInitializer {
         grant(directeur, activitesInfos, lire);
         grant(directeur, saisieDonnees, lire, valider);
 
+        fonctionnaliteRepository.findByCodeFonctionnalite("PARAMETRAGE_DOCUMENTS").ifPresent(parametrageDocuments -> {
+            grant(superviseurAenf, parametrageDocuments, lire, creer, modifier);
+            grant(directeur, parametrageDocuments, lire, creer, modifier);
+        });
+
         grantAllPermissionsToRole(admin);
         grantAllPermissionsToRole(superAdmin);
         grantAllPermissionsToRole(superRoot);

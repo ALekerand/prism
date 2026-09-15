@@ -1,5 +1,6 @@
 package com.dcspa.prism.config;
 
+import com.dcspa.prism.security.AuthUserCache;
 import com.dcspa.prism.security.JwtAuthFilter;
 import com.dcspa.prism.security.JwtUtil;
 import com.dcspa.prism.security.SaisieWorkflowEditGuardFilter;
@@ -27,8 +28,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
 	@Bean
-	public JwtAuthFilter jwtAuthFilter(JwtUtil jwtUtil, AuthService authService) {
-		return new JwtAuthFilter(jwtUtil, authService);
+	public JwtAuthFilter jwtAuthFilter(JwtUtil jwtUtil, AuthService authService, AuthUserCache authUserCache) {
+		return new JwtAuthFilter(jwtUtil, authService, authUserCache);
 	}
 
 	@Bean
@@ -49,7 +50,6 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-						.requestMatchers("/api/auth/**").permitAll()
 						.requestMatchers("/v3/api-docs", "/v3/api-docs/**").permitAll()
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
 						.anyRequest().authenticated())

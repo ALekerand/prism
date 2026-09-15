@@ -1,5 +1,6 @@
 package com.dcspa.prism.repository;
 
+import com.dcspa.prism.dto.AlphaCirconscriptionScope;
 import com.dcspa.prism.dto.CentreTypeListItem;
 import com.dcspa.prism.entity.Alpha;
 import com.dcspa.prism.repositorybase.BaseRepository;
@@ -29,8 +30,18 @@ public interface AlphaRepository extends BaseRepository<Alpha, Integer>, JpaSpec
 			  a.totalApprenants, a.totalHommes, a.totalFemmes, a.latitudeGps, a.longitudeGps,
 			  a.gpsValide, a.structurePartenaire, a.nomPartenaire,
 			  a.localisationCentre, a.nomMilieuImplentation, a.encadreurNonMena, a.encadrerParMena, a.idPromoteur,
-			  coalesce(a.centre.actif, true))
+			  coalesce(a.centre.actif, true), a.centre.enregistrePar, a.centre.enregistrePar)
 			from Alpha a
 			""")
 	Page<CentreTypeListItem> findAllAsListItems(Pageable pageable);
+
+	@Query("""
+			select new com.dcspa.prism.dto.AlphaCirconscriptionScope(iep.id, d.id)
+			from Alpha a
+			join a.centre c
+			join c.idIep iep
+			join iep.idDrena d
+			where a.id = :alphaId
+			""")
+	Optional<AlphaCirconscriptionScope> findCirconscriptionScopeByAlphaId(@Param("alphaId") Integer alphaId);
 }

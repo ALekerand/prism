@@ -11,12 +11,15 @@ import com.dcspa.prism.entity.Drena;
 import com.dcspa.prism.entity.Iep;
 import com.dcspa.prism.entity.LocaliteDImplantation;
 import com.dcspa.prism.entity.Region;
-import com.dcspa.prism.entity.RoleFonctionnalitePermission;
 import com.dcspa.prism.entity.SousPrefecture;
 import com.dcspa.prism.repository.AppUserRepository;
 import com.dcspa.prism.security.AuthUser;
+import com.dcspa.prism.security.AuthUserCache;
 import com.dcspa.prism.security.JwtUtil;
+import com.dcspa.prism.security.PasswordRules;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,22 +27,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+    private static final Set<String> RBAC_BYPASS_ROLES = Set.of("SUPER_ROOT", "SUPER_ADMIN", "ADMIN");
+
     private final AppUserRepository appUserRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final AdminDashboardService adminDashboardService;
+    private final AuthUserCache authUserCache;
 
-    // Charge l’utilisateur Spring Security à partir du nom de connexion.
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -48,7 +54,6 @@ public class AuthService implements UserDetailsService {
         return toAuthUser(user);
     }
 
-    // Même chargement que loadUserByUsername, typé AuthUser (permissions incluses).
     @Transactional(readOnly = true)
     public AuthUser loadUserWithPermissions(String username) {
         AppUser user = appUserRepository.findByUsername(username)
@@ -56,10 +61,10 @@ public class AuthService implements UserDetailsService {
         return toAuthUser(user);
     }
 
-    // Vérifie mot de passe et compte actif, puis émet la réponse avec JWT et rôles.
-    /** Un seul chargement utilisateur (graphe rôles/permissions) dans la même transaction lecture. */
+    /** Chargement utilisateur + rôles, sans graphe 300+ permissions pour les rôles admin. */
     @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
+        long started = System.nanoTime();
         AppUser user = appUserRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé: " + request.getUsername()));
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
@@ -70,16 +75,24 @@ public class AuthService implements UserDetailsService {
             throw new IllegalArgumentException("Compte désactivé");
         }
         String token = jwtUtil.generateToken(authUser.getUsername());
+        authUserCache.put(authUser.getUsername(), authUser);
         List<String> roleCodes = user.getRoles().stream()
                 .map(AppRole::getCodeRole)
                 .collect(Collectors.toList());
-        Map<String, Object> scope = adminDashboardService.buildSummary(authUser);
+        Map<String, Object> scope = adminDashboardService.buildScopeMeta(authUser);
+        long elapsedMs = (System.nanoTime() - started) / 1_000_000L;
+        log.info("Login {} en {} ms ({} rôles, {} permissions)", authUser.getUsername(), elapsedMs,
+                roleCodes.size(), authUser.getPermissions().size());
         return LoginResponse.builder()
                 .token(token)
                 .type("Bearer")
                 .userId(authUser.getUserId())
                 .username(authUser.getUsername())
                 .email(user.getEmail())
+                .nom(user.getNom())
+                .prenoms(user.getPrenoms())
+                .dateNaissance(user.getDateNaissance())
+                .lieuNaissance(user.getLieuNaissance())
                 .roles(roleCodes)
                 .permissions(authUser.getPermissions())
                 .idRegion(authUser.getIdRegion())
@@ -102,7 +115,6 @@ public class AuthService implements UserDetailsService {
                 .build();
     }
 
-    // Corps JSON pour GET /api/auth/me.
     @Transactional(readOnly = true)
     public Map<String, Object> buildAuthenticatedUserPayload(AuthUser user) {
         AppUser appUser = appUserRepository.findByUsername(user.getUsername()).orElse(null);
@@ -110,6 +122,10 @@ public class AuthService implements UserDetailsService {
         payload.put("userId", user.getUserId());
         payload.put("username", user.getUsername());
         payload.put("email", appUser != null ? appUser.getEmail() : null);
+        payload.put("nom", appUser != null ? appUser.getNom() : null);
+        payload.put("prenoms", appUser != null ? appUser.getPrenoms() : null);
+        payload.put("dateNaissance", appUser != null ? appUser.getDateNaissance() : null);
+        payload.put("lieuNaissance", appUser != null ? appUser.getLieuNaissance() : null);
         payload.put("roles", appUser != null ? roleCodes(appUser) : List.of());
         payload.put("permissions", user.getPermissions());
         payload.put("idRegion", user.getIdRegion());
@@ -126,32 +142,72 @@ public class AuthService implements UserDetailsService {
         payload.put("sousPrefecture", appUser != null ? ReferentielEnricher.toRef(appUser.getIdSousPrefecture()) : null);
         payload.put("commune", appUser != null ? ReferentielEnricher.toRef(appUser.getIdCommune()) : null);
         payload.put("localite", appUser != null ? ReferentielEnricher.toRef(appUser.getIdLocalite()) : null);
-        Map<String, Object> scope = adminDashboardService.buildSummary(user);
+        Map<String, Object> scope = adminDashboardService.buildScopeMeta(user);
         payload.put("nationalView", scope.get("nationalView"));
         payload.put("scopeMode", scope.get("scopeMode"));
         payload.put("scopeLabel", scope.get("scopeLabel"));
         return payload;
     }
 
-    // Construit le principal avec la liste des permissions fonctionnelles.
-    private AuthUser toAuthUser(AppUser user) {
-        List<String> permissions = new ArrayList<>();
-        for (AppRole role : user.getRoles()) {
-            for (RoleFonctionnalitePermission rfp : role.getRoleFonctionnalitePermissions()) {
-                String key = rfp.getFonctionnalite().getCodeFonctionnalite() + ":"
-                        + rfp.getPermission().getCodePermission();
-                if (!permissions.contains(key)) {
-                    permissions.add(key);
-                }
-            }
+    @Transactional
+    public Map<String, Object> updateOwnProfile(AuthUser principal, com.dcspa.prism.dto.UpdateProfileRequest request) {
+        if (principal == null) {
+            throw new IllegalArgumentException("Utilisateur non authentifié.");
         }
+        if (request == null) {
+            throw new IllegalArgumentException("Requête obligatoire");
+        }
+        AppUser user = appUserRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé: " + principal.getUsername()));
+        user.setEmail(trimToNull(request.getEmail()));
+        user.setNom(trimToNull(request.getNom()));
+        user.setPrenoms(trimToNull(request.getPrenoms()));
+        user.setDateNaissance(request.getDateNaissance());
+        user.setLieuNaissance(trimToNull(request.getLieuNaissance()));
+        appUserRepository.save(user);
+        authUserCache.invalidate(user.getUsername());
+        return buildAuthenticatedUserPayload(principal);
+    }
+
+    @Transactional
+    public void changeOwnPassword(AuthUser principal, String currentPassword, String newPassword) {
+        if (principal == null) {
+            throw new IllegalArgumentException("Utilisateur non authentifié.");
+        }
+        AppUser user = appUserRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé: " + principal.getUsername()));
+        if (currentPassword == null || !passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+            throw new IllegalArgumentException("Mot de passe actuel incorrect.");
+        }
+        PasswordRules.requireNewPassword(newPassword);
+        if (passwordEncoder.matches(newPassword, user.getPasswordHash())) {
+            throw new IllegalArgumentException("Le nouveau mot de passe doit être différent de l'actuel.");
+        }
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        appUserRepository.save(user);
+        authUserCache.invalidate(user.getUsername());
+    }
+
+    private static String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private AuthUser toAuthUser(AppUser user) {
+        List<String> roles = roleCodes(user);
+        List<String> permissions = roles.stream().anyMatch(RBAC_BYPASS_ROLES::contains)
+                ? List.of()
+                : appUserRepository.findPermissionKeysByUsername(user.getUsername());
         return new AuthUser(
                 user.getId(),
                 user.getUsername(),
                 user.getPasswordHash(),
                 Boolean.TRUE.equals(user.getActif()),
                 permissions,
-                roleCodes(user),
+                roles,
                 idOf(user.getIdRegion()),
                 idOf(user.getIdDrena()),
                 idOf(user.getIdIep()),

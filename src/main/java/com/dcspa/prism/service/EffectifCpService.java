@@ -22,7 +22,10 @@ public class EffectifCpService {
 	public Optional<EffectifCp> findById(Integer id) { return repository.findById(id); }
 
 	@Transactional
-	public EffectifCp save(EffectifCp entity) { return repository.save(entity); }
+	public EffectifCp save(EffectifCp entity) {
+		com.dcspa.prism.service.effectif.EffectifEntityCoherence.applyAndValidate(entity);
+		return repository.save(entity);
+	}
 
 	@Transactional
 	public void deleteById(Integer id) { repository.deleteById(id); }

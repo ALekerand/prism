@@ -37,6 +37,9 @@ class AuthServiceLoginTest {
 	@Mock
 	private AdminDashboardService adminDashboardService;
 
+	@Mock
+	private com.dcspa.prism.security.AuthUserCache authUserCache;
+
 	@InjectMocks
 	private AuthService authService;
 
@@ -59,7 +62,7 @@ class AuthServiceLoginTest {
 		scope.put("nationalView", true);
 		scope.put("scopeMode", "NATIONAL");
 		scope.put("scopeLabel", "Vue nationale");
-		when(adminDashboardService.buildSummary(org.mockito.ArgumentMatchers.any())).thenReturn(scope);
+		when(adminDashboardService.buildScopeMeta(org.mockito.ArgumentMatchers.any())).thenReturn(scope);
 
 		LoginRequest req = new LoginRequest();
 		req.setUsername("admin");

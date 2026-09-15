@@ -32,7 +32,16 @@ public final class SaisieWorkflowVisibilityRules {
 			if (Objects.equals(me, proprietaire) || Objects.equals(me, soumisPar)) {
 				return true;
 			}
-			return "BROUILLON".equals(st) && proprietaire == null && soumisPar == null;
+			if ("BROUILLON".equals(st) && proprietaire == null && soumisPar == null) {
+				if (rowIepId == null) {
+					return false;
+				}
+				if (user.getIdIep() != null) {
+					return user.getIdIep().equals(rowIepId);
+				}
+				return true;
+			}
+			return false;
 		}
 		if (user.hasRole("COORDONNATEUR") || user.hasRole("IEPP")) {
 			if (user.getIdIep() != null && rowIepId != null && !user.getIdIep().equals(rowIepId)) {

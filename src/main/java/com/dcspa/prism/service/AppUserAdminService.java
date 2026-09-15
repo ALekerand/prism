@@ -19,6 +19,8 @@ import com.dcspa.prism.repository.SousPrefectureRepository;
 import com.dcspa.prism.repository.spec.AppUserSpecifications;
 import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
 import com.dcspa.prism.security.AuthUser;
+import com.dcspa.prism.security.AuthUserCache;
+import com.dcspa.prism.security.PasswordRules;
 import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
 import com.dcspa.prism.service.circonscription.CirconscriptionLevel;
 import com.dcspa.prism.service.pagination.PageableUtils;
@@ -57,6 +59,7 @@ public class AppUserAdminService {
     private final PasswordEncoder passwordEncoder;
     private final CirconscriptionResolver circonscriptionResolver;
     private final DrenaDepartementRepository drenaDepartementRepository;
+    private final AuthUserCache authUserCache;
 
     private static final Set<String> SCOPED_ROLE_CODES = Set.of(
             "CONSEILLER",
@@ -115,13 +118,24 @@ public class AppUserAdminService {
     }
 
     @Transactional
+    public void resetPassword(Integer userId, String newPassword, AuthUser authUser) {
+        AppUser user = appUserRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable: " + userId));
+        assertUserVisible(user, authUser);
+        PasswordRules.requireNewPassword(newPassword);
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        appUserRepository.save(user);
+        authUserCache.invalidate(user.getUsername());
+    }
+
+    @Transactional
     public AppUserAdminResponse createUser(AppUserAdminUpsertRequest request, AuthUser authUser) {
         if (request == null) throw new IllegalArgumentException("Requête obligatoire");
         String username = String.valueOf(request.getUsername() == null ? "" : request.getUsername()).trim();
         if (username.isBlank()) throw new IllegalArgumentException("username est obligatoire");
         if (appUserRepository.existsByUsername(username)) throw new IllegalArgumentException("username existe déjà");
         String password = String.valueOf(request.getPassword() == null ? "" : request.getPassword());
-        if (password.isBlank()) throw new IllegalArgumentException("password est obligatoire");
+        PasswordRules.requireNewPassword(password);
 
         AppUser u = new AppUser();
         u.setUsername(username);
@@ -155,7 +169,9 @@ public class AppUserAdminService {
         u.setActif(Boolean.TRUE.equals(request.getActif()));
 
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            PasswordRules.requireNewPassword(request.getPassword());
             u.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+            authUserCache.invalidate(u.getUsername());
         }
 
         if (request.getRoleIds() != null) {

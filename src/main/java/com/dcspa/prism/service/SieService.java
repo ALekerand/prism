@@ -43,6 +43,7 @@ import com.dcspa.prism.repository.SieNiveauRepository;
 import com.dcspa.prism.repository.SieRepository;
 import com.dcspa.prism.repository.TypeSieRepository;
 import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
+import com.dcspa.prism.repository.spec.CentreListScopeSpecifications;
 import com.dcspa.prism.repository.spec.SimpleCentreTypeSpecifications;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.pagination.PageableUtils;
@@ -81,6 +82,7 @@ public class SieService {
 	private final TypeSieRepository typeSieRepository;
 	private final CirconscriptionResolver circonscriptionResolver;
 	private final CirconscriptionWriteGuard circonscriptionWriteGuard;
+	private final CentreConseillerLabelService centreConseillerLabelService;
 
 	// Charge tous les SIE.
 	@Transactional(readOnly = true)
@@ -93,7 +95,7 @@ public class SieService {
 	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, SieListFilter filter, AuthUser authUser) {
 		Pageable p = PageableUtils.cap(pageable);
 		Specification<Sie> spec = combineSieScope(filter, authUser);
-		return sieRepository.findAll(spec, p).map(CentreTypeListItemMapper::fromSie);
+		return centreConseillerLabelService.enrich(sieRepository.findAll(spec, p).map(CentreTypeListItemMapper::fromSie));
 	}
 
 	// Détail par identifiant.
@@ -113,7 +115,9 @@ public class SieService {
 	@Transactional(readOnly = true)
 	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request, AuthUser authUser) {
 		Map<String, String> criteria = request == null ? null : request.getCriteria();
-		Specification<Sie> scope = CentreCirconscriptionSpecifications.forSie(circonscriptionResolver.resolve(authUser));
+		Specification<Sie> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forSie(circonscriptionResolver.resolve(authUser)),
+				authUser);
 		List<Sie> source = scope == null ? sieRepository.findAll() : sieRepository.findAll(scope);
 		return source.stream()
 				.map(this::toDetailedItem)
@@ -190,6 +194,7 @@ public class SieService {
 		centre.setLocalisationCentre(c.getLocalisationCentre());
 		centre.setNomMilieuImplentation(resolveNomMilieuImplentation(c.getIdMilieuImplentation(), localite));
 		CentreSupplementalFields.applyToCentre(centre, c);
+		CentreRegistrationMetadata.applyOnCreate(centre, authUser);
 		Centre savedCentre = centreService.save(centre);
 
 		Sie entity = new Sie();
@@ -286,7 +291,9 @@ public class SieService {
 
 	private Specification<Sie> combineSieScope(SieListFilter filter, AuthUser authUser) {
 		Specification<Sie> base = SimpleCentreTypeSpecifications.forSie(filter);
-		Specification<Sie> scope = CentreCirconscriptionSpecifications.forSie(circonscriptionResolver.resolve(authUser));
+		Specification<Sie> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forSie(circonscriptionResolver.resolve(authUser)),
+				authUser);
 		if (scope == null) {
 			return base;
 		}
@@ -297,7 +304,9 @@ public class SieService {
 		if (sieId == null) {
 			return false;
 		}
-		Specification<Sie> scope = CentreCirconscriptionSpecifications.forSie(circonscriptionResolver.resolve(user));
+		Specification<Sie> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forSie(circonscriptionResolver.resolve(user)),
+				user);
 		if (scope == null) {
 			return true;
 		}
@@ -357,7 +366,10 @@ public class SieService {
 		item.setNiveaux(sieNiveauRepository.findByIdCentre_Id(sie.getId()).stream()
 				.map(this::toNiveauDetails)
 				.toList());
-		centreRepository.findById(sie.getId()).ifPresent(c -> item.setActif(CentreSupplementalFields.actifForApi(c)));
+		centreRepository.findById(sie.getId()).ifPresent(c -> {
+			item.setActif(CentreSupplementalFields.actifForApi(c));
+			centreConseillerLabelService.fill(item, c);
+		});
 		return item;
 	}
 

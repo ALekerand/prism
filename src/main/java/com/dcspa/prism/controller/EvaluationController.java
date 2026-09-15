@@ -1,7 +1,9 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ActivitesCentreCirconscriptionEnricher;
 import com.dcspa.prism.controller.support.ActivitesCentreSaisieWorkflowGate;
 import com.dcspa.prism.controller.support.ActivitesCentreWorkflow;
+import com.dcspa.prism.controller.support.EffectifSaisieWorkflowSupport;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.PermissionGuard;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
@@ -20,6 +22,7 @@ import com.dcspa.prism.repository.TauxEvaluationRepository;
 import com.dcspa.prism.repository.ThemeEvaluationRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,8 @@ public class EvaluationController {
 	private static final String WORKFLOW_RESOURCE = "/api/evaluation";
 	private final EvaluationRepository repository;
 	private final ActivitesCentreSaisieWorkflowGate saisieWorkflowGate;
+	private final EffectifSaisieWorkflowSupport saisieWorkflow;
+	private final ActivitesCentreCirconscriptionEnricher circonscriptionEnricher;
 	private final AlphaRepository alphaRepository;
 	private final PeriodeActiviteRepository periodeRepository;
 	private final NiveauEvaluationRepository niveauRepository;
@@ -47,7 +52,8 @@ public class EvaluationController {
 	public ResponseEntity<?> findAll(@AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return ResponseEntity.ok(repository.findAllWithRefs().stream().map(this::toRow).toList());
+		List<Map<String, Object>> rows = repository.findAllWithRefs().stream().map(this::toRow).toList();
+		return ResponseEntity.ok(saisieWorkflow.enrichAndFilterList(WORKFLOW_RESOURCE, rows, user));
 	}
 
 	@Transactional(readOnly = true)
@@ -55,7 +61,11 @@ public class EvaluationController {
 	public ResponseEntity<?> findById(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return repository.findByIdWithRefs(id).map(this::toRow).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+		return repository.findByIdWithRefs(id)
+				.map(this::toRow)
+				.flatMap(row -> saisieWorkflow.enrichAndFilterOne(WORKFLOW_RESOURCE, row, user))
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@DeleteMapping("/{id}")
@@ -69,6 +79,7 @@ public class EvaluationController {
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
 		}
+		saisieWorkflow.purgeOnDelete(WORKFLOW_RESOURCE, id);
 		repository.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
@@ -84,13 +95,14 @@ public class EvaluationController {
 			@AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return ResponseEntity.ok(repository.findAllWithRefs().stream()
+		return ResponseEntity.ok(saisieWorkflow.enrichAndFilterList(WORKFLOW_RESOURCE,
+				repository.findAllWithRefs().stream()
 				.filter(x -> idAlpha == null || idAlpha.equals(JpaAssociationIds.intIdOrNull(x.getIdAlpha())))
 				.filter(x -> idPeriodeActivite == null || idPeriodeActivite.equals(JpaAssociationIds.intIdOrNull(x.getIdPeriodeActivite())))
 				.filter(x -> idNiveauEvaluation == null || idNiveauEvaluation.equals(JpaAssociationIds.intIdOrNull(x.getIdNiveauEvaluation())))
 				.filter(x -> idThemeEvaluation == null || idThemeEvaluation.equals(JpaAssociationIds.intIdOrNull(x.getIdThemeEvaluation())))
 				.filter(x -> idTauxEvaluation == null || idTauxEvaluation.equals(JpaAssociationIds.intIdOrNull(x.getIdTauxEvaluation())))
-				.map(this::toRow).toList());
+				.map(this::toRow).toList(), user));
 	}
 
 	@Transactional
@@ -102,7 +114,11 @@ public class EvaluationController {
 			Evaluation e = new Evaluation();
 			apply(e, body);
 			ActivitesCentreWorkflow.initializeDraft(e);
-			return ResponseEntity.status(201).body(toRow(repository.save(e)));
+			Evaluation saved = repository.save(e);
+			saisieWorkflow.claimAfterCreate(WORKFLOW_RESOURCE, saved.getId(), FEATURE, user);
+			Map<String, Object> row = toRow(saved);
+			saisieWorkflow.enrichRows(WORKFLOW_RESOURCE, List.of(row), user);
+			return ResponseEntity.status(201).body(row);
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
 		}
@@ -205,7 +221,7 @@ public class EvaluationController {
 					throw new IllegalArgumentException("Le nombre total évalué doit être > 0");
 				}
 				if (item.getNombreResultatObtenu() < 0 || item.getNombreResultatObtenu() > item.getNombreTotalEvalue()) {
-					throw new IllegalArgumentException("Le nombre de résultats obtenus est invalide");
+					throw new IllegalArgumentException("Le résultat obtenu ne peut pas dépasser le total évalué");
 				}
 				taux = (int) Math.round(100.0 * item.getNombreResultatObtenu() / item.getNombreTotalEvalue());
 			}
@@ -323,6 +339,7 @@ public class EvaluationController {
 	private Map<String, Object> toRow(Evaluation e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
+		circonscriptionEnricher.putAlphaCirconscription(m, e.getIdAlpha());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
 		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "NiveauEvaluation", e.getIdNiveauEvaluation());

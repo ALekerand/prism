@@ -1,7 +1,9 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.dto.ChangePasswordRequest;
 import com.dcspa.prism.dto.LoginRequest;
 import com.dcspa.prism.dto.LoginResponse;
+import com.dcspa.prism.dto.UpdateProfileRequest;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.AuthService;
 import jakarta.validation.Valid;
@@ -12,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,5 +41,26 @@ public class AuthController {
             return ResponseEntity.status(401).build();
         }
         return ResponseEntity.ok(authService.buildAuthenticatedUserPayload(user));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<Map<String, Object>> updateMe(
+            @AuthenticationPrincipal AuthUser user,
+            @RequestBody UpdateProfileRequest request) {
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(authService.updateOwnProfile(user, request));
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<Void> changePassword(
+            @AuthenticationPrincipal AuthUser user,
+            @Valid @RequestBody ChangePasswordRequest request) {
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        authService.changeOwnPassword(user, request.getCurrentPassword(), request.getNewPassword());
+        return ResponseEntity.noContent().build();
     }
 }

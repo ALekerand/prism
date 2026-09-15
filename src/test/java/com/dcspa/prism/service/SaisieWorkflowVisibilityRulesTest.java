@@ -29,6 +29,15 @@ class SaisieWorkflowVisibilityRulesTest {
 	}
 
 	@Test
+	void conseillerNeVoitPasBrouillonAutreIepNiSansIep() {
+		AuthUser c = user("alice", "CONSEILLER");
+		Assertions.assertFalse(
+				SaisieWorkflowVisibilityRules.rowVisibleInCommissionList(c, "BROUILLON", null, null, 99, null));
+		Assertions.assertFalse(
+				SaisieWorkflowVisibilityRules.rowVisibleInCommissionList(c, "BROUILLON", null, null, null, null));
+	}
+
+	@Test
 	void conseillerVoitSesSaisiesEtBrouillonSansProprietaire() {
 		AuthUser c = user("alice", "CONSEILLER");
 		Assertions.assertTrue(

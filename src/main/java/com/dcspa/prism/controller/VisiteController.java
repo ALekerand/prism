@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ActivitesCentreCirconscriptionEnricher;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.VisiteRequest;
@@ -37,6 +38,7 @@ public class VisiteController {
 	private final PeriodeActiviteRepository periodeActiviteRepository;
 	private final NiveauAlphaRepository niveauAlphaRepository;
 	private final SaisieWorkflowService saisieWorkflowService;
+	private final ActivitesCentreCirconscriptionEnricher circonscriptionEnricher;
 
 	@Transactional(readOnly = true)
 	@GetMapping
@@ -181,7 +183,8 @@ public class VisiteController {
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
 		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		ReferentielEnricher.putRef(m, "NiveauAlpha", e.getIdNiveauAlpha());
-		int totalVisitesConseiller = Math.toIntExact(repository.countByIdAlpha_Id(JpaAssociationIds.intIdOrNull(e.getIdAlpha())));
+		int totalVisitesConseiller = Math.toIntExact(
+				repository.countByIdAlpha_Id(JpaAssociationIds.intIdOrNull(e.getIdAlpha())));
 		m.put("maitriseSeanceLecture", e.getMaitriseSeanceLecture());
 		m.put("maitriseSeanceEcriture", e.getMaitriseSeanceEcriture());
 		m.put("maitriseSeanceCalcul", e.getMaitriseSeanceCalcul());
@@ -271,7 +274,21 @@ public class VisiteController {
 	private boolean isVisiteVisibleForUser(Visite e, Map<Integer, Map<String, Object>> workflowById, AuthUser user) {
 		Integer id = e.getId();
 		Map<String, Object> w = id == null ? null : workflowById.get(id);
-		return VisiteWorkflowListRules.isRowVisible(e, w, user);
+		Map<String, Object> scope = new LinkedHashMap<>();
+		circonscriptionEnricher.putAlphaCirconscription(scope, e.getIdAlpha());
+		Integer rowIep = intOrNull(scope.get("idIep"));
+		Integer rowDrena = intOrNull(scope.get("idDrena"));
+		return VisiteWorkflowListRules.isRowVisible(e, w, user, rowIep, rowDrena);
+	}
+
+	private static Integer intOrNull(Object value) {
+		if (value instanceof Integer i) {
+			return i;
+		}
+		if (value instanceof Number n) {
+			return n.intValue();
+		}
+		return null;
 	}
 
 	private static String normalizeMaitrise(String value) {

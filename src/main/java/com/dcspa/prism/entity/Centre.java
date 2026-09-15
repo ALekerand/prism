@@ -115,6 +115,11 @@ public class Centre {
     @Column(name = "DATE_ENREGISTREMENT")
     private java.time.LocalDate dateEnregistrement;
 
+    /** Login de l'utilisateur ayant créé le centre (filtrage conseiller). */
+    @Size(max = 150)
+    @Column(name = "ENREGISTRE_PAR", length = 150)
+    private String enregistrePar;
+
     /** Date de création DAAJE (saisie). */
     @Column(name = "DATE_CREATION_DAAJE")
     private java.time.LocalDate dateCreationDaaje;

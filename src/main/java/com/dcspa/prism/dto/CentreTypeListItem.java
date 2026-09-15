@@ -55,5 +55,14 @@ public class CentreTypeListItem {
 
     /** Actif pour les statistiques ({@code false} = inactif). */
     private Boolean actif;
+
+    /** Login du conseiller qui a enregistré le centre ({@code centre.enregistrePar}). */
+    private String enregistrePar;
+
+    /**
+     * Nom affiché du conseiller (prénoms + nom), ou le login si l’utilisateur n’est pas résolu.
+     */
+    @lombok.Setter
+    private String conseillerNom;
 }
 

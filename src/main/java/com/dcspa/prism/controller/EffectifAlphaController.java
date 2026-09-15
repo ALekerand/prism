@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.EffectifSaisieWorkflowSupport;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
 import com.dcspa.prism.dto.EffectifAlphaRequest;
 import com.dcspa.prism.entity.Alpha;
@@ -9,9 +10,11 @@ import com.dcspa.prism.entity.PeriodeActivite;
 import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.repository.NiveauAlphaRepository;
 import com.dcspa.prism.repository.PeriodeActiviteRepository;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.EffectifAlphaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,38 +36,49 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EffectifAlphaController {
 
+	private static final String WORKFLOW_RESOURCE = "/api/effectif-alpha";
+
 	private final EffectifAlphaService effectifAlphaService;
 	private final PeriodeActiviteRepository periodeActiviteRepository;
 	private final AlphaRepository alphaRepository;
 	private final NiveauAlphaRepository niveauAlphaRepository;
+	private final EffectifSaisieWorkflowSupport effectifWorkflow;
 
 	@Transactional(readOnly = true)
 	@GetMapping
-	public ResponseEntity<List<Map<String, Object>>> findAll() {
+	public ResponseEntity<List<Map<String, Object>>> findAll(@AuthenticationPrincipal AuthUser user) {
 		List<Map<String, Object>> rows = effectifAlphaService.findAll()
 				.stream()
 				.map(this::toRow)
 				.collect(Collectors.toList());
-		return ResponseEntity.ok(rows);
+		return ResponseEntity.ok(effectifWorkflow.enrichAndFilterList(WORKFLOW_RESOURCE, rows, user));
 	}
 
 	@Transactional(readOnly = true)
 	@GetMapping("/{id}")
-	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id) {
+	public ResponseEntity<Map<String, Object>> findById(
+			@PathVariable Integer id,
+			@AuthenticationPrincipal AuthUser user) {
 		return effectifAlphaService.findById(id)
 				.map(this::toRow)
+				.flatMap(row -> effectifWorkflow.enrichAndFilterOne(WORKFLOW_RESOURCE, row, user))
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@Transactional
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody EffectifAlphaRequest body) {
+	public ResponseEntity<?> create(
+			@RequestBody EffectifAlphaRequest body,
+			@AuthenticationPrincipal AuthUser user) {
 		try {
 			EffectifAlpha entity = new EffectifAlpha();
 			applyRequest(entity, body);
 			EffectifAlpha saved = effectifAlphaService.save(entity);
-			return ResponseEntity.status(201).body(toRow(saved));
+			effectifWorkflow.claimAfterCreate(WORKFLOW_RESOURCE, saved.getId(), user);
+			Map<String, Object> row = toRow(saved);
+			effectifWorkflow.enrichRows(WORKFLOW_RESOURCE, List.of(row), user);
+			return ResponseEntity.status(201).body(row);
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
 		}
@@ -89,6 +103,7 @@ public class EffectifAlphaController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
+		effectifWorkflow.purgeOnDelete(WORKFLOW_RESOURCE, id);
 		effectifAlphaService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}

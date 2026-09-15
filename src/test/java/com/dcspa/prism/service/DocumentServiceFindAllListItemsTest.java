@@ -38,6 +38,9 @@ class DocumentServiceFindAllListItemsTest {
 	@Mock
 	private CirconscriptionResolver circonscriptionResolver;
 
+	@Mock
+	private CirconscriptionWriteGuard circonscriptionWriteGuard;
+
 	@InjectMocks
 	private DocumentService documentService;
 

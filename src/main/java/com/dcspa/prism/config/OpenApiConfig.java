@@ -17,7 +17,7 @@ public class OpenApiConfig {
     public OpenAPI prismOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("PRISM API")
+                        .title(PlatformBranding.PLATFORM_NAME + " API")
                         .description("API de suivi des activités de la DSCPA")
                         .version("v1"))
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))

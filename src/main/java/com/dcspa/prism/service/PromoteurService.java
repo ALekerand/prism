@@ -6,6 +6,7 @@ import com.dcspa.prism.entity.Promoteur;
 import com.dcspa.prism.repository.CentreRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
+import com.dcspa.prism.repository.spec.CentreListScopeSpecifications;
 import com.dcspa.prism.repository.spec.PromoteurSpecifications;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
@@ -32,7 +33,9 @@ public class PromoteurService {
 	private final CirconscriptionResolver circonscriptionResolver;
 
 	@Transactional(readOnly = true)
-	public List<Promoteur> findAll() { return repository.findAll(); }
+	public List<Promoteur> findAll() {
+		return repository.findAll();
+	}
 
 	@Transactional(readOnly = true)
 	public Page<Promoteur> findAll(Pageable pageable) {
@@ -56,6 +59,23 @@ public class PromoteurService {
 		return id == null ? Optional.empty() : repository.findById(id);
 	}
 
+	@Transactional(readOnly = true)
+	public Optional<Promoteur> findByIdInListScope(Integer id, AuthUser authUser) {
+		if (id == null) {
+			return Optional.empty();
+		}
+		Optional<Promoteur> found = repository.findById(id);
+		if (found.isEmpty()) {
+			return found;
+		}
+		Specification<Promoteur> scope = scopeForPromoteurList(authUser);
+		if (scope == null) {
+			return found;
+		}
+		Specification<Promoteur> idEq = (root, query, cb) -> cb.equal(root.get("id"), id);
+		return repository.count(Specification.where(scope).and(idEq)) > 0 ? found : Optional.empty();
+	}
+
 	@Transactional
 	public Promoteur save(Promoteur entity) { return repository.save(entity); }
 
@@ -63,8 +83,8 @@ public class PromoteurService {
 	public void deleteById(Integer id) { if (id != null) repository.deleteById(id); }
 
 	/**
-	 * Conseiller : promoteurs rattachés aux centres de sa circonscription (périmètre IEP).
-	 * Les rôles à vue nationale ne sont pas filtrés.
+	 * Conseiller : promoteurs liés aux centres de son périmètre (liste administration).
+	 * Non appliqué à {@code GET /api/promoteur} (wizard : réutilisation inter-zones).
 	 */
 	private Specification<Promoteur> scopeForPromoteurList(AuthUser authUser) {
 		if (authUser == null || !authUser.hasRole("CONSEILLER") || circonscriptionResolver.isNationalView(authUser)) {
@@ -72,10 +92,16 @@ public class PromoteurService {
 		}
 		CirconscriptionAttachement att = circonscriptionResolver.resolve(authUser);
 		Specification<Centre> centreScope = CentreCirconscriptionSpecifications.forCentreStats(att);
-		if (centreScope == null) {
+		Specification<Centre> ownScope = CentreListScopeSpecifications.forCentreOwnedBy(authUser);
+		Specification<Centre> combinedCentreScope = ownScope == null
+				? centreScope
+				: centreScope == null
+				? ownScope
+				: Specification.where(centreScope).and(ownScope);
+		if (combinedCentreScope == null) {
 			return null;
 		}
-		List<Centre> centres = centreRepository.findAll(centreScope);
+		List<Centre> centres = centreRepository.findAll(combinedCentreScope);
 		Set<Integer> promoteurIds = centres.stream()
 				.map(Centre::getIdPromoteur)
 				.filter(Objects::nonNull)

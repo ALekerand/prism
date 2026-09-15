@@ -22,6 +22,7 @@ public class ControleRequest {
 	private Integer nombreKitManuelsCvc;
 	private Integer nombreKitAutre;
 	private Boolean conformiteProgramme;
+	private String commentaire;
 	private List<HoraireFormationRequest> horairesFormation;
 	private List<KitManuelRequest> kitsManuels;
 

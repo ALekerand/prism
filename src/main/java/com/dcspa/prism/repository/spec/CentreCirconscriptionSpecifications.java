@@ -410,6 +410,39 @@ public final class CentreCirconscriptionSpecifications {
 	}
 
 	public static <T> Specification<T> forCentreBackedStats(Class<T> entityClass, CirconscriptionAttachement att) {
-		return andNullable(forCentreBacked(entityClass, att), centreBackedActifOnly());
+		return andNullable(forEffectifBacked(entityClass, att), effectifCentreActifOnly());
+	}
+
+	/** Effectifs : {@code idCentre} (Alpha/CEC/CP/SIE) puis {@code centre}. */
+	private static <T> Specification<T> forEffectifBacked(Class<T> entityClass, CirconscriptionAttachement att) {
+		if (att == null || att.level() == CirconscriptionLevel.NONE || att.scopeId() == null) {
+			return null;
+		}
+		return switch (att.level()) {
+			case NONE -> null;
+			case IEP -> (root, query, cb) -> cb.equal(
+					root.join("idCentre", JoinType.INNER).join("centre", JoinType.INNER).join("idIep", JoinType.INNER).get("id"),
+					att.scopeId());
+			case DRENA -> (root, query, cb) -> {
+				distinctIfRootQuery(query, entityClass);
+				var iepJoin = root.join("idCentre", JoinType.INNER).join("centre", JoinType.INNER).join("idIep", JoinType.INNER);
+				return cb.equal(iepJoin.join("idDrena", JoinType.INNER).get("id"), att.scopeId());
+			};
+			case REGION -> (root, query, cb) -> {
+				distinctIfRootQuery(query, entityClass);
+				var centreJoin = root.join("idCentre", JoinType.INNER).join("centre", JoinType.INNER);
+				var locJoin = centreJoin.join("idLocalite", JoinType.INNER);
+				var spJoin = locJoin.join("idSousPrefecture", JoinType.INNER);
+				var depJoin = spJoin.join("idDepartement", JoinType.INNER);
+				return cb.equal(depJoin.join("idRegion", JoinType.INNER).get("id"), att.scopeId());
+			};
+		};
+	}
+
+	private static <T> Specification<T> effectifCentreActifOnly() {
+		return (root, query, cb) -> {
+			var centre = root.join("idCentre", JoinType.INNER).join("centre", JoinType.INNER);
+			return cb.or(cb.isNull(centre.get("actif")), cb.isTrue(centre.get("actif")));
+		};
 	}
 }

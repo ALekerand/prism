@@ -51,7 +51,9 @@ public final class CentreTypeListItemMapper {
                 a.getEncadreurNonMena(),
                 a.getEncadrerParMena(),
                 a.getIdPromoteur(),
-                actif == null ? Boolean.TRUE : actif
+                actif == null ? Boolean.TRUE : actif,
+                enregistrePar(a.getCentre()),
+                null
         );
     }
 
@@ -88,7 +90,9 @@ public final class CentreTypeListItemMapper {
                 c.getEncadreurNonMena(),
                 c.getEncadrerParMena(),
                 c.getIdPromoteur(),
-                actif == null ? Boolean.TRUE : actif
+                actif == null ? Boolean.TRUE : actif,
+                enregistrePar(c.getCentre()),
+                null
         );
     }
 
@@ -125,7 +129,9 @@ public final class CentreTypeListItemMapper {
                 c.getEncadreurNonMena(),
                 c.getEncadrerParMena(),
                 c.getIdPromoteur(),
-                actif == null ? Boolean.TRUE : actif
+                actif == null ? Boolean.TRUE : actif,
+                enregistrePar(c.getCentre()),
+                null
         );
     }
 
@@ -162,12 +168,18 @@ public final class CentreTypeListItemMapper {
                 s.getEncadreurNonMena(),
                 s.getEncadrerParMena(),
                 s.getIdPromoteur(),
-                actif == null ? Boolean.TRUE : actif
+                actif == null ? Boolean.TRUE : actif,
+                enregistrePar(s.getCentre()),
+                null
         );
     }
 
     // Mappe un SIE vers le DTO.
     public static CentreTypeListItem fromSie(Sie s) {
         return fromSie(s, actifFromCentre(s.getCentre()));
+    }
+
+    private static String enregistrePar(Centre centre) {
+        return centre == null ? null : centre.getEnregistrePar();
     }
 }

@@ -41,6 +41,7 @@ import com.dcspa.prism.repository.PersonnephysiqueRepository;
 import com.dcspa.prism.repository.PersonnemoraleRepository;
 import com.dcspa.prism.repository.PromoteurRepository;
 import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
+import com.dcspa.prism.repository.spec.CentreListScopeSpecifications;
 import com.dcspa.prism.repository.spec.SimpleCentreTypeSpecifications;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.pagination.PageableUtils;
@@ -78,6 +79,7 @@ public class CpService {
 	private final CpNiveauRepository cpNiveauRepository;
 	private final CirconscriptionResolver circonscriptionResolver;
 	private final CirconscriptionWriteGuard circonscriptionWriteGuard;
+	private final CentreConseillerLabelService centreConseillerLabelService;
 
 	// Charge tous les CP.
 	@Transactional(readOnly = true)
@@ -90,7 +92,7 @@ public class CpService {
 	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, CpListFilter filter, AuthUser authUser) {
 		Pageable p = PageableUtils.cap(pageable);
 		Specification<Cp> spec = combineCpScope(filter, authUser);
-		return cpRepository.findAll(spec, p).map(CentreTypeListItemMapper::fromCp);
+		return centreConseillerLabelService.enrich(cpRepository.findAll(spec, p).map(CentreTypeListItemMapper::fromCp));
 	}
 
 	// Détail par identifiant.
@@ -110,7 +112,9 @@ public class CpService {
 	@Transactional(readOnly = true)
 	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request, AuthUser authUser) {
 		Map<String, String> criteria = request == null ? null : request.getCriteria();
-		Specification<Cp> scope = CentreCirconscriptionSpecifications.forCp(circonscriptionResolver.resolve(authUser));
+		Specification<Cp> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forCp(circonscriptionResolver.resolve(authUser)),
+				authUser);
 		List<Cp> source = scope == null ? cpRepository.findAll() : cpRepository.findAll(scope);
 		return source.stream()
 				.map(this::toDetailedItem)
@@ -187,6 +191,7 @@ public class CpService {
 		centre.setLocalisationCentre(c.getLocalisationCentre());
 		centre.setNomMilieuImplentation(resolveNomMilieuImplentation(c.getIdMilieuImplentation(), localite));
 		CentreSupplementalFields.applyToCentre(centre, c);
+		CentreRegistrationMetadata.applyOnCreate(centre, authUser);
 		Centre savedCentre = centreService.save(centre);
 
 		Cp entity = new Cp();
@@ -283,7 +288,9 @@ public class CpService {
 			effective.setExcludePromu(true);
 		}
 		Specification<Cp> base = SimpleCentreTypeSpecifications.forCp(effective);
-		Specification<Cp> scope = CentreCirconscriptionSpecifications.forCp(circonscriptionResolver.resolve(authUser));
+		Specification<Cp> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forCp(circonscriptionResolver.resolve(authUser)),
+				authUser);
 		if (scope == null) {
 			return base;
 		}
@@ -294,7 +301,9 @@ public class CpService {
 		if (cpId == null) {
 			return false;
 		}
-		Specification<Cp> scope = CentreCirconscriptionSpecifications.forCp(circonscriptionResolver.resolve(user));
+		Specification<Cp> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forCp(circonscriptionResolver.resolve(user)),
+				user);
 		if (scope == null) {
 			return true;
 		}
@@ -353,7 +362,10 @@ public class CpService {
 		item.setNiveaux(cpNiveauRepository.findByIdCentre_Id(cp.getId()).stream()
 				.map(this::toNiveauDetails)
 				.toList());
-		centreRepository.findById(cp.getId()).ifPresent(c -> item.setActif(CentreSupplementalFields.actifForApi(c)));
+		centreRepository.findById(cp.getId()).ifPresent(c -> {
+			item.setActif(CentreSupplementalFields.actifForApi(c));
+			centreConseillerLabelService.fill(item, c);
+		});
 		return item;
 	}
 

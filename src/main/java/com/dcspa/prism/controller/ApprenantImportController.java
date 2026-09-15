@@ -1,5 +1,6 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.config.PlatformBranding;
 import com.dcspa.prism.entity.AnneScolaire;
 import com.dcspa.prism.repository.AnneScolaireRepository;
 import com.dcspa.prism.service.ApprenantImportTemplateService;
@@ -46,7 +47,8 @@ public class ApprenantImportController {
 	public ResponseEntity<byte[]> downloadExcelTemplate() {
 		byte[] bytes = templateService.buildExcelTemplate();
 		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"PRISM_modele_import_apprenants.xlsx\"")
+				.header(HttpHeaders.CONTENT_DISPOSITION,
+						"attachment; filename=\"" + PlatformBranding.IMPORT_TEMPLATE_PREFIX + "_modele_import_apprenants.xlsx\"")
 				.contentType(XLSX)
 				.body(bytes);
 	}
@@ -55,7 +57,8 @@ public class ApprenantImportController {
 	public ResponseEntity<byte[]> downloadCsvTemplate() {
 		byte[] bytes = templateService.buildCsvTemplate();
 		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"PRISM_modele_import_apprenants.csv\"")
+				.header(HttpHeaders.CONTENT_DISPOSITION,
+						"attachment; filename=\"" + PlatformBranding.IMPORT_TEMPLATE_PREFIX + "_modele_import_apprenants.csv\"")
 				.contentType(new MediaType("text", "csv", StandardCharsets.UTF_8))
 				.body(bytes);
 	}

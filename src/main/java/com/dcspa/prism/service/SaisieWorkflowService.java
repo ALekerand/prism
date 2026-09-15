@@ -93,7 +93,8 @@ public class SaisieWorkflowService {
 		}
 		workflow.setStatut(SaisieWorkflowStatus.SOUMIS);
 		workflow.setMotifRejet(null);
-		workflow.setCommentaireRetour(null);
+		// Conserver le commentaire de retour : le validateur suivant doit encore voir pourquoi
+		// la fiche avait été renvoyée. Un nouveau retour / validation / rejet l’écrase.
 		workflow.setSoumisPar(username(user));
 		workflow.setDateSoumission(Instant.now());
 		workflow.setDecidePar(null);
@@ -250,7 +251,7 @@ public class SaisieWorkflowService {
 					workflow.getDecidePar(),
 					workflow.getDateDecision(),
 					workflow.getMotifRejet()));
-		} else if (statut == SaisieWorkflowStatus.RETOURNE) {
+		} else if (statut == SaisieWorkflowStatus.RETOURNE || workflow.getCommentaireRetour() != null) {
 			etapes.add(etape(
 					"RETOUR",
 					"Retourné pour correction",

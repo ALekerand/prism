@@ -15,6 +15,10 @@ public class LoginResponse {
     private final Integer userId;
     private final String username;
     private final String email;
+    private final String nom;
+    private final String prenoms;
+    private final java.time.LocalDate dateNaissance;
+    private final String lieuNaissance;
     private final List<String> roles;
     private final List<String> permissions;
     private final Integer idRegion;

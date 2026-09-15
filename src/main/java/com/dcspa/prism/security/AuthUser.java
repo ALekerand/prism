@@ -102,6 +102,9 @@ public class AuthUser implements UserDetails {
     }
 
     public boolean hasPermission(String fonctionnaliteCode, String permissionCode) {
+        if (hasAnyRole("SUPER_ROOT", "SUPER_ADMIN", "ADMIN")) {
+            return true;
+        }
         String key = fonctionnaliteCode + ":" + permissionCode;
         return permissions.contains(key);
     }

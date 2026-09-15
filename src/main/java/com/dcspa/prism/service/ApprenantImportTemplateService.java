@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import com.dcspa.prism.config.PlatformBranding;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -22,7 +23,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 /**
- * Modèle d'import bulk apprenants (Excel + CSV) aux couleurs PRISM MENA.
+ * Modèle d'import bulk apprenants (Excel + CSV) aux couleurs MENA / {@link PlatformBranding#PLATFORM_NAME}.
  */
 @Service
 public class ApprenantImportTemplateService {
@@ -63,7 +64,7 @@ public class ApprenantImportTemplateService {
 		int r = 0;
 		Row titleRow = sheet.createRow(r++);
 		Cell titleCell = titleRow.createCell(0);
-		titleCell.setCellValue("PRISM MENA — Modèle d'import des apprenants");
+		titleCell.setCellValue(PlatformBranding.PLATFORM_NAME + " MENA — Modèle d'import des apprenants");
 		titleCell.setCellStyle(title);
 		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3));
 
@@ -75,7 +76,7 @@ public class ApprenantImportTemplateService {
 		writeLine(sheet, r++, body, "5. dateNaissance : format AAAA-MM-JJ (ex. 2012-03-15).");
 		writeLine(sheet, r++, tip, "Astuce : vous pouvez aussi exporter/enregistrer en CSV (séparateur ;) pour l'import.");
 		r++;
-		writeLine(sheet, r, tip, "Plateforme PRISM — MENA / DCSPA — Côte d'Ivoire");
+		writeLine(sheet, r, tip, "Plateforme " + PlatformBranding.PLATFORM_NAME + " — MENA / DCSPA — Côte d'Ivoire");
 
 		sheet.setColumnWidth(0, 90 * 256);
 	}

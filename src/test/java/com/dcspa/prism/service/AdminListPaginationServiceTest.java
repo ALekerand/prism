@@ -22,6 +22,7 @@ import com.dcspa.prism.repository.RegionRepository;
 import com.dcspa.prism.repository.SousPrefectureRepository;
 import com.dcspa.prism.repository.CommuneRepository;
 import com.dcspa.prism.repository.StructureFormationCertificationRepository;
+import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -184,5 +185,49 @@ class AdminListPaginationServiceTest {
 
 		assertThat(page.getTotalElements()).isEqualTo(1);
 		assertThat(page.getContent().get(0).getId()).isEqualTo(2);
+	}
+
+	@Test
+	void promoteurServiceFindAllReferentielIsUnscoped() {
+		Promoteur p1 = new Promoteur();
+		p1.setId(1);
+		Promoteur p2 = new Promoteur();
+		p2.setId(2);
+		when(promoteurRepository.findAll()).thenReturn(List.of(p1, p2));
+
+		List<Promoteur> all = promoteurService.findAll();
+
+		assertThat(all).hasSize(2);
+		verify(promoteurRepository).findAll();
+		verify(centreRepository, never()).findAll(any(Specification.class));
+	}
+
+	@Test
+	void promoteurServicePagedListAppliesConseillerScope() {
+		AuthUser conseiller = new AuthUser(
+				1,
+				"commission_1_conseiller_1",
+				"x",
+				true,
+				List.of(),
+				List.of("CONSEILLER"),
+				null,
+				null,
+				10,
+				null,
+				null,
+				null,
+				null);
+		when(circonscriptionResolver.isNationalView(conseiller)).thenReturn(false);
+		when(circonscriptionResolver.resolve(conseiller)).thenReturn(CirconscriptionAttachement.none());
+		when(centreRepository.findAll(any(Specification.class))).thenReturn(Collections.emptyList());
+		when(promoteurRepository.findAll(any(Specification.class), any(Pageable.class)))
+				.thenReturn(new PageImpl<>(Collections.emptyList()));
+
+		Page<Promoteur> page = promoteurService.findAll(null, PageRequest.of(0, 20), conseiller);
+
+		assertThat(page.getContent()).isEmpty();
+		verify(centreRepository).findAll(any(Specification.class));
+		verify(promoteurRepository).findAll(any(Specification.class), any(Pageable.class));
 	}
 }

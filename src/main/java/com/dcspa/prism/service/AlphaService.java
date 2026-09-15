@@ -51,6 +51,7 @@ import com.dcspa.prism.repository.RegimealphabetisationRepository;
 import com.dcspa.prism.repository.TypeAlphaRepository;
 import com.dcspa.prism.repository.spec.AlphaSpecifications;
 import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
+import com.dcspa.prism.repository.spec.CentreListScopeSpecifications;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.pagination.PageableUtils;
 import com.dcspa.prism.support.NumericSanitizer;
@@ -92,6 +93,7 @@ public class AlphaService {
 	private final AlphaNiveauRepository alphaNiveauRepository;
 	private final CirconscriptionResolver circonscriptionResolver;
 	private final CirconscriptionWriteGuard circonscriptionWriteGuard;
+	private final CentreConseillerLabelService centreConseillerLabelService;
 
 	// Charge toutes les entités Alpha depuis la base.
 	@Transactional(readOnly = true)
@@ -104,14 +106,16 @@ public class AlphaService {
 	public Page<CentreTypeListItem> findAllListItems(Pageable pageable, AlphaListFilter filter, AuthUser authUser) {
 		Pageable p = PageableUtils.cap(pageable);
 		AlphaListFilter f = filter == null ? new AlphaListFilter() : filter;
-		Specification<Alpha> scope = CentreCirconscriptionSpecifications.forAlpha(circonscriptionResolver.resolve(authUser));
+		Specification<Alpha> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forAlpha(circonscriptionResolver.resolve(authUser)),
+				authUser);
 		if (f.isEmpty() && scope == null) {
-			return alphaRepository.findAllAsListItems(p);
+			return centreConseillerLabelService.enrich(alphaRepository.findAllAsListItems(p));
 		}
 		Specification<Alpha> combined = scope == null
 				? AlphaSpecifications.fromFilter(f)
 				: Specification.where(scope).and(AlphaSpecifications.fromFilter(f));
-		return alphaRepository.findAll(combined, p).map(CentreTypeListItemMapper::fromAlpha);
+		return centreConseillerLabelService.enrich(alphaRepository.findAll(combined, p).map(CentreTypeListItemMapper::fromAlpha));
 	}
 
 	// Recherche un Alpha par clé primaire.
@@ -131,7 +135,9 @@ public class AlphaService {
 	@Transactional(readOnly = true)
 	public List<CentreWithPromoteurItem> searchDetailed(CentreSearchRequest request, AuthUser authUser) {
 		Map<String, String> criteria = request == null ? null : request.getCriteria();
-		Specification<Alpha> scope = CentreCirconscriptionSpecifications.forAlpha(circonscriptionResolver.resolve(authUser));
+		Specification<Alpha> scope = CentreListScopeSpecifications.combine(
+				CentreCirconscriptionSpecifications.forAlpha(circonscriptionResolver.resolve(authUser)),
+				authUser);
 		List<Alpha> source = scope == null ? alphaRepository.findAll() : alphaRepository.findAll(scope);
 		return source.stream()
 				.map(this::toDetailedItem)
@@ -231,6 +237,7 @@ public class AlphaService {
 		centre.setLocalisationCentre(c.getLocalisationCentre());
 		centre.setNomMilieuImplentation(resolveNomMilieuImplentation(c.getIdMilieuImplentation(), localite));
 		CentreSupplementalFields.applyToCentre(centre, c);
+		CentreRegistrationMetadata.applyOnCreate(centre, authUser);
 		Centre savedCentre = centreService.save(centre);
 
 		Campagne campagne = campagneRepository.findById(Objects.requireNonNull(req.getCampagneId(), "campagneId est obligatoire"))
@@ -412,7 +419,10 @@ public class AlphaService {
 		attachReferences(item, alpha);
 		attachPromoteur(item, alpha.getIdPromoteur());
 		attachAlphaSpecificRefs(item, alpha);
-		centreRepository.findById(alpha.getId()).ifPresent(c -> item.setActif(CentreSupplementalFields.actifForApi(c)));
+		centreRepository.findById(alpha.getId()).ifPresent(c -> {
+			item.setActif(CentreSupplementalFields.actifForApi(c));
+			centreConseillerLabelService.fill(item, c);
+		});
 		item.setNiveaux(alphaNiveauRepository.findByIdCentre_Id(alpha.getId()).stream()
 				.map(this::toNiveauDetails)
 				.toList());

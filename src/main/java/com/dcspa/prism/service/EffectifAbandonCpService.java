@@ -22,7 +22,10 @@ public class EffectifAbandonCpService {
 	public Optional<EffectifAbandonCp> findById(Integer id) { return repository.findById(id); }
 
 	@Transactional
-	public EffectifAbandonCp save(EffectifAbandonCp entity) { return repository.save(entity); }
+	public EffectifAbandonCp save(EffectifAbandonCp entity) {
+		com.dcspa.prism.service.effectif.EffectifEntityCoherence.applyAndValidate(entity);
+		return repository.save(entity);
+	}
 
 	@Transactional
 	public void deleteById(Integer id) { repository.deleteById(id); }

@@ -20,6 +20,7 @@ import com.dcspa.prism.repository.RegionRepository;
 import com.dcspa.prism.repository.SieRepository;
 import com.dcspa.prism.repository.VisiteRepository;
 import com.dcspa.prism.repository.spec.CentreCirconscriptionSpecifications;
+import com.dcspa.prism.repository.spec.CentreListScopeSpecifications;
 import com.dcspa.prism.security.AuthUser;
 import com.dcspa.prism.service.circonscription.CirconscriptionAttachement;
 import com.dcspa.prism.service.circonscription.CirconscriptionLevel;
@@ -56,25 +57,43 @@ public class AdminDashboardService {
 	private final DrenaRepository drenaRepository;
 	private final RegionRepository regionRepository;
 
+	/** Métadonnées de périmètre sans agrégats SQL (login, /me). */
 	@Transactional(readOnly = true)
-	public Map<String, Object> buildSummary(AuthUser user) {
+	public Map<String, Object> buildScopeMeta(AuthUser user) {
 		CirconscriptionAttachement att = circonscriptionResolver.resolve(user);
 		boolean national = att.level() == CirconscriptionLevel.NONE;
-
-		long alphaTotal = count(alphaRepository, CentreCirconscriptionSpecifications.forAlphaStats(att));
-		long cecTotal = count(cecRepository, CentreCirconscriptionSpecifications.forCecStats(att));
-		long cpTotal = count(cpRepository, CentreCirconscriptionSpecifications.forCpStats(att));
-		long sieTotal = count(sieRepository, CentreCirconscriptionSpecifications.forSieStats(att));
-		long centresTotal = count(centreRepository, CentreCirconscriptionSpecifications.forCentreStats(att));
-		long personnelTotal = count(personnelRepository, CentreCirconscriptionSpecifications.forPersonnelStats(att));
-		long visitesTotal = count(visiteRepository, CentreCirconscriptionSpecifications.forVisiteStats(att));
-		long controlesTotal = count(controleRepository, CentreCirconscriptionSpecifications.forControleStats(att));
-		long evaluationsTotal = count(evaluationRepository, CentreCirconscriptionSpecifications.forEvaluationStats(att));
-
 		Map<String, Object> payload = new LinkedHashMap<>();
 		payload.put("scopeMode", national ? "NATIONAL" : att.level().name());
 		payload.put("scopeLabel", resolveScopeLabel(att, national));
 		payload.put("nationalView", national);
+		return payload;
+	}
+
+	@Transactional(readOnly = true)
+	public Map<String, Object> buildSummary(AuthUser user) {
+		CirconscriptionAttachement att = circonscriptionResolver.resolve(user);
+		boolean national = att.level() == CirconscriptionLevel.NONE;
+		Map<String, Object> payload = buildScopeMeta(user);
+
+		long alphaTotal = count(alphaRepository, CentreListScopeSpecifications.andOwnTypedCentres(
+				CentreCirconscriptionSpecifications.forAlphaStats(att), user));
+		long cecTotal = count(cecRepository, CentreListScopeSpecifications.andOwnTypedCentres(
+				CentreCirconscriptionSpecifications.forCecStats(att), user));
+		long cpTotal = count(cpRepository, CentreListScopeSpecifications.andOwnTypedCentres(
+				CentreCirconscriptionSpecifications.forCpStats(att), user));
+		long sieTotal = count(sieRepository, CentreListScopeSpecifications.andOwnTypedCentres(
+				CentreCirconscriptionSpecifications.forSieStats(att), user));
+		long centresTotal = count(centreRepository, CentreListScopeSpecifications.andOwnCentre(
+				CentreCirconscriptionSpecifications.forCentreStats(att), user));
+		long personnelTotal = count(personnelRepository, CentreListScopeSpecifications.andOwnViaIdCentre(
+				CentreCirconscriptionSpecifications.forPersonnelStats(att), user));
+		long visitesTotal = count(visiteRepository, CentreListScopeSpecifications.andOwnViaAlpha(
+				CentreCirconscriptionSpecifications.forVisiteStats(att), user));
+		long controlesTotal = count(controleRepository, CentreListScopeSpecifications.andOwnViaAlpha(
+				CentreCirconscriptionSpecifications.forControleStats(att), user));
+		long evaluationsTotal = count(evaluationRepository, CentreListScopeSpecifications.andOwnViaAlpha(
+				CentreCirconscriptionSpecifications.forEvaluationStats(att), user));
+
 		payload.put("centresTotal", centresTotal);
 		payload.put("alphaTotal", alphaTotal);
 		payload.put("cecTotal", cecTotal);
@@ -88,6 +107,9 @@ public class AdminDashboardService {
 		if (national) {
 			payload.put("usersTotal", appUserRepository.count());
 			payload.put("rolesTotal", appRoleRepository.count());
+		} else if (user != null && user.hasRole("CONSEILLER")) {
+			payload.put("usersTotal", null);
+			payload.put("rolesTotal", null);
 		} else {
 			Specification<com.dcspa.prism.entity.AppUser> userScope = CentreCirconscriptionSpecifications.forAppUser(att);
 			payload.put("usersTotal", userScope == null ? appUserRepository.count() : appUserRepository.count(userScope));

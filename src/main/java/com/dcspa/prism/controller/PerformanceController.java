@@ -1,7 +1,9 @@
 package com.dcspa.prism.controller;
 
+import com.dcspa.prism.controller.support.ActivitesCentreCirconscriptionEnricher;
 import com.dcspa.prism.controller.support.ActivitesCentreSaisieWorkflowGate;
 import com.dcspa.prism.controller.support.ActivitesCentreWorkflow;
+import com.dcspa.prism.controller.support.EffectifSaisieWorkflowSupport;
 import com.dcspa.prism.controller.support.JpaAssociationIds;
 import com.dcspa.prism.controller.support.PermissionGuard;
 import com.dcspa.prism.controller.support.ReferentielEnricher;
@@ -14,6 +16,7 @@ import com.dcspa.prism.repository.PerformanceRepository;
 import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,8 @@ public class PerformanceController {
 	private static final String WORKFLOW_RESOURCE = "/api/performance";
 	private final PerformanceRepository repository;
 	private final ActivitesCentreSaisieWorkflowGate saisieWorkflowGate;
+	private final EffectifSaisieWorkflowSupport saisieWorkflow;
+	private final ActivitesCentreCirconscriptionEnricher circonscriptionEnricher;
 	private final AlphaRepository alphaRepository;
 	private final PeriodeActiviteRepository periodeActiviteRepository;
 
@@ -38,7 +43,8 @@ public class PerformanceController {
 	public ResponseEntity<?> findAll(@AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return ResponseEntity.ok(repository.findAll().stream().map(this::toRow).toList());
+		List<Map<String, Object>> rows = repository.findAll().stream().map(this::toRow).toList();
+		return ResponseEntity.ok(saisieWorkflow.enrichAndFilterList(WORKFLOW_RESOURCE, rows, user));
 	}
 
 	@Transactional(readOnly = true)
@@ -46,7 +52,11 @@ public class PerformanceController {
 	public ResponseEntity<?> findById(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
-		return repository.findById(id).map(this::toRow).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+		return repository.findById(id)
+				.map(this::toRow)
+				.flatMap(row -> saisieWorkflow.enrichAndFilterOne(WORKFLOW_RESOURCE, row, user))
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@DeleteMapping("/{id}")
@@ -60,6 +70,7 @@ public class PerformanceController {
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
 		}
+		saisieWorkflow.purgeOnDelete(WORKFLOW_RESOURCE, id);
 		repository.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
@@ -73,12 +84,13 @@ public class PerformanceController {
 		ResponseEntity<?> denied = PermissionGuard.require(user, FEATURE, "LIRE");
 		if (denied != null) return denied;
 		String t = tauxFrequentationParMois == null ? null : tauxFrequentationParMois.toLowerCase();
-		return ResponseEntity.ok(repository.findAll().stream()
+		return ResponseEntity.ok(saisieWorkflow.enrichAndFilterList(WORKFLOW_RESOURCE,
+				repository.findAll().stream()
 				.filter(x -> idAlpha == null || idAlpha.equals(JpaAssociationIds.intIdOrNull(x.getIdAlpha())))
 				.filter(x -> idPeriodeActivite == null
 						|| idPeriodeActivite.equals(JpaAssociationIds.intIdOrNull(x.getIdPeriodeActivite())))
 				.filter(x -> t == null || (x.getTauxFrequentationParMois() != null && x.getTauxFrequentationParMois().toLowerCase().contains(t)))
-				.map(this::toRow).toList());
+				.map(this::toRow).toList(), user));
 	}
 
 	@Transactional
@@ -90,7 +102,11 @@ public class PerformanceController {
 			Performance e = new Performance();
 			apply(e, body);
 			ActivitesCentreWorkflow.initializeDraft(e);
-			return ResponseEntity.status(201).body(toRow(repository.save(e)));
+			Performance saved = repository.save(e);
+			saisieWorkflow.claimAfterCreate(WORKFLOW_RESOURCE, saved.getId(), FEATURE, user);
+			Map<String, Object> row = toRow(saved);
+			saisieWorkflow.enrichRows(WORKFLOW_RESOURCE, List.of(row), user);
+			return ResponseEntity.status(201).body(row);
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
 		}
@@ -176,6 +192,7 @@ public class PerformanceController {
 	private Map<String, Object> toRow(Performance e) {
 		Map<String, Object> m = new LinkedHashMap<>();
 		m.put("id", e.getId());
+		circonscriptionEnricher.putAlphaCirconscription(m, e.getIdAlpha());
 		ReferentielEnricher.putRef(m, "Alpha", e.getIdAlpha());
 		ReferentielEnricher.putRef(m, "PeriodeActivite", e.getIdPeriodeActivite());
 		m.put("tauxFrequentationParMois", e.getTauxFrequentationParMois());
