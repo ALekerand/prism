@@ -2,6 +2,7 @@ package com.dcspa.prism.controller;
 
 import com.dcspa.prism.dto.SaisieWorkflowDecisionRequest;
 import com.dcspa.prism.security.AuthUser;
+import com.dcspa.prism.service.SaisieWorkflowReturnAlertService;
 import com.dcspa.prism.service.SaisieWorkflowService;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SaisieWorkflowController {
 	private final SaisieWorkflowService service;
+	private final SaisieWorkflowReturnAlertService returnAlertService;
+
+	@Transactional(readOnly = true)
+	@GetMapping("/retours-alertes")
+	public ResponseEntity<Map<String, Object>> returnAlerts(@AuthenticationPrincipal AuthUser user) {
+		return ResponseEntity.ok(returnAlertService.buildAlertPayload(user));
+	}
 
 	@Transactional(readOnly = true)
 	@GetMapping("/statuses")
@@ -38,7 +46,7 @@ public class SaisieWorkflowController {
 		return ResponseEntity.ok(service.statuses(resource, recordIds, user));
 	}
 
-	/** Timeline du cycle de validation courant (snapshot {@code saisie_workflow}). */
+	/** Timeline : journal {@code saisie_workflow_event}, sinon snapshot {@code saisie_workflow}. */
 	@Transactional(readOnly = true)
 	@GetMapping("/historique")
 	public ResponseEntity<Map<String, Object>> historique(

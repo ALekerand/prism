@@ -31,6 +31,19 @@ public interface AppUserRepository extends BaseRepository<AppUser, Integer>, Jpa
     List<AppUser> findByUsernameIn(Collection<String> usernames);
 
     @Query("""
+            select u.prenoms, u.nom, u.username, iep.id
+            from AppUser u
+            join u.idIep iep
+            join u.roles r
+            where r.codeRole = :roleCode
+              and iep.id in :iepIds
+              and (u.actif is null or u.actif = true)
+            """)
+    List<Object[]> findIdentityByRoleAndIepIdIn(
+            @Param("roleCode") String roleCode,
+            @Param("iepIds") Collection<Integer> iepIds);
+
+    @Query("""
             SELECT DISTINCT CONCAT(f.codeFonctionnalite, ':', p.codePermission)
             FROM AppUser u
             JOIN u.roles r

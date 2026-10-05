@@ -56,6 +56,7 @@ public class AdminDashboardService {
 	private final IeppRepository iepRepository;
 	private final DrenaRepository drenaRepository;
 	private final RegionRepository regionRepository;
+	private final SaisieWorkflowReturnAlertService workflowReturnAlertService;
 
 	/** Métadonnées de périmètre sans agrégats SQL (login, /me). */
 	@Transactional(readOnly = true)
@@ -116,6 +117,7 @@ public class AdminDashboardService {
 			payload.put("rolesTotal", null);
 		}
 
+		payload.put("workflowReturns", workflowReturnAlertService.buildAlertPayload(user));
 		return payload;
 	}
 

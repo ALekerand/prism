@@ -64,5 +64,9 @@ public class CentreTypeListItem {
      */
     @lombok.Setter
     private String conseillerNom;
+
+    /** Nom affiché du coordonnateur de l’IEP du centre. */
+    @lombok.Setter
+    private String coordonnateurNom;
 }
 

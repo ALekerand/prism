@@ -1,6 +1,7 @@
 package com.dcspa.prism.repository;
 
 import com.dcspa.prism.entity.SaisieWorkflow;
+import com.dcspa.prism.entity.SaisieWorkflowStatus;
 import com.dcspa.prism.repositorybase.BaseRepository;
 import java.util.Collection;
 import java.util.List;
@@ -10,4 +11,6 @@ public interface SaisieWorkflowRepository extends BaseRepository<SaisieWorkflow,
 	Optional<SaisieWorkflow> findByResourcePathAndRecordId(String resourcePath, Integer recordId);
 
 	List<SaisieWorkflow> findByResourcePathAndRecordIdIn(String resourcePath, Collection<Integer> recordIds);
+
+	List<SaisieWorkflow> findByStatut(SaisieWorkflowStatus statut);
 }

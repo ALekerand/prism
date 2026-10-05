@@ -53,6 +53,7 @@ public final class CentreTypeListItemMapper {
                 a.getIdPromoteur(),
                 actif == null ? Boolean.TRUE : actif,
                 enregistrePar(a.getCentre()),
+                null,
                 null
         );
     }
@@ -92,6 +93,7 @@ public final class CentreTypeListItemMapper {
                 c.getIdPromoteur(),
                 actif == null ? Boolean.TRUE : actif,
                 enregistrePar(c.getCentre()),
+                null,
                 null
         );
     }
@@ -131,6 +133,7 @@ public final class CentreTypeListItemMapper {
                 c.getIdPromoteur(),
                 actif == null ? Boolean.TRUE : actif,
                 enregistrePar(c.getCentre()),
+                null,
                 null
         );
     }
@@ -170,6 +173,7 @@ public final class CentreTypeListItemMapper {
                 s.getIdPromoteur(),
                 actif == null ? Boolean.TRUE : actif,
                 enregistrePar(s.getCentre()),
+                null,
                 null
         );
     }

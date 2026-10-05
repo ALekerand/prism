@@ -21,6 +21,7 @@ import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.repository.TauxEvaluationRepository;
 import com.dcspa.prism.repository.ThemeEvaluationRepository;
 import com.dcspa.prism.security.AuthUser;
+import com.dcspa.prism.service.evaluation.EvaluationThemeComplementRules;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,6 +210,7 @@ public class EvaluationController {
 		if (r.getThemesTaux().isEmpty()) {
 			throw new IllegalArgumentException("Au moins un thème avec taux est obligatoire");
 		}
+		EvaluationThemeComplementRules.applyComplements(r.getThemesTaux(), this::resolveTheme);
 		e.getThemesTaux().clear();
 		ThemeEvaluation firstTheme = null;
 		for (EvaluationRequest.ThemeTauxRequest item : r.getThemesTaux()) {

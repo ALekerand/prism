@@ -2,7 +2,9 @@ package com.dcspa.prism.service;
 
 import com.dcspa.prism.controller.support.PermissionGuard;
 import com.dcspa.prism.entity.SaisieWorkflow;
+import com.dcspa.prism.entity.SaisieWorkflowEvent;
 import com.dcspa.prism.entity.SaisieWorkflowStatus;
+import com.dcspa.prism.repository.SaisieWorkflowEventRepository;
 import com.dcspa.prism.repository.SaisieWorkflowRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.time.Instant;
@@ -24,6 +26,8 @@ public class SaisieWorkflowService {
 	private static final String[] ADMIN_ROLES = { "ADMIN", "SUPER_ADMIN", "SUPER_ROOT" };
 
 	private final SaisieWorkflowRepository repository;
+	private final SaisieWorkflowEventRepository eventRepository;
+	private final CentreConseillerLabelService auteurLabelService;
 
 	@Transactional(readOnly = true)
 	public Map<Integer, Map<String, Object>> statuses(String resourcePath, Collection<Integer> recordIds, AuthUser user) {
@@ -76,8 +80,13 @@ public class SaisieWorkflowService {
 				return badRequest("Impossible de revendiquer une donnée déjà soumise ou validée.");
 			}
 		}
+		boolean firstClaim = workflow.getProprietaire() == null;
 		workflow.setProprietaire(me);
-		return ResponseEntity.ok(toRow(repository.save(workflow), user));
+		SaisieWorkflow saved = repository.save(workflow);
+		if (firstClaim) {
+			appendEvent(saved, "PRISE_EN_CHARGE", "Prise en charge", me, Instant.now(), null);
+		}
+		return ResponseEntity.ok(toRow(saved, user));
 	}
 
 	@Transactional
@@ -88,22 +97,35 @@ public class SaisieWorkflowService {
 		if (!isEditable(workflow, user)) {
 			return badRequest("Soumission impossible : la donnée est déjà engagée dans le circuit de validation.");
 		}
-		if (workflow.getProprietaire() == null && username(user) != null) {
+		boolean firstOwner = workflow.getProprietaire() == null && username(user) != null;
+		boolean wasReturned = workflow.getStatut() == SaisieWorkflowStatus.RETOURNE;
+		String returnComment = workflow.getCommentaireRetour();
+		String returnActeur = workflow.getDecidePar();
+		Instant returnDate = workflow.getDateDecision();
+		if (firstOwner) {
 			workflow.setProprietaire(username(user));
 		}
 		workflow.setStatut(SaisieWorkflowStatus.SOUMIS);
 		workflow.setMotifRejet(null);
-		// Conserver le commentaire de retour : le validateur suivant doit encore voir pourquoi
-		// la fiche avait été renvoyée. Un nouveau retour / validation / rejet l’écrase.
+		// Snapshot : conserver le commentaire pour le badge du validateur suivant.
+		// L’historique durable est le journal d’événements (le commentaire de retour n’y disparaît pas).
 		workflow.setSoumisPar(username(user));
 		workflow.setDateSoumission(Instant.now());
 		workflow.setDecidePar(null);
 		workflow.setDateDecision(null);
-		// Nouveau cycle : réinitialiser les validateurs pour un historique cohérent.
+		// Nouveau cycle : réinitialiser les validateurs du snapshot (badges / paliers).
 		workflow.setValideCoordPar(null);
 		workflow.setValideSupPar(null);
 		workflow.setValideCentralPar(null);
-		return ResponseEntity.ok(toRow(repository.save(workflow), user));
+		SaisieWorkflow saved = repository.save(workflow);
+		if (wasReturned) {
+			appendLegacyReturnIfNeeded(saved, returnComment, returnActeur, returnDate);
+		}
+		if (firstOwner) {
+			appendEvent(saved, "PRISE_EN_CHARGE", "Prise en charge", username(user), Instant.now(), null);
+		}
+		appendEvent(saved, "SOUMISSION", "Soumis pour validation", username(user), saved.getDateSoumission(), null);
+		return ResponseEntity.ok(toRow(saved, user));
 	}
 
 	@Transactional
@@ -116,13 +138,18 @@ public class SaisieWorkflowService {
 		ResponseEntity<?> denied = requireValidator(user, feature, decision.roles);
 		if (denied != null) return denied;
 		String me = username(user);
+		String returnComment = workflow.getCommentaireRetour();
 		workflow.setStatut(decision.nextStatus);
 		workflow.setMotifRejet(null);
 		workflow.setCommentaireRetour(null);
 		workflow.setDecidePar(me);
 		workflow.setDateDecision(Instant.now());
 		recordValidatorStep(workflow, decision.nextStatus, me);
-		return ResponseEntity.ok(toRow(repository.save(workflow), user));
+		SaisieWorkflow saved = repository.save(workflow);
+		appendLegacyReturnIfNeeded(saved, returnComment, null, null);
+		EventSpec spec = validationEvent(decision.nextStatus);
+		appendEvent(saved, spec.action(), spec.libelle(), me, saved.getDateDecision(), null);
+		return ResponseEntity.ok(toRow(saved, user));
 	}
 
 	@Transactional
@@ -139,7 +166,9 @@ public class SaisieWorkflowService {
 		workflow.setCommentaireRetour(null);
 		workflow.setDecidePar(username(user));
 		workflow.setDateDecision(Instant.now());
-		return ResponseEntity.ok(toRow(repository.save(workflow), user));
+		SaisieWorkflow saved = repository.save(workflow);
+		appendEvent(saved, "REJET", "Rejeté", username(user), saved.getDateDecision(), saved.getMotifRejet());
+		return ResponseEntity.ok(toRow(saved, user));
 	}
 
 	@Transactional
@@ -152,7 +181,15 @@ public class SaisieWorkflowService {
 		workflow.setCommentaireRetour(clean(commentaire));
 		workflow.setDecidePar(username(user));
 		workflow.setDateDecision(Instant.now());
-		return ResponseEntity.ok(toRow(repository.save(workflow), user));
+		SaisieWorkflow saved = repository.save(workflow);
+		appendEvent(
+				saved,
+				"RETOUR",
+				"Retourné pour correction",
+				username(user),
+				saved.getDateDecision(),
+				saved.getCommentaireRetour());
+		return ResponseEntity.ok(toRow(saved, user));
 	}
 
 	public Map<String, Object> toRow(SaisieWorkflow workflow) {
@@ -179,12 +216,13 @@ public class SaisieWorkflowService {
 			row.put("workflowOnglet", tab.name());
 			row.put("workflowOngletLibelle", SaisieWorkflowQueueTabResolver.tabLabel(tab, user));
 		}
+		auteurLabelService.enrichWorkflowValidatorLabels(row);
 		return row;
 	}
 
 	/**
-	 * Timeline du cycle courant dérivée du snapshot {@link SaisieWorkflow}
-	 * (soumission + validations progressives + rejet/retour éventuel).
+	 * Timeline : journal d’événements s’il existe, sinon snapshot {@link SaisieWorkflow}
+	 * (fiches antérieures à {@code saisie_workflow_event}).
 	 */
 	@Transactional(readOnly = true)
 	public Map<String, Object> historique(String resourcePath, Integer recordId, AuthUser user) {
@@ -206,6 +244,20 @@ public class SaisieWorkflowService {
 	}
 
 	private List<Map<String, Object>> buildHistoriqueEtapes(SaisieWorkflow workflow) {
+		if (workflow.getId() != null) {
+			List<SaisieWorkflowEvent> events = eventRepository.findByIdSaisieWorkflowOrderByIdAsc(workflow.getId());
+			if (!events.isEmpty()) {
+				return events.stream().map(this::toEtape).toList();
+			}
+		}
+		return buildHistoriqueEtapesFromSnapshot(workflow);
+	}
+
+	private Map<String, Object> toEtape(SaisieWorkflowEvent event) {
+		return etape(event.getAction(), event.getLibelle(), event.getActeur(), event.getDateEtape(), event.getDetail());
+	}
+
+	private List<Map<String, Object>> buildHistoriqueEtapesFromSnapshot(SaisieWorkflow workflow) {
 		List<Map<String, Object>> etapes = new java.util.ArrayList<>();
 		SaisieWorkflowStatus statut = workflow.getStatut();
 
@@ -291,6 +343,45 @@ public class SaisieWorkflowService {
 			case VALIDEE_CENTRALE -> workflow.setValideCentralPar(username);
 			default -> { /* rien */ }
 		}
+	}
+
+	private EventSpec validationEvent(SaisieWorkflowStatus nextStatus) {
+		return switch (nextStatus) {
+			case VALIDEE_COORDONNATEUR -> new EventSpec("VALIDATION_COORDONNATEUR", "Validé par le coordonnateur");
+			case VALIDEE_SUPERVISEUR -> new EventSpec("VALIDATION_SUPERVISEUR", "Validé par le superviseur");
+			case VALIDEE_CENTRALE -> new EventSpec("VALIDATION_CENTRALE", "Validé au niveau central");
+			default -> new EventSpec(nextStatus.name(), label(nextStatus));
+		};
+	}
+
+	private void appendLegacyReturnIfNeeded(SaisieWorkflow workflow, String comment, String acteur, Instant date) {
+		if (comment == null || hasEvent(workflow.getId(), "RETOUR")) {
+			return;
+		}
+		appendEvent(workflow, "RETOUR", "Retourné pour correction", acteur, date, comment);
+	}
+
+	private boolean hasEvent(Integer workflowId, String action) {
+		if (workflowId == null || action == null) {
+			return false;
+		}
+		return eventRepository.findByIdSaisieWorkflowOrderByIdAsc(workflowId).stream()
+				.anyMatch(event -> action.equals(event.getAction()));
+	}
+
+	private void appendEvent(
+			SaisieWorkflow workflow, String action, String libelle, String acteur, Instant date, String detail) {
+		if (workflow == null || workflow.getId() == null) {
+			return;
+		}
+		SaisieWorkflowEvent event = new SaisieWorkflowEvent();
+		event.setIdSaisieWorkflow(workflow.getId());
+		event.setAction(action);
+		event.setLibelle(libelle);
+		event.setActeur(acteur);
+		event.setDateEtape(date);
+		event.setDetail(detail);
+		eventRepository.save(event);
 	}
 
 	private SaisieWorkflow getOrCreate(String resourcePath, Integer recordId) {
@@ -424,6 +515,9 @@ public class SaisieWorkflowService {
 	}
 
 	private record RoleDecision(SaisieWorkflowStatus nextStatus, String[] roles) {
+	}
+
+	private record EventSpec(String action, String libelle) {
 	}
 
 	private ResponseEntity<?> badRequest(String message) {

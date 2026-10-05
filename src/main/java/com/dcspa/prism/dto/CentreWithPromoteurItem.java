@@ -51,6 +51,9 @@ public class CentreWithPromoteurItem {
     /** Nom affiché du conseiller (prénoms + nom), ou le login. */
     private String conseillerNom;
 
+    /** Nom affiché du coordonnateur de l’IEP du centre. */
+    private String coordonnateurNom;
+
     /** Détail CEC : école tutrice (autres types : {@code null}). */
     private String ecoleTutrice;
 

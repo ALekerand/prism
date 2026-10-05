@@ -12,6 +12,7 @@ import com.dcspa.prism.repository.AlphaRepository;
 import com.dcspa.prism.repository.NiveauAlphaRepository;
 import com.dcspa.prism.repository.PeriodeActiviteRepository;
 import com.dcspa.prism.repository.VisiteRepository;
+import com.dcspa.prism.service.CentreConseillerLabelService;
 import com.dcspa.prism.service.SaisieWorkflowService;
 import com.dcspa.prism.service.VisiteWorkflowListRules;
 import com.dcspa.prism.security.AuthUser;
@@ -39,16 +40,19 @@ public class VisiteController {
 	private final NiveauAlphaRepository niveauAlphaRepository;
 	private final SaisieWorkflowService saisieWorkflowService;
 	private final ActivitesCentreCirconscriptionEnricher circonscriptionEnricher;
+	private final CentreConseillerLabelService auteurLabelService;
 
 	@Transactional(readOnly = true)
 	@GetMapping
 	public ResponseEntity<List<Map<String, Object>>> findAll(@AuthenticationPrincipal AuthUser user) {
 		List<Visite> all = repository.findAll();
 		Map<Integer, Map<String, Object>> workflowById = workflowStatusesFor(all, user);
-		return ResponseEntity.ok(all.stream()
+		List<Map<String, Object>> rows = all.stream()
 				.filter(v -> isVisiteVisibleForUser(v, workflowById, user))
-				.map(this::toRow)
-				.toList());
+				.map(v -> mergeWorkflow(toRow(v), v.getId(), workflowById))
+				.toList();
+		auteurLabelService.enrichMaps(rows);
+		return ResponseEntity.ok(rows);
 	}
 
 	@Transactional(readOnly = true)
@@ -56,7 +60,12 @@ public class VisiteController {
 	public ResponseEntity<Map<String, Object>> findById(@PathVariable Integer id, @AuthenticationPrincipal AuthUser user) {
 		return repository.findById(id)
 				.filter(v -> isVisiteVisibleForUser(v, workflowStatusesFor(List.of(v), user), user))
-				.map(this::toRow)
+				.map(v -> {
+					Map<Integer, Map<String, Object>> workflowById = workflowStatusesFor(List.of(v), user);
+					Map<String, Object> row = mergeWorkflow(toRow(v), v.getId(), workflowById);
+					auteurLabelService.enrichMaps(List.of(row));
+					return row;
+				})
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
 	}
@@ -264,6 +273,17 @@ public class VisiteController {
 
 	private boolean changed(Object current, Object incoming) {
 		return !java.util.Objects.equals(current, incoming);
+	}
+
+	private Map<String, Object> mergeWorkflow(
+			Map<String, Object> row, Integer id, Map<Integer, Map<String, Object>> workflowById) {
+		if (id != null && workflowById != null) {
+			Map<String, Object> workflow = workflowById.get(id);
+			if (workflow != null) {
+				row.putAll(workflow);
+			}
+		}
+		return row;
 	}
 
 	private Map<Integer, Map<String, Object>> workflowStatusesFor(List<Visite> visites, AuthUser user) {

@@ -2,6 +2,7 @@ package com.dcspa.prism.controller.support;
 
 import com.dcspa.prism.repository.SaisieWorkflowRepository;
 import com.dcspa.prism.security.AuthUser;
+import com.dcspa.prism.service.CentreConseillerLabelService;
 import com.dcspa.prism.service.SaisieWorkflowService;
 import com.dcspa.prism.service.SaisieWorkflowVisibilityRules;
 import java.util.List;
@@ -21,6 +22,7 @@ public class EffectifSaisieWorkflowSupport {
 
 	private final SaisieWorkflowService workflowService;
 	private final SaisieWorkflowRepository workflowRepository;
+	private final CentreConseillerLabelService auteurLabelService;
 
 	public List<Map<String, Object>> enrichAndFilterList(
 			String resourcePath, List<Map<String, Object>> rows, AuthUser user) {
@@ -49,16 +51,16 @@ public class EffectifSaisieWorkflowSupport {
 				.filter(Integer.class::isInstance)
 				.map(Integer.class::cast)
 				.toList();
-		if (ids.isEmpty()) {
-			return;
-		}
-		Map<Integer, Map<String, Object>> statuses = workflowService.statuses(resourcePath, ids, user);
-		for (Map<String, Object> row : rows) {
-			Object idObj = row.get("id");
-			if (idObj instanceof Integer id && statuses.containsKey(id)) {
-				row.putAll(statuses.get(id));
+		if (!ids.isEmpty()) {
+			Map<Integer, Map<String, Object>> statuses = workflowService.statuses(resourcePath, ids, user);
+			for (Map<String, Object> row : rows) {
+				Object idObj = row.get("id");
+				if (idObj instanceof Integer id && statuses.containsKey(id)) {
+					row.putAll(statuses.get(id));
+				}
 			}
 		}
+		auteurLabelService.enrichMaps(rows);
 	}
 
 	public void claimAfterCreate(String resourcePath, Integer recordId, AuthUser user) {

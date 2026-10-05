@@ -53,6 +53,14 @@ class SaisieWorkflowQueueTabResolverTest {
 		assertEquals(SaisieWorkflowListTab.RENVOYE, SaisieWorkflowQueueTabResolver.resolve(w, user));
 	}
 
+	@Test
+	void validateur_qui_retourne_voit_traite() {
+		SaisieWorkflow w = workflow(SaisieWorkflowStatus.RETOURNE, "c1", "c1");
+		w.setDecidePar("sup");
+		AuthUser user = user("sup", "SUPERVISEUR");
+		assertEquals(SaisieWorkflowListTab.TERMINE, SaisieWorkflowQueueTabResolver.resolve(w, user));
+	}
+
 	private static SaisieWorkflow workflow(SaisieWorkflowStatus statut, String prop, String soumis) {
 		SaisieWorkflow w = new SaisieWorkflow();
 		w.setStatut(statut);

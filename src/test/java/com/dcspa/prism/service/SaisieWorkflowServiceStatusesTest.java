@@ -1,7 +1,9 @@
 package com.dcspa.prism.service;
 
 import com.dcspa.prism.entity.SaisieWorkflow;
+import com.dcspa.prism.entity.SaisieWorkflowEvent;
 import com.dcspa.prism.entity.SaisieWorkflowStatus;
+import com.dcspa.prism.repository.SaisieWorkflowEventRepository;
 import com.dcspa.prism.repository.SaisieWorkflowRepository;
 import com.dcspa.prism.security.AuthUser;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -24,6 +27,12 @@ class SaisieWorkflowServiceStatusesTest {
 
 	@Mock
 	private SaisieWorkflowRepository repository;
+
+	@Mock
+	private SaisieWorkflowEventRepository eventRepository;
+
+	@Mock
+	private CentreConseillerLabelService auteurLabelService;
 
 	@InjectMocks
 	private SaisieWorkflowService service;
@@ -119,5 +128,79 @@ class SaisieWorkflowServiceStatusesTest {
 		assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
 		assertThat(workflow.getStatut()).isEqualTo(SaisieWorkflowStatus.SOUMIS);
 		assertThat(workflow.getCommentaireRetour()).isEqualTo("Corriger les totaux H/F");
+	}
+
+	@Test
+	void historiqueKeepsReturnCommentAfterCorrectionAndValidation() {
+		AuthUser conseiller = new AuthUser(
+				3,
+				"commission_1_conseiller_2",
+				"x",
+				true,
+				List.of("SAISIE_DONNEES:MODIFIER"),
+				List.of("CONSEILLER"),
+				null,
+				null,
+				1,
+				null,
+				null,
+				null,
+				null);
+		AuthUser coordonnateur = new AuthUser(
+				4,
+				"iep_coordonnateur",
+				"x",
+				true,
+				List.of("SAISIE_DONNEES:VALIDER"),
+				List.of("COORDONNATEUR"),
+				null,
+				null,
+				1,
+				null,
+				null,
+				null,
+				null);
+		SaisieWorkflow workflow = new SaisieWorkflow();
+		workflow.setId(7);
+		workflow.setResourcePath("/api/effectif-alpha");
+		workflow.setRecordId(1);
+		workflow.setStatut(SaisieWorkflowStatus.SOUMIS);
+		workflow.setProprietaire("commission_1_conseiller_2");
+		workflow.setSoumisPar("commission_1_conseiller_2");
+		when(repository.findByResourcePathAndRecordId(eq("/api/effectif-alpha"), eq(1)))
+				.thenReturn(Optional.of(workflow));
+		when(repository.save(any(SaisieWorkflow.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		java.util.List<SaisieWorkflowEvent> stored = new java.util.ArrayList<>();
+		when(eventRepository.save(any(SaisieWorkflowEvent.class))).thenAnswer(invocation -> {
+			stored.add(invocation.getArgument(0));
+			return invocation.getArgument(0);
+		});
+		when(eventRepository.findByIdSaisieWorkflowOrderByIdAsc(eq(7))).thenAnswer(invocation -> List.copyOf(stored));
+
+		assertThat(service.returnForCorrection(
+						"/api/effectif-alpha", 1, "SAISIE_DONNEES", coordonnateur, "Corriger les totaux H/F")
+				.getStatusCode()
+				.is2xxSuccessful())
+				.isTrue();
+		assertThat(service.submit("/api/effectif-alpha", 1, "SAISIE_DONNEES", conseiller)
+				.getStatusCode()
+				.is2xxSuccessful())
+				.isTrue();
+		assertThat(workflow.getCommentaireRetour()).isEqualTo("Corriger les totaux H/F");
+		assertThat(service.validate("/api/effectif-alpha", 1, "SAISIE_DONNEES", coordonnateur)
+				.getStatusCode()
+				.is2xxSuccessful())
+				.isTrue();
+		assertThat(workflow.getCommentaireRetour()).isNull();
+
+		Map<String, Object> hist = service.historique("/api/effectif-alpha", 1, coordonnateur);
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> etapes = (List<Map<String, Object>>) hist.get("etapes");
+		assertThat(etapes)
+				.anySatisfy(etape -> {
+					assertThat(etape.get("action")).isEqualTo("RETOUR");
+					assertThat(etape.get("detail")).isEqualTo("Corriger les totaux H/F");
+				})
+				.anySatisfy(etape -> assertThat(etape.get("action")).isEqualTo("VALIDATION_COORDONNATEUR"));
 	}
 }
