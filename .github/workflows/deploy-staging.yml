@@ -1,0 +1,60 @@
+# Déploiement API PRISM (prism.war) → Tomcat /prism.
+# Secrets : VPS_HOST, VPS_USER, VPS_SSH_PRIVATE_KEY (port SSH 90).
+name: Deploy PRISM backend (VPS)
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-prism-backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build WAR
+        run: ./mvnw -q clean package -DskipTests
+
+      - name: Copy WAR to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: 90
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          source: target/prism.war
+          target: /tmp/prism-backend
+
+      - name: Install WAR & restart Tomcat
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          port: 90
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          script: |
+            set -euo pipefail
+            TOMCAT="${TOMCAT_WEBAPPS:-/opt/tomcat/webapps}"
+            WAR="/tmp/prism-backend/target/prism.war"
+            if [ ! -f "$WAR" ]; then WAR="/tmp/prism-backend/prism.war"; fi
+            if [ ! -f "$WAR" ]; then ls -laR /tmp/prism-backend; exit 1; fi
+            sudo rm -rf "${TOMCAT}/prism" || true
+            sudo cp "$WAR" "${TOMCAT}/prism.war"
+            if systemctl list-unit-files 2>/dev/null | grep -q '^tomcat9\.service'; then
+              sudo systemctl restart tomcat9
+            elif systemctl list-unit-files 2>/dev/null | grep -q '^tomcat\.service'; then
+              sudo systemctl restart tomcat
+            fi
+            rm -rf /tmp/prism-backend
+            echo "PRISM backend deploy OK"
