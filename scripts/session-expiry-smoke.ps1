@@ -1,6 +1,6 @@
 # Smoke : jeton invalide → HTTP 401 (pas 403) sur une API protégée.
 param(
-  [string]$BaseUrl = 'http://154.0.30.233:91/prism'
+  [string]$BaseUrl = 'http://154.0.30.233:91/dcspa'
 )
 
 $ErrorActionPreference = 'Stop'
