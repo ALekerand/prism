@@ -154,20 +154,37 @@ public class SaisieWorkflowReturnAlertService {
 	}
 
 	static String resourceLabel(String resourcePath) {
-		if (resourcePath == null) {
+		if (resourcePath == null || resourcePath.isBlank()) {
 			return "Saisie";
 		}
-		return switch (resourcePath) {
-			case "/api/controle" -> "Contrôle";
+		String path = resourcePath.trim();
+		return switch (path) {
+			case "/api/controle" -> "Contrôle de centre";
 			case "/api/evaluation" -> "Évaluation périodique";
-			case "/api/visite" -> "Visite";
+			case "/api/visite" -> "Visite conseiller";
 			case "/api/performance" -> "Performance";
-			default -> {
-				if (resourcePath.startsWith("/api/effectif")) {
-					yield "Effectif";
-				}
-				yield "Saisie";
-			}
+			case "/api/effectif-alpha" -> "Effectif scolarisé (Alpha)";
+			case "/api/effectif-abandon-alpha" -> "Effectif abandon (Alpha)";
+			case "/api/effectif-passage-alpha" -> "Effectif passage (Alpha)";
+			case "/api/effectif-situation-handicap-alpha" -> "Effectif handicap (Alpha)";
+			case "/api/effectif-cp" -> "Effectif scolarisé (CP)";
+			case "/api/effectif-abandon-cp" -> "Effectif abandon (CP)";
+			case "/api/effectif-cepe-cp" -> "Effectif CEPE (CP)";
+			case "/api/effectif-promu-cp" -> "Effectif promu (CP)";
+			case "/api/effectif-admis-integration-cp" -> "Effectif admis intégration (CP)";
+			case "/api/effectif-integration-formel-cp" -> "Effectif intégration formel (CP)";
+			case "/api/effectif-situation-handicap-cp" -> "Effectif handicap (CP)";
+			case "/api/effectif-cec" -> "Effectif scolarisé (CEC)";
+			case "/api/effectif-abandon-cec" -> "Effectif abandon (CEC)";
+			case "/api/effectif-cepe-cec" -> "Effectif CEPE (CEC)";
+			case "/api/effectif-promu-cec" -> "Effectif promu (CEC)";
+			case "/api/effectif-situation-handicap-cec" -> "Effectif handicap (CEC)";
+			case "/api/effectif-sie" -> "Effectif scolarisé (SIE)";
+			case "/api/effectif-abondan-sie" -> "Effectif abandon (SIE)";
+			case "/api/effectif-promu-sie" -> "Effectif promu (SIE)";
+			case "/api/effectif-reverse-formel-sie" -> "Effectif reverse formel (SIE)";
+			case "/api/effectif-situation-handicap-sie" -> "Effectif handicap (SIE)";
+			default -> path.startsWith("/api/effectif") ? "Effectif" : "Saisie";
 		};
 	}
 
