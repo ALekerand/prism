@@ -53,6 +53,7 @@ class AuthServiceProfileTest {
     @Test
     void changeOwnPasswordEncodesAndInvalidatesCache() {
         AppUser user = user("admin", "hash");
+        user.setMustChangePassword(true);
         AuthUser principal = principal("admin");
         when(appUserRepository.findByUsername("admin")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("oldpass1", "hash")).thenReturn(true);
@@ -62,6 +63,7 @@ class AuthServiceProfileTest {
         authService.changeOwnPassword(principal, "oldpass1", "newpass12");
 
         assertEquals("newhash", user.getPasswordHash());
+        assertEquals(Boolean.FALSE, user.getMustChangePassword());
         verify(appUserRepository).save(user);
         verify(authUserCache).invalidate("admin");
     }

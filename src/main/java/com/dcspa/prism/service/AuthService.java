@@ -112,6 +112,7 @@ public class AuthService implements UserDetailsService {
                 .nationalView(Boolean.TRUE.equals(scope.get("nationalView")))
                 .scopeMode(String.valueOf(scope.getOrDefault("scopeMode", "NATIONAL")))
                 .scopeLabel(String.valueOf(scope.getOrDefault("scopeLabel", "Vue nationale")))
+                .mustChangePassword(Boolean.TRUE.equals(user.getMustChangePassword()))
                 .build();
     }
 
@@ -146,6 +147,9 @@ public class AuthService implements UserDetailsService {
         payload.put("nationalView", scope.get("nationalView"));
         payload.put("scopeMode", scope.get("scopeMode"));
         payload.put("scopeLabel", scope.get("scopeLabel"));
+        payload.put(
+                "mustChangePassword",
+                appUser != null && Boolean.TRUE.equals(appUser.getMustChangePassword()));
         return payload;
     }
 
@@ -184,6 +188,7 @@ public class AuthService implements UserDetailsService {
             throw new IllegalArgumentException("Le nouveau mot de passe doit être différent de l'actuel.");
         }
         user.setPasswordHash(passwordEncoder.encode(newPassword));
+        user.setMustChangePassword(false);
         appUserRepository.save(user);
         authUserCache.invalidate(user.getUsername());
     }

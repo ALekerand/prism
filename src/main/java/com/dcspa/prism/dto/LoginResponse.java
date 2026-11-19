@@ -38,5 +38,7 @@ public class LoginResponse {
     private final Boolean nationalView;
     private final String scopeMode;
     private final String scopeLabel;
+    /** true : l’utilisateur doit changer son mot de passe avant d’utiliser l’application. */
+    private final Boolean mustChangePassword;
 }
 

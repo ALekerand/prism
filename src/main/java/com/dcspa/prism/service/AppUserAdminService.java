@@ -124,6 +124,7 @@ public class AppUserAdminService {
         assertUserVisible(user, authUser);
         PasswordRules.requireNewPassword(newPassword);
         user.setPasswordHash(passwordEncoder.encode(newPassword));
+        user.setMustChangePassword(true);
         appUserRepository.save(user);
         authUserCache.invalidate(user.getUsername());
     }
@@ -146,6 +147,7 @@ public class AppUserAdminService {
         u.setRoles(roles);
         applyScope(u, request);
         applyIdentity(u, request);
+        u.setMustChangePassword(true);
         validateScopeForRoles(roles, u);
         assertUpsertWithinViewerScope(u, authUser);
         return toDto(appUserRepository.save(u));

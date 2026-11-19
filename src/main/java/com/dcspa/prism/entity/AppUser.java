@@ -84,6 +84,9 @@ public class AppUser {
     @Column(name = "DATE_DEPART_RETRAITE")
     private java.time.LocalDate dateDepartRetraite;
 
+    @Column(name = "MUST_CHANGE_PASSWORD")
+    private Boolean mustChangePassword;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_role",
