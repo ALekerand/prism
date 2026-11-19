@@ -15,6 +15,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -53,6 +56,18 @@ public class SecurityConfig {
 						.requestMatchers("/v3/api-docs", "/v3/api-docs/**").permitAll()
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
 						.anyRequest().authenticated())
+				.exceptionHandling(exceptions -> exceptions
+						.authenticationEntryPoint((request, response, authException) -> response
+								.setStatus(HttpServletResponse.SC_UNAUTHORIZED))
+						.accessDeniedHandler((request, response, accessDeniedException) -> {
+							var authentication = SecurityContextHolder.getContext().getAuthentication();
+							boolean anonymous = authentication == null
+									|| !authentication.isAuthenticated()
+									|| authentication instanceof AnonymousAuthenticationToken;
+							response.setStatus(anonymous
+									? HttpServletResponse.SC_UNAUTHORIZED
+									: HttpServletResponse.SC_FORBIDDEN);
+						}))
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 				.addFilterAfter(saisieWorkflowEditGuardFilter, JwtAuthFilter.class)
 				.build();
