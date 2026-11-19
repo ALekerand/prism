@@ -30,6 +30,7 @@ public class SaisieWorkflowReturnAlertService {
 
 	private final SaisieWorkflowRepository workflowRepository;
 	private final SaisieWorkflowRecordScopeService recordScopeService;
+	private final SaisieWorkflowRecordCaptionService recordCaptionService;
 	private final AppUserRepository appUserRepository;
 
 	@Transactional(readOnly = true)
@@ -47,11 +48,14 @@ public class SaisieWorkflowReturnAlertService {
 	}
 
 	private boolean shouldExposeAlerts(AuthUser user) {
+		if (user == null) {
+			return false;
+		}
 		if (user.hasRole("CONSEILLER") && !user.hasAnyRole("COORDONNATEUR", "IEPP", "SUPERVISEUR", "SUPERVISEUR_AENF",
 				"DIRECTEUR", "ADMIN", "SUPER_ADMIN", "SUPER_ROOT")) {
 			return true;
 		}
-		return user.hasRole("COORDONNATEUR") || user.hasRole("IEPP");
+		return user.hasAnyRole("COORDONNATEUR", "IEPP", "SUPERVISEUR", "SUPERVISEUR_AENF", "DIRECTEUR");
 	}
 
 	private List<Map<String, Object>> collectItems(AuthUser user) {
@@ -63,11 +67,16 @@ public class SaisieWorkflowReturnAlertService {
 		Map<String, List<SaisieWorkflow>> byResource = returned.stream()
 				.collect(Collectors.groupingBy(SaisieWorkflow::getResourcePath));
 		Map<String, WorkflowRecordScope> scopeByKey = new HashMap<>();
+		Map<String, String> captionByKey = new HashMap<>();
 		for (Map.Entry<String, List<SaisieWorkflow>> entry : byResource.entrySet()) {
 			List<Integer> ids = entry.getValue().stream().map(SaisieWorkflow::getRecordId).toList();
 			Map<Integer, WorkflowRecordScope> scopes = recordScopeService.resolveScopes(entry.getKey(), ids);
 			for (Map.Entry<Integer, WorkflowRecordScope> scopeEntry : scopes.entrySet()) {
 				scopeByKey.put(scopeKey(entry.getKey(), scopeEntry.getKey()), scopeEntry.getValue());
+			}
+			Map<Integer, String> captions = recordCaptionService.resolveCaptions(entry.getKey(), ids);
+			for (Map.Entry<Integer, String> cap : captions.entrySet()) {
+				captionByKey.put(scopeKey(entry.getKey(), cap.getKey()), cap.getValue());
 			}
 		}
 
@@ -80,7 +89,8 @@ public class SaisieWorkflowReturnAlertService {
 			if (!visibleInScope(user, workflow, scope)) {
 				continue;
 			}
-			items.add(toItem(workflow));
+			String capKey = scopeKey(workflow.getResourcePath(), workflow.getRecordId());
+			items.add(toItem(workflow, captionByKey.get(capKey)));
 		}
 		items.sort(Comparator.comparing(
 				(Map<String, Object> row) -> (Instant) row.get("dateDecision"),
@@ -101,6 +111,9 @@ public class SaisieWorkflowReturnAlertService {
 			boolean superior = decidePar != null && superiorLogins.contains(decidePar);
 			return SaisieWorkflowReturnNotificationRules.notifyCoordonnateur(workflow, user)
 					&& superior;
+		}
+		if (user.hasAnyRole("SUPERVISEUR", "SUPERVISEUR_AENF", "DIRECTEUR")) {
+			return SaisieWorkflowReturnNotificationRules.shouldNotify(user, workflow);
 		}
 		return false;
 	}
@@ -141,10 +154,11 @@ public class SaisieWorkflowReturnAlertService {
 		return out;
 	}
 
-	private Map<String, Object> toItem(SaisieWorkflow workflow) {
+	private Map<String, Object> toItem(SaisieWorkflow workflow, String recordCaption) {
 		Map<String, Object> item = new LinkedHashMap<>();
 		item.put("resourcePath", workflow.getResourcePath());
 		item.put("resourceLabel", resourceLabel(workflow.getResourcePath()));
+		item.put("recordCaption", recordCaption);
 		item.put("recordId", workflow.getRecordId());
 		item.put("commentaire", workflow.getCommentaireRetour());
 		item.put("decidePar", workflow.getDecidePar());

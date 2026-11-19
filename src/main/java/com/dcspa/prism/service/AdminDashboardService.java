@@ -57,6 +57,7 @@ public class AdminDashboardService {
 	private final DrenaRepository drenaRepository;
 	private final RegionRepository regionRepository;
 	private final SaisieWorkflowReturnAlertService workflowReturnAlertService;
+	private final SaisieWorkflowPendingAlertService workflowPendingAlertService;
 
 	/** Métadonnées de périmètre sans agrégats SQL (login, /me). */
 	@Transactional(readOnly = true)
@@ -118,6 +119,7 @@ public class AdminDashboardService {
 		}
 
 		payload.put("workflowReturns", workflowReturnAlertService.buildAlertPayload(user));
+		payload.put("workflowPending", workflowPendingAlertService.buildAlertPayload(user));
 		return payload;
 	}
 

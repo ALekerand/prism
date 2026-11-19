@@ -173,6 +173,7 @@ public class AppUserAdminService {
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             PasswordRules.requireNewPassword(request.getPassword());
             u.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+            u.setMustChangePassword(true);
             authUserCache.invalidate(u.getUsername());
         }
 

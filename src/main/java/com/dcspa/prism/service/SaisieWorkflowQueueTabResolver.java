@@ -66,14 +66,17 @@ public final class SaisieWorkflowQueueTabResolver {
 
 	private static SaisieWorkflowListTab resolveValidatorTab(SaisieWorkflow workflow, AuthUser user) {
 		String me = username(user);
+		if (workflow.getStatut() == SaisieWorkflowStatus.RETOURNE) {
+			if (me != null && Objects.equals(me, workflow.getDecidePar())) {
+				return SaisieWorkflowListTab.TERMINE;
+			}
+			return SaisieWorkflowListTab.RENVOYE;
+		}
 		if (iValidatedAtMyLevel(workflow, me, user)) {
 			return SaisieWorkflowListTab.TERMINE;
 		}
 		if (canValidateNow(workflow, user)) {
 			return SaisieWorkflowListTab.ACTION;
-		}
-		if (workflow.getStatut() == SaisieWorkflowStatus.RETOURNE) {
-			return SaisieWorkflowListTab.RENVOYE;
 		}
 		if (workflow.getStatut() == SaisieWorkflowStatus.BROUILLON) {
 			return SaisieWorkflowListTab.EN_COURS;

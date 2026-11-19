@@ -26,10 +26,10 @@ class SaisieWorkflowReturnNotificationRulesTest {
 	}
 
 	@Test
-	void coordNonNotifieQuandSuperieurRenvoieAuConseillerApresValidationCoord() {
+	void coordNotifieQuandSuperieurRenvoieApresValidationCoord() {
 		SaisieWorkflow w = workflow(SaisieWorkflowStatus.RETOURNE, "cons1", "cons1", "sup1", "coord");
 		AuthUser user = user("coord", "COORDONNATEUR");
-		assertFalse(SaisieWorkflowReturnNotificationRules.shouldNotifyCoordonnateur(w, user, true));
+		assertTrue(SaisieWorkflowReturnNotificationRules.shouldNotifyCoordonnateur(w, user, true));
 	}
 
 	@Test

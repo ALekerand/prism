@@ -32,6 +32,10 @@ public final class SaisieWorkflowReturnNotificationRules {
 		if (user.hasRole("COORDONNATEUR") || user.hasRole("IEPP")) {
 			return notifyCoordonnateur(workflow, user);
 		}
+		if (user.hasAnyRole("SUPERVISEUR", "SUPERVISEUR_AENF", "DIRECTEUR")) {
+			return workflow.getStatut() == SaisieWorkflowStatus.RETOURNE
+					&& SaisieWorkflowQueueTabResolver.resolve(workflow, user) == SaisieWorkflowListTab.RENVOYE;
+		}
 		return false;
 	}
 
@@ -54,9 +58,6 @@ public final class SaisieWorkflowReturnNotificationRules {
 		String me = normalize(user.getUsername());
 		String decidePar = normalize(workflow.getDecidePar());
 		if (me != null && me.equals(decidePar)) {
-			return false;
-		}
-		if (workflow.getValideCoordPar() != null) {
 			return false;
 		}
 		return decidePar != null;

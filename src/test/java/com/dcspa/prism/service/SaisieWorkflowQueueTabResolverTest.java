@@ -54,6 +54,15 @@ class SaisieWorkflowQueueTabResolverTest {
 	}
 
 	@Test
+	void coord_retour_superieur_est_renvoye_pas_traite() {
+		SaisieWorkflow w = workflow(SaisieWorkflowStatus.RETOURNE, "c1", "c1");
+		w.setDecidePar("sup");
+		w.setValideCoordPar("coord");
+		AuthUser user = user("coord", "COORDONNATEUR");
+		assertEquals(SaisieWorkflowListTab.RENVOYE, SaisieWorkflowQueueTabResolver.resolve(w, user));
+	}
+
+	@Test
 	void validateur_qui_retourne_voit_traite() {
 		SaisieWorkflow w = workflow(SaisieWorkflowStatus.RETOURNE, "c1", "c1");
 		w.setDecidePar("sup");
