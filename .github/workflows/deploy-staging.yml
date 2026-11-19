@@ -24,7 +24,7 @@ jobs:
           cache: maven
 
       - name: Build WAR
-        run: ./mvnw -q clean package -DskipTests
+        run: mvn -B -q clean package -DskipTests
 
       - name: Copy WAR to VPS
         uses: appleboy/scp-action@v0.1.7
