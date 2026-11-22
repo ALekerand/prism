@@ -7,40 +7,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SaisieWorkflowRecordScopeService {
-
-	private static final Set<String> ALPHA_EFFECTIF_RESOURCES = Set.of(
-			"/api/effectif-alpha",
-			"/api/effectif-abandon-alpha",
-			"/api/effectif-passage-alpha",
-			"/api/effectif-situation-handicap-alpha");
-
-	private static final Set<String> CEC_EFFECTIF_RESOURCES = Set.of(
-			"/api/effectif-cec",
-			"/api/effectif-abandon-cec",
-			"/api/effectif-cepe-cec",
-			"/api/effectif-promu-cec",
-			"/api/effectif-situation-handicap-cec");
-
-	private static final Set<String> CP_EFFECTIF_RESOURCES = Set.of(
-			"/api/effectif-cp",
-			"/api/effectif-abandon-cp",
-			"/api/effectif-cepe-cp",
-			"/api/effectif-promu-cp",
-			"/api/effectif-admis-integration-cp",
-			"/api/effectif-integration-formel-cp",
-			"/api/effectif-situation-handicap-cp");
-
-	private static final Set<String> SIE_EFFECTIF_RESOURCES = Set.of(
-			"/api/effectif-sie",
-			"/api/effectif-abondan-sie",
-			"/api/effectif-promu-sie",
-			"/api/effectif-reverse-formel-sie",
-			"/api/effectif-situation-handicap-sie");
 
 	private static final Map<String, AlphaActivityTable> ALPHA_ACTIVITY_RESOURCES = Map.of(
 			"/api/controle", new AlphaActivityTable("controle", "id_controle"),
@@ -56,17 +26,9 @@ public class SaisieWorkflowRecordScopeService {
 			return Map.of();
 		}
 		String path = normalizeResource(resourcePath);
-		if (ALPHA_EFFECTIF_RESOURCES.contains(path)) {
-			return loadAlphaEffectifScopes(path, recordIds);
-		}
-		if (CEC_EFFECTIF_RESOURCES.contains(path)) {
-			return loadTypedCentreScopes(path, recordIds, "cec");
-		}
-		if (CP_EFFECTIF_RESOURCES.contains(path)) {
-			return loadTypedCentreScopes(path, recordIds, "cp");
-		}
-		if (SIE_EFFECTIF_RESOURCES.contains(path)) {
-			return loadTypedCentreScopes(path, recordIds, "sie");
+		WorkflowEffectifSqlSupport.EffectifSqlMeta effectif = WorkflowEffectifSqlSupport.meta(path);
+		if (effectif != null) {
+			return loadEffectifScopes(effectif, recordIds);
 		}
 		AlphaActivityTable activity = ALPHA_ACTIVITY_RESOURCES.get(path);
 		if (activity != null) {
@@ -75,32 +37,9 @@ public class SaisieWorkflowRecordScopeService {
 		return Map.of();
 	}
 
-	private Map<Integer, WorkflowRecordScope> loadAlphaEffectifScopes(String resourcePath, Collection<Integer> recordIds) {
-		String table = tableFromResource(resourcePath);
-		String pk = pkColumnFromResource(resourcePath);
-		String sql = """
-				SELECT e.%s, a.id_iep, iep.id_drena, ctr.enregistre_par
-				FROM %s e
-				INNER JOIN alpha a ON e.id_centre = a.id_centre
-				INNER JOIN centre ctr ON a.id_centre = ctr.id_centre
-				LEFT JOIN iep ON a.id_iep = iep.id_iep
-				WHERE e.%s IN :ids
-				""".formatted(pk, table, pk);
-		return runScopeQuery(sql, recordIds);
-	}
-
-	private Map<Integer, WorkflowRecordScope> loadTypedCentreScopes(
-			String resourcePath, Collection<Integer> recordIds, String centreType) {
-		String table = tableFromResource(resourcePath);
-		String pk = pkColumnFromResource(resourcePath);
-		String sql = """
-				SELECT e.%s, c.id_iep, iep.id_drena, ctr.enregistre_par
-				FROM %s e
-				INNER JOIN %s c ON e.id_centre = c.id_centre
-				INNER JOIN centre ctr ON c.id_centre = ctr.id_centre
-				LEFT JOIN iep ON c.id_iep = iep.id_iep
-				WHERE e.%s IN :ids
-				""".formatted(pk, table, centreType, pk);
+	private Map<Integer, WorkflowRecordScope> loadEffectifScopes(
+			WorkflowEffectifSqlSupport.EffectifSqlMeta meta, Collection<Integer> recordIds) {
+		String sql = WorkflowEffectifSqlSupport.scopeSql(meta);
 		return runScopeQuery(sql, recordIds);
 	}
 
@@ -134,14 +73,6 @@ public class SaisieWorkflowRecordScopeService {
 			out.put(recordId, new WorkflowRecordScope(idIep, idDrena, enregistrePar));
 		}
 		return out;
-	}
-
-	private static String tableFromResource(String resourcePath) {
-		return resourcePath.substring("/api/".length()).replace('-', '_');
-	}
-
-	private static String pkColumnFromResource(String resourcePath) {
-		return "id_" + tableFromResource(resourcePath);
 	}
 
 	private static String normalizeResource(String resourcePath) {

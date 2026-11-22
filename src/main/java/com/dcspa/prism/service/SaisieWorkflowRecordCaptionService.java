@@ -72,58 +72,30 @@ public class SaisieWorkflowRecordCaptionService {
 		if (activitySql != null) {
 			return runCaptionQuery(activitySql.formatted(ACTIVITY_CAPTION_EXPR), recordIds);
 		}
-		if (path.startsWith("/api/effectif")) {
-			return captionEffectif(path, recordIds);
+		WorkflowEffectifSqlSupport.EffectifSqlMeta meta = WorkflowEffectifSqlSupport.meta(path);
+		if (meta != null) {
+			return captionEffectif(meta, recordIds);
 		}
 		return Map.of();
 	}
 
-	private Map<Integer, String> captionEffectif(String resourcePath, Collection<Integer> recordIds) {
-		String table = tableFromResource(resourcePath);
-		String pk = pkColumnFromResource(resourcePath);
-		String codeCol = codeColumnFromResource(resourcePath);
-		String joinCentre;
-		String centreLabelExpr;
-		if (resourcePath.contains("-alpha") || resourcePath.endsWith("alpha")) {
-			joinCentre = """
-					INNER JOIN alpha c ON e.id_centre = c.id_centre
-					INNER JOIN centre ctr ON c.id_centre = ctr.id_centre""";
-			centreLabelExpr = """
-					TRIM(CONCAT_WS(' ',
-						NULLIF(TRIM(ctr.code_centre), ''),
-						NULLIF(TRIM(c.libelle_alpha), '')
-					))""";
-		} else if (resourcePath.contains("cec")) {
-			joinCentre = """
-					INNER JOIN cec c ON e.id_centre = c.id_centre
-					INNER JOIN centre ctr ON c.id_centre = ctr.id_centre""";
-			centreLabelExpr = "NULLIF(TRIM(ctr.code_centre), '')";
-		} else if (resourcePath.contains("-cp") || resourcePath.contains("cp")) {
-			joinCentre = """
-					INNER JOIN cp c ON e.id_centre = c.id_centre
-					INNER JOIN centre ctr ON c.id_centre = ctr.id_centre""";
-			centreLabelExpr = "NULLIF(TRIM(ctr.code_centre), '')";
-		} else if (resourcePath.contains("sie")) {
-			joinCentre = """
-					INNER JOIN sie c ON e.id_centre = c.id_centre
-					INNER JOIN centre ctr ON c.id_centre = ctr.id_centre""";
-			centreLabelExpr = "NULLIF(TRIM(ctr.code_centre), '')";
-		} else {
-			return Map.of();
-		}
+	private Map<Integer, String> captionEffectif(
+			WorkflowEffectifSqlSupport.EffectifSqlMeta meta, Collection<Integer> recordIds) {
+		String joinCentre = WorkflowEffectifSqlSupport.centreLabelJoin(meta);
+		String centreLabelExpr = WorkflowEffectifSqlSupport.centreLabelExpr(meta);
 		String captionExpr = """
 				TRIM(CONCAT_WS(' · ',
 					%s,
 					NULLIF(TRIM(pa.libelle_periode_activite), ''),
 					NULLIF(TRIM(e.%s), '')
-				))""".formatted(centreLabelExpr, codeCol);
+				))""".formatted(centreLabelExpr, meta.codeColumn());
 		String sql = """
 				SELECT e.%s, %s
 				FROM %s e
 				%s
 				LEFT JOIN periode_activite pa ON e.id_periode_activite = pa.id_periode_activite
 				WHERE e.%s IN :ids
-				""".formatted(pk, captionExpr, table, joinCentre, pk);
+				""".formatted(meta.pkColumn(), captionExpr, meta.table(), joinCentre, meta.pkColumn());
 		return runCaptionQuery(sql, recordIds);
 	}
 
@@ -144,18 +116,6 @@ public class SaisieWorkflowRecordCaptionService {
 			}
 		}
 		return out;
-	}
-
-	private static String codeColumnFromResource(String resourcePath) {
-		return "code_" + tableFromResource(resourcePath);
-	}
-
-	private static String tableFromResource(String resourcePath) {
-		return resourcePath.substring("/api/".length()).replace('-', '_');
-	}
-
-	private static String pkColumnFromResource(String resourcePath) {
-		return "id_" + tableFromResource(resourcePath);
 	}
 
 	private static String normalizeResource(String resourcePath) {
